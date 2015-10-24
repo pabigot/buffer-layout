@@ -128,5 +128,31 @@ suite("Layout", function () {
         assert.equal(f, be.decode(b));
         assert.equal(fe, le.decode(b));
     });
+    test("Double", function () {
+        var be = lo.f64be('dee'),
+            le = lo.f64('eed'),
+            f = 123456789.125e+10,
+            fe = 3.4283031083405533e-77,
+            b = new Buffer(8);
+        assert(be instanceof lo.DoubleBE);
+        assert(be instanceof lo.Layout);
+        assert.equal(8, be.span);
+        assert.equal('dee', be.property);
+        assert(le instanceof lo.Double);
+        assert(le instanceof lo.Layout);
+        assert.equal(8, le.span);
+        assert.equal('eed', le.property);
+        b.fill(0);
+        assert.equal(0, be.decode(b));
+        assert.equal(0, le.decode(b));
+        le.encode(f, b);
+        assert.equal(0, Buffer('300fc1f41022b143', 'hex').compare(b));
+        assert.equal(f, le.decode(b));
+        assert.equal(fe, be.decode(b));
+        be.encode(f, b);
+        assert.equal(0, Buffer('43b12210f4c10f30', 'hex').compare(b));
+        assert.equal(f, be.decode(b));
+        assert.equal(fe, le.decode(b));
+    });
 
 });
