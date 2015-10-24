@@ -2,6 +2,8 @@
     @overview Make references to local things local.
     @module plugins/local
     @author Michael Mathews <micmath@gmail.com>
+    @author Peter A. Bigot <pab@pabigot.com>
+    @see {@link https://github.com/jsdoc3/jsdoc/issues/101|issue #101}
  */
 
 var thisModule = '',
@@ -20,10 +22,17 @@ exports.defineTags = function(dictionary) {
     });
 }
 
+function buildRE(prefix, tag) {
+    var pat = '(' + prefix + ')\\b(' + tag + ')\\b';
+    return new RegExp(pat, 'g');
+}
+
 exports.handlers = {
     jsdocCommentFound: function(e) {
         if (thisModule) for (var local in registry) {
-            e.comment = e.comment.replace('{'+local, '{'+thisModule+'~'+local);
+            var sv = '$1'+thisModule+'~'+'$2';
+            e.comment = e.comment.replace(buildRE('{', local), sv);
+            e.comment = e.comment.replace(buildRE('{@link\\s+', local), sv);
         }
     },
 
