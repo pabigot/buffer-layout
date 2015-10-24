@@ -7,13 +7,24 @@ suite("Layout", function () {
             var d = new lo.Layout(8);
             assert(d instanceof lo.Layout);
             assert.equal(8, d.span);
-            assert.strictEqual(undefined, d.tag);
+            assert.strictEqual(undefined, d.property);
         });
         test("named ctor", function () {
-            var d = new lo.Layout(8);
+            var d = new lo.Layout(8, 'tag');
             assert(d instanceof lo.Layout);
             assert.equal(8, d.span);
-            assert.strictEqual(undefined, d.tag);
+            assert.strictEqual('tag', d.property);
+        });
+        test("invalid ctor", function () {
+            assert.throws(function () { new lo.Layout(); }, TypeError);
+            assert.throws(function () { new lo.Layout("3"); }, TypeError);
+            assert.throws(function () { new lo.Layout("three"); }, TypeError);
+        });
+        test("abstractness", function () {
+            var d = new lo.Layout(3),
+                b = new Buffer(3);
+            assert.throws(function () { d.decode(b); });
+            assert.throws(function () { d.encode('sth', b); });
         });
     });
 });
