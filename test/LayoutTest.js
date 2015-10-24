@@ -1,4 +1,5 @@
 var assert = require("assert"),
+    _ = require("lodash"),
     lo = require("../lib/Layout");
 
 suite("Layout", function () {
@@ -252,6 +253,93 @@ suite("Layout", function () {
         assert.equal(0, Buffer('43b12210f4c10f30', 'hex').compare(b));
         assert.equal(f, be.decode(b));
         assert.equal(fe, le.decode(b));
+    });
+    suite("Structure", function () {
+        test("invalid ctor", function () {
+            assert.throws(function () { new lo.Structure(); }, TypeError);
+            assert.throws(function () { new lo.Structure("stuff"); }, TypeError);
+            assert.throws(function () { new lo.Structure(["stuff"]); }, TypeError);
+        });
+        test("basics", function () {
+            var st = new lo.Structure([lo.u8('u8'),
+                                       lo.u16('u16'),
+                                       lo.s16be('s16be')]),
+                b = new Buffer(5);
+            assert(st instanceof lo.Structure);
+            assert(st instanceof lo.Layout);
+            assert.equal(5, st.span);
+            assert.strictEqual(undefined, st.property);
+            b.fill(0);
+            var obj = st.decode(b);
+            assert(_.isEqual({u8:0, u16:0, s16be:0}, obj));
+            obj = {u8:21, u16:0x1234, s16be:-5432};
+            st.encode(obj, b);
+            assert.equal(0, Buffer('153412eac8', 'hex').compare(b));
+            assert(_.isEqual(obj, st.decode(b)));
+        });
+        test("padding", function () {
+            var st = new lo.Structure([lo.u16('u16'),
+                                       lo.u8(),
+                                       lo.s16be('s16be')]),
+                b = new Buffer(5);
+            assert.equal(5, st.span);
+            b.fill(0);
+            var obj = st.decode(b);
+            assert(_.isEqual({u16:0, s16be:0}, obj));
+            b.fill(0xFF);
+            obj = {u16:0x1234, s16be:-5432};
+            st.encode(obj, b);
+            assert.equal(0, Buffer('3412ffeac8', 'hex').compare(b));
+            assert(_.isEqual(obj, st.decode(b)));
+        });
+        test("missing", function () {
+            var st = new lo.Structure([lo.u16('u16'),
+                                       lo.u8('u8'),
+                                       lo.s16be('s16be')]),
+                b = new Buffer(5);
+            assert.equal(5, st.span);
+            b.fill(0);
+            var obj = st.decode(b);
+            assert(_.isEqual({u16:0, u8:0, s16be:0}, obj));
+            b.fill(0xFF);
+            obj = {u16:0x1234, s16be:-5432};
+            st.encode(obj, b);
+            assert.equal(0, Buffer('341200eac8', 'hex').compare(b));
+            assert(_.isEqual(_.extend(obj, {u8:0}), st.decode(b)));
+        });
+        test("update", function () {
+            var st = new lo.Structure([lo.u8('u8'),
+                                       lo.u16('u16'),
+                                       lo.s16be('s16be')]),
+                obj = {},
+                b = Buffer('153412eac8', 'hex'),
+                rc = st.decode(b, 0, obj);
+            assert(_.isEqual({u8:21, u16:0x1234, s16be:-5432}, obj));
+            assert.strictEqual(obj, rc);
+        });
+        test("nested", function () {
+            var st = new lo.Structure([lo.u8('u8'),
+                                       lo.u16('u16'),
+                                       lo.s16be('s16be')], 'st'),
+                cst = new lo.Structure([lo.u32('u32'),
+                                        st,
+                                        lo.s24('s24')]),
+                obj = {'u32': 0x12345678,
+                        'st': {
+                            u8: 23,
+                            u16: 65432,
+                            s16be: -12345
+                        },
+                        's24': -123456},
+                b = new Buffer(12);
+            assert.equal(5, st.span);
+            assert.equal('st', st.property);
+            assert.equal(12, cst.span);
+            cst.encode(obj, b);
+            assert.equal(0, Buffer('785634121798ffcfc7c01dfe', 'hex').compare(b));
+            assert(_.isEqual(obj, cst.decode(b)));
+        });
+
     });
 
 });
