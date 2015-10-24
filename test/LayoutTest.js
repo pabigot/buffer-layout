@@ -102,5 +102,31 @@ suite("Layout", function () {
             assert.throws(function () { new lo.UIntBE(8); }, TypeError);
         });
     });
+    test("Float", function () {
+        var be = lo.f32be('eff'),
+            le = lo.f32('ffe'),
+            f = 123456.125,
+            fe = 3.174030951333261e-29,
+            b = new Buffer(4);
+        assert(be instanceof lo.FloatBE);
+        assert(be instanceof lo.Layout);
+        assert.equal(4, be.span);
+        assert.equal('eff', be.property);
+        assert(le instanceof lo.Float);
+        assert(le instanceof lo.Layout);
+        assert.equal(4, le.span);
+        assert.equal('ffe', le.property);
+        b.fill(0);
+        assert.equal(0, be.decode(b));
+        assert.equal(0, le.decode(b));
+        le.encode(f, b);
+        assert.equal(0, Buffer('1020f147', 'hex').compare(b));
+        assert.equal(f, le.decode(b));
+        assert.equal(fe, be.decode(b));
+        be.encode(f, b);
+        assert.equal(0, Buffer('47f12010', 'hex').compare(b));
+        assert.equal(f, be.decode(b));
+        assert.equal(fe, le.decode(b));
+    });
 
 });
