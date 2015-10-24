@@ -71,4 +71,36 @@ suite("Layout", function () {
             assert.throws(function () { new lo.UInt(8); }, TypeError);
         });
     });
+    suite("UIntBE", function () {
+        test("u16be", function () {
+            var d = lo.u16be('t'),
+                b = new Buffer(2);
+            assert(d instanceof lo.UIntBE);
+            assert(d instanceof lo.Layout);
+            assert.equal(2, d.span);
+            assert.equal('t', d.property);
+            b.fill(0);
+            assert.equal(0, d.decode(b));
+            d.encode(0x1234, b);
+            assert.equal(0, Buffer('1234', 'hex').compare(b));
+            assert.equal(0x1234, d.decode(b));
+        });
+        test("u48be", function () {
+            var d = lo.u48be('t'),
+                b = new Buffer(6);
+            assert(d instanceof lo.UIntBE);
+            assert(d instanceof lo.Layout);
+            assert.equal(6, d.span);
+            assert.equal('t', d.property);
+            b.fill(0);
+            assert.equal(0, d.decode(b));
+            d.encode(0x123456789abc, b);
+            assert.equal(0, Buffer('123456789abc', 'hex').compare(b));
+            assert.equal(0x123456789abc, d.decode(b));
+        });
+        test("invalid ctor", function () {
+            assert.throws(function () { new lo.UIntBE(8); }, TypeError);
+        });
+    });
+
 });
