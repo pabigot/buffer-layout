@@ -1,0 +1,10 @@
+{
+    "opts": {
+	"recurse": true,
+	"destination": "./jsdoc/html/"
+    },
+    "source": {
+	"include": ["./lib/"]
+    },
+    "plugins": ["plugins/markdown"]
+}
