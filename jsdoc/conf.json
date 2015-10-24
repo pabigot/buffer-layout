@@ -6,5 +6,5 @@
     "source": {
 	"include": ["./lib/"]
     },
-    "plugins": ["plugins/markdown"]
+    "plugins": ["plugins/markdown", "custom/local"]
 }

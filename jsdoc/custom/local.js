@@ -32,7 +32,7 @@ exports.handlers = {
         if (thisModule) for (var local in registry) {
             var sv = '$1'+thisModule+'~'+'$2';
             e.comment = e.comment.replace(buildRE('{', local), sv);
-            e.comment = e.comment.replace(buildRE('{@link\\s+', local), sv);
+            e.comment = e.comment.replace(buildRE('{@link\\s*\\*?\\s*', local), sv);
         }
     },
 
