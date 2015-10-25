@@ -476,11 +476,17 @@ suite("Layout", function () {
             assert.equal(0, Buffer('050000000300000007', 'hex').compare(b));
         });
         test("variants", function () {
-            var dlo = lo.u8(),
-                vlo = new lo.Sequence(lo.u8(), 4),
+            var dlo = lo.u8('v'),
+                vlo = new lo.Sequence(lo.u8(), 4, 'c'),
                 un = new lo.Union(dlo, vlo),
                 b = new Buffer(5);
             assert.strictEqual(undefined, un.getVariant(1));
+            b.fill(0);
+            assert(_.isEqual({v: 0, c:[0,0,0,0]}, un.decode(b)));
+            var obj = { destination: true },
+                rv = un.decode(b, 0, obj);
+            assert.strictEqual(rv, obj);
+            assert(_.isEqual({v: 0, c:[0,0,0,0], destination:true}, obj));
             var lo1 = lo.u32(),
                 v1 = un.addVariant(1, lo1);
             assert(v1 instanceof lo.VariantLayout);
@@ -490,6 +496,9 @@ suite("Layout", function () {
             assert.strictEqual(v1, un.getVariant(b));
             assert.equal(0x01010101, v1.decode(b));
             assert.equal(0x01010101, un.decode(b));
+            obj = { destination: true };
+            rv = un.decode(b, 0, obj);
+            assert.equal(0x01010101, rv);
             var lo2 = lo.f32(),
                 v2 = un.addVariant(2, lo2);
             un.discr_layout.encode(v2.variant, b);
@@ -502,8 +511,10 @@ suite("Layout", function () {
             assert.strictEqual(v3, un.getVariant(b));
             assert(_.isEqual({a:1, b:1, c:257}, v3.decode(b)));
             assert(_.isEqual({a:1, b:1, c:257}, un.decode(b)));
-            un.discr_layout.encode(99, b);
-            assert(_.isEqual({variant:99, content:[1,1,1,1]}, un.decode(b)));
+            obj = { destination: true };
+            rv = un.decode(b, 0, obj);
+            assert.strictEqual(rv, obj);
+            assert(_.isEqual({a:1, b:1, c:257, destination:true}, rv));
         })
         test("custom default", function () {
             var dlo = lo.u8('number'),
