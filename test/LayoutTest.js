@@ -380,5 +380,44 @@ suite("Layout", function () {
         });
 
     });
-
+    suite("replicate", function () {
+        test("uint", function () {
+            var src = lo.u32('hi'),
+                dst = src.replicate('lo');
+            assert(dst instanceof src.constructor);
+            assert.equal(src.span, dst.span);
+            assert.equal('lo', dst.property);
+        });
+        test("struct", function () {
+            var src = new lo.Structure([lo.u8('a'), lo.s32('b')], 'hi'),
+                dst = src.replicate('lo');
+            assert(dst instanceof src.constructor);
+            assert.equal(src.span, dst.span);
+            assert.strictEqual(src.fields, dst.fields);
+            assert.equal('lo', dst.property);
+        });
+        test("sequence", function () {
+            var src = new lo.Sequence(lo.u16(), 20, 'hi');
+                dst = src.replicate('lo');
+            assert(dst instanceof src.constructor);
+            assert.equal(src.span, dst.span);
+            assert.equal(src.count, dst.count);
+            assert.strictEqual(src.elt_layout, dst.elt_layout);
+            assert.equal('lo', dst.property);
+        });
+        test("add", function () {
+            var src = lo.u32(),
+                dst = src.replicate('p');
+            assert(dst instanceof src.constructor);
+            assert.strictEqual(undefined, src.property);
+            assert.equal('p', dst.property);
+        });
+        test("remove", function () {
+            var src = lo.u32('p'),
+                dst = src.replicate();
+            assert(dst instanceof src.constructor);
+            assert.equal('p', src.property);
+            assert.strictEqual(undefined, dst.property);
+        });
+    });
 });
