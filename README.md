@@ -1,8 +1,8 @@
 # buffer-layout
 
-buffer-layout is a utility module implemented in pure Javascript that
-support translations between Javascript objects and Buffers.  It is
-made available under the MIT license.
+buffer-layout is a utility module implemented in pure JavaScript that
+supports translations between JavaScript values and Buffers.  It is made
+available under the MIT license.
 
 Layout support is provided for these types of data:
 
