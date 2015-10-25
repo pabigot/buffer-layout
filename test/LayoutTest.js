@@ -529,4 +529,17 @@ suite("Layout", function () {
             assert.equal('payload', un.layout.fields[1].property);
         });
     });
+    test("fromArray", function () {
+        assert.strictEqual(undefined, lo.u8().fromArray([1]));
+        var st = new lo.Structure([lo.u8('a'), lo.u8('b'), lo.u16('c')]);
+        assert(_.isEqual({a:1, b:2, c:3}, st.fromArray([1,2,3])));
+        assert(_.isEqual({a:1, b:2}, st.fromArray([1,2])));
+        var un = new lo.Union(lo.u8('v'), lo.u32('c'));
+        assert.strictEqual(undefined, un.fromArray([1,2,3]));
+        var v1 = un.addVariant(1, st),
+            v2 = un.addVariant(2, lo.f32());
+        assert(v1 instanceof lo.VariantLayout);
+        assert(_.isEqual({a:1, b:2, c:3}, un.getVariant(1).fromArray([1,2,3])));
+        assert.strictEqual(undefined, un.getVariant(2).fromArray([1,2,3]));
+    });
 });
