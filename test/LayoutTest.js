@@ -420,4 +420,90 @@ suite("Layout", function () {
             assert.strictEqual(undefined, dst.property);
         });
     });
+    suite("VariantLayout", function () {
+        test("invalid ctor", function () {
+            var un = new lo.Union(lo.u8(), lo.u32());
+            assert.throws(function () { new lo.VariantLayout(); }, TypeError);
+            assert.throws(function () { new lo.VariantLayout("other"); }, TypeError);
+            assert.throws(function () { new lo.VariantLayout(un); }, TypeError);
+            assert.throws(function () { new lo.VariantLayout(un, 1.2); }, TypeError);
+            assert.throws(function () { new lo.VariantLayout(un, "str"); }, TypeError);
+            assert.throws(function () { new lo.VariantLayout(un, 1); }, TypeError);
+            assert.throws(function () { new lo.VariantLayout(un, 1, "other"); }, TypeError);
+            assert.throws(function () { new lo.VariantLayout(un, 1, lo.f64()); }, Error);
+        });
+        test("ctor", function () {
+            var un = new lo.Union(lo.u8(), lo.u32()),
+                d = new lo.VariantLayout(un, 1, lo.f32());
+            assert(d instanceof lo.VariantLayout);
+            assert(d instanceof lo.Layout);
+            assert.strictEqual(un, d.union);
+            assert.equal(5, d.span);
+            assert.equal(1, d.variant);
+            assert.strictEqual(undefined, d.property);
+        });
+    });
+    suite("Union", function () {
+        test("invalid ctor", function () {
+            assert.throws(function () { new lo.Union(); }, TypeError);
+            assert.throws(function () { new lo.Union("other"); }, TypeError);
+            assert.throws(function () { new lo.Union(lo.f32()); }, TypeError);
+            assert.throws(function () { new lo.Union(lo.u8()); }, TypeError);
+            assert.throws(function () { new lo.Union(lo.u8(), "other"); }, TypeError);
+        });
+        test("basics", function () {
+            var dlo = lo.u8(),
+                vlo = new lo.Sequence(lo.u8(), 8),
+                un = new lo.Union(dlo, vlo),
+                b = new Buffer(9);
+            assert(un instanceof lo.Union);
+            assert(un instanceof lo.Layout);
+            assert.strictEqual(dlo, un.discr_layout);
+            assert.strictEqual(vlo, un.default_layout);
+            assert(un.layout instanceof lo.Structure);
+            assert.equal('variant', un.layout.fields[0].property);
+            assert.equal('content', un.layout.fields[1].property);
+            assert.equal(un.span, dlo.span + vlo.span);
+            assert.strictEqual(undefined, un.property);
+            b.fill(0);
+            var o = un.decode(b);
+            assert.equal(0, o.variant);
+            assert(_.isEqual([0,0,0,0, 0,0,0,0], o.content));
+            o.variant = 5;
+            o.content[3] = 3;
+            o.content[7] = 7;
+            un.encode(o, b);
+            assert.equal(0, Buffer('050000000300000007', 'hex').compare(b));
+        });
+        test("variants", function () {
+            var dlo = lo.u8(),
+                vlo = new lo.Sequence(lo.u8(), 4),
+                un = new lo.Union(dlo, vlo),
+                b = new Buffer(5);
+            assert.strictEqual(undefined, un.getVariant(1));
+            var lo1 = lo.u32(),
+                v1 = un.addVariant(1, lo1);
+            assert(v1 instanceof lo.VariantLayout);
+            assert.equal(1, v1.variant);
+            assert.strictEqual(lo1, v1.layout);
+            b.fill(1);
+            assert.strictEqual(v1, un.getVariant(b));
+            assert.equal(0x01010101, v1.decode(b));
+            assert.equal(0x01010101, un.decode(b));
+            var lo2 = lo.f32(),
+                v2 = un.addVariant(2, lo2);
+            un.discr_layout.encode(v2.variant, b);
+            assert.strictEqual(v2, un.getVariant(b));
+            assert.equal(2.3694278276172396e-38, v2.decode(b));
+            assert.equal(2.3694278276172396e-38, un.decode(b));
+            var lo3 = new lo.Structure([lo.u8('a'), lo.u8('b'), lo.u16('c')]),
+                v3 = un.addVariant(3, lo3);
+            un.discr_layout.encode(v3.variant, b);
+            assert.strictEqual(v3, un.getVariant(b));
+            assert(_.isEqual({a:1, b:1, c:257}, v3.decode(b)));
+            assert(_.isEqual({a:1, b:1, c:257}, un.decode(b)));
+            un.discr_layout.encode(99, b);
+            assert(_.isEqual({variant:99, content:[1,1,1,1]}, un.decode(b)));
+        })
+    });
 });
