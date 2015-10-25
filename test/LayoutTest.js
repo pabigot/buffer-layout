@@ -254,6 +254,45 @@ suite("Layout", function () {
         assert.equal(f, be.decode(b));
         assert.equal(fe, le.decode(b));
     });
+    suite("Sequence", function () {
+        test("invalid ctor", function () {
+            assert.throws(function () { new lo.Sequence(); }, TypeError);
+            assert.throws(function () { new lo.Sequence(lo.u8()); }, TypeError);
+            assert.throws(function () { new lo.Sequence(lo.u8(), "5 is not an integer"); }, TypeError);
+        });
+        test("basics", function () {
+            var seq = new lo.Sequence(lo.u8(), 4, 'id'),
+                b = new Buffer(4);
+            assert(seq instanceof lo.Sequence);
+            assert(seq instanceof lo.Layout);
+            assert(seq.elt_layout instanceof lo.UInt);
+            assert.equal(4, seq.count);
+            assert.equal(4, seq.span);
+            assert.equal('id', seq.property);
+            b.fill(0);
+            assert(_.isEqual([0,0,0,0], seq.decode(b)));
+            seq.encode([1,2,3,4], b);
+            assert(_.isEqual([1,2,3,4], seq.decode(b)));
+            seq.encode([5,6], b, 1);
+            assert(_.isEqual([1,5,6,4], seq.decode(b)));
+        });
+        test("struct elts", function () {
+            var st = new lo.Structure([lo.u8('u8'),
+                                       lo.s32('s32')]),
+                seq = new lo.Sequence(st, 3),
+                tv = [{u8:1, s32:1e4}, {u8:0, s32:0}, {u8:3, s32:-324}],
+                b = new Buffer(15);
+            assert.equal(5, st.span);
+            assert.equal(3, seq.count);
+            assert.strictEqual(st, seq.elt_layout);
+            assert.equal(15, seq.span);
+            seq.encode(tv, b);
+            assert.equal(0, Buffer('0110270000000000000003bcfeffff', 'hex').compare(b));
+            assert(_.isEqual(tv, seq.decode(b)));
+            seq.encode([{u8:2,s32:0x12345678}], b, st.span);
+            assert.equal(0, Buffer('0110270000027856341203bcfeffff', 'hex').compare(b));
+        });
+    });
     suite("Structure", function () {
         test("invalid ctor", function () {
             assert.throws(function () { new lo.Structure(); }, TypeError);
