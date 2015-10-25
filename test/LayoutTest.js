@@ -505,5 +505,17 @@ suite("Layout", function () {
             un.discr_layout.encode(99, b);
             assert(_.isEqual({variant:99, content:[1,1,1,1]}, un.decode(b)));
         })
+        test("custom default", function () {
+            var dlo = lo.u8('number'),
+                vlo = new lo.Sequence(lo.u8(), 8, 'payload'),
+                un = new lo.Union(dlo, vlo);
+            assert(un instanceof lo.Union);
+            assert(un instanceof lo.Layout);
+            assert.strictEqual(dlo, un.discr_layout);
+            assert.strictEqual(vlo, un.default_layout);
+            assert(un.layout instanceof lo.Structure);
+            assert.equal('number', un.layout.fields[0].property);
+            assert.equal('payload', un.layout.fields[1].property);
+        });
     });
 });
