@@ -10,12 +10,18 @@
     },
     "devDependencies": {
 	"jsdoc": "3.3.x",
-	"jslint": "0.9.x",
+	"jslint": "~0.9.3",
+	"jshint": "~2.8.0",
 	"mocha": "2.2.x"
     },
     "scripts": {
-        "mkdoc": "jsdoc -c jsdoc/conf.json",
-        "lint": "jslint lib/Layout.js || true",
+	"mkdoc": "jsdoc -c jsdoc/conf.json",
+	"lint": "jshint lib/Layout.js || true",
+	"jslint": "jslint lib/Layout.js || true",
 	"test": "mocha -u tdd"
+    },
+    "jshintConfig": {
+	"node": true,
+	"laxbreak": true
     }
 }
