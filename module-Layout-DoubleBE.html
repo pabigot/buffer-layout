@@ -157,7 +157,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line437">line 437</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line470">line 470</a>
     </li></ul></dd>
     
 
@@ -267,7 +267,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line150">line 150</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line151">line 151</a>
     </li></ul></dd>
     
 
@@ -334,7 +334,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line141">line 141</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line142">line 142</a>
     </li></ul></dd>
     
 
@@ -417,7 +417,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line444">line 444</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line477">line 477</a>
     </li></ul></dd>
     
 
@@ -504,7 +504,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line451">line 451</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line484">line 484</a>
     </li></ul></dd>
     
 
@@ -527,6 +527,198 @@ the decoded Object.</p>
 
 
 
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="fromArray"><span class="type-signature"></span>fromArray<span class="signature">(values, dest)</span><span class="type-signature"> &rarr; {Object|undefined}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Create an object from layout properties and an array of values.</p>
+<p><strong>NOTE</strong> This function returns <code>undefined</code> if invoked on a layout
+that does not return its value as an Object.  That would generally
+be anything that isn't fundamentally a <a href="module-Layout-Structure.html">Structure</a>,
+which includes <a href="module-Layout-VariantLayout.html">variant layouts</a> if they are
+structures, and excludes <a href="module-Layout-Union.html">Union</a>s.  If you want this
+feature for a union you must use getVariant to select the desired layout.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>values</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>an array of values that correspond to the
+default order for properties.  As with <a href="module-Layout-Layout.html#decode">decode</a>
+layout elements that have no property name are skipped when
+iterating over the array values.  Only the top-level properties are
+assigned; arguments are not assigned to properties of contained
+layouts.  Any unused values are ignored.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dest</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>as with <a href="module-Layout-Layout.html#decode">decode</a>.  If
+required but not provided an empty Object will be used.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-Layout.html#fromArray">module:Layout~Layout#fromArray</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line231">line 231</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -640,7 +832,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line194">line 194</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line202">line 202</a>
     </li></ul></dd>
     
 
@@ -713,7 +905,7 @@ set to <code>property</code>.</li>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sun Oct 25 2015 14:15:21 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sun Oct 25 2015 16:28:35 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

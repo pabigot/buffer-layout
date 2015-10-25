@@ -151,7 +151,7 @@ instance of <a href="module-Layout-UInt.html">UInt</a> (or <a href="module-Layou
 
             
 
-            <td class="description last"><p>initializer for <a href="module-Layout-Union.html#default_layout">discr_layout</a>.</p></td>
+            <td class="description last"><p>initializer for <a href="module-Layout-Union.html#default_layout">default_layout</a>.</p></td>
         </tr>
 
     
@@ -225,7 +225,7 @@ instance of <a href="module-Layout-UInt.html">UInt</a> (or <a href="module-Layou
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line624">line 624</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line675">line 675</a>
     </li></ul></dd>
     
 
@@ -286,10 +286,11 @@ instance of <a href="module-Layout-UInt.html">UInt</a> (or <a href="module-Layou
 
 
 <div class="description">
-    <p>The layout used content when the value of the discriminator is
-not recognized.</p>
-<p>In unrecognized variants this is returned as the <code>content</code>
-property of an object.</p>
+    <p>The layout for non-discriminator content when the value of the
+discriminator is not recognized.</p>
+<p>This is the value passed to the constructor.  It is
+structurally equivalent to the second component of <a href="module-Layout-Union.html#layout">layout</a> but may have a different property
+name.</p>
 </div>
 
 
@@ -327,7 +328,7 @@ property of an object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line657">line 657</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line723">line 723</a>
     </li></ul></dd>
     
 
@@ -352,8 +353,8 @@ property of an object.</p>
 
 <div class="description">
     <p>The layout for the discriminator value in isolation.</p>
-<p>In unrecognized variants this is returned as the <code>variant</code>
-property of an object.</p>
+<p>This is the value passed to the constructor.  It is
+structurally equivalent to the first component of <a href="module-Layout-Union.html#layout">layout</a> but may have a different property name.</p>
 </div>
 
 
@@ -391,7 +392,7 @@ property of an object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line650">line 650</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line714">line 714</a>
     </li></ul></dd>
     
 
@@ -416,9 +417,13 @@ property of an object.</p>
 
 <div class="description">
     <p>The layout for unrecognized variants.</p>
-<p>This is a <a href="module-Layout-Structure.html">Structure</a> layout where the <a href="module-Layout-Union.html#discr_layout">discriminator</a> is represented by the
-property named <code>variant</code> and the property <code>content</code> is decoded
-using the <a href="module-Layout-Union.html#default_layout">default layout</a>.</p>
+<p>This is a <a href="module-Layout-Structure.html">Structure</a> layout comprising the
+<a href="module-Layout-Union.html#discr_layout">discriminator</a> immediately followed by the
+<a href="module-Layout-Union.html#default_layout">default layout</a>.</p>
+<p>If <a href="module-Layout-Union.html#discr_layout">discr_layout</a> was not given a
+<a href="module-Layout-Layout.html#property">property</a>, <code>variant</code> will be used.</p>
+<p>If <a href="module-Layout-Union.html#default_layout">default_layout</a> was not given a
+<a href="module-Layout-Layout.html#property">property</a>, <code>content</code> will be used.</p>
 </div>
 
 
@@ -456,7 +461,7 @@ using the <a href="module-Layout-Union.html#default_layout">default layout</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line644">line 644</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line707">line 707</a>
     </li></ul></dd>
     
 
@@ -529,7 +534,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line150">line 150</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line151">line 151</a>
     </li></ul></dd>
     
 
@@ -598,7 +603,7 @@ manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line670">line 670</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line736">line 736</a>
     </li></ul></dd>
     
 
@@ -665,7 +670,7 @@ manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line141">line 141</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line142">line 142</a>
     </li></ul></dd>
     
 
@@ -838,7 +843,7 @@ manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line717">line 717</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line790">line 790</a>
     </li></ul></dd>
     
 
@@ -943,7 +948,7 @@ manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line677">line 677</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line743">line 743</a>
     </li></ul></dd>
     
 
@@ -1030,7 +1035,7 @@ manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line691">line 691</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line764">line 764</a>
     </li></ul></dd>
     
 
@@ -1053,6 +1058,198 @@ manipulate the content of this property.</p>
 
 
 
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="fromArray"><span class="type-signature"></span>fromArray<span class="signature">(values, dest)</span><span class="type-signature"> &rarr; {Object|undefined}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Create an object from layout properties and an array of values.</p>
+<p><strong>NOTE</strong> This function returns <code>undefined</code> if invoked on a layout
+that does not return its value as an Object.  That would generally
+be anything that isn't fundamentally a <a href="module-Layout-Structure.html">Structure</a>,
+which includes <a href="module-Layout-VariantLayout.html">variant layouts</a> if they are
+structures, and excludes <a href="module-Layout-Union.html">Union</a>s.  If you want this
+feature for a union you must use getVariant to select the desired layout.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>values</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>an array of values that correspond to the
+default order for properties.  As with <a href="module-Layout-Layout.html#decode">decode</a>
+layout elements that have no property name are skipped when
+iterating over the array values.  Only the top-level properties are
+assigned; arguments are not assigned to properties of contained
+layouts.  Any unused values are ignored.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dest</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>as with <a href="module-Layout-Layout.html#decode">decode</a>.  If
+required but not provided an empty Object will be used.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-Layout.html#fromArray">module:Layout~Layout#fromArray</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line231">line 231</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1191,7 +1388,7 @@ union.  Used only when <code>vb</code> is an instance of {Buffer}.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line734">line 734</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line807">line 807</a>
     </li></ul></dd>
     
 
@@ -1348,7 +1545,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line194">line 194</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line202">line 202</a>
     </li></ul></dd>
     
 
@@ -1421,7 +1618,7 @@ set to <code>property</code>.</li>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sun Oct 25 2015 14:15:21 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sun Oct 25 2015 16:28:35 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
