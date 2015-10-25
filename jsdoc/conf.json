@@ -4,7 +4,7 @@
 	"destination": "./jsdoc/html/"
     },
     "source": {
-	"include": ["./lib/"]
+	"include": ["./lib/", "README.md"]
     },
     "plugins": ["plugins/markdown", "custom/local"]
 }
