@@ -54,7 +54,7 @@ If you need to generate data encoded in this format:
     function Reading (sn, temp, hum) {
         this.sensor_id = sn;
         this.T_Cel = temp;
-        this.RH_ppt = hum;
+        this.RH_pph = hum;
         this.timestamp_posix = Math.floor(Date.now() / 1000);
     }
     rd = new Reading(7, -5, 16);
@@ -63,6 +63,6 @@ If you need to generate data encoded in this format:
 
 which produces:
 
-    07fbff000078282d56
+    07fbff10000e4e2d56
 
 For full details see the [documentation](http://pabigot.github.io/buffer-layout/).
