@@ -22,7 +22,7 @@ and later.  Install with `npm install buffer-layout`.
 ## Usage
 
 Assume you have a sensor that records environmental data using the
-following C structure:
+following (packed) C structure:
 
     struct reading {
       uint8_t sensor_id;
