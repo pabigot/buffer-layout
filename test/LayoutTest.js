@@ -542,4 +542,174 @@ suite("Layout", function () {
         assert(_.isEqual({a:1, b:2, c:3}, un.getVariant(1).fromArray([1,2,3])));
         assert.strictEqual(undefined, un.getVariant(2).fromArray([1,2,3]));
     });
+    suite("BitStructure", function () {
+        test("invalid ctor", function () {
+            assert.throws(function () { new lo.BitStructure(); }, TypeError);
+            assert.throws(function () { new lo.BitStructure(lo.f32()); }, TypeError);
+            assert.throws(function () { new lo.BitStructure(lo.s32()); }, TypeError);
+            assert.throws(function () { new lo.BitStructure(lo.u40()); }, Error);
+        });
+        test("invalid add", function () {
+            assert.throws(function () {
+                var bs = new lo.BitStructure(lo.u32()),
+                    bf1 = bs.addField(30),
+                    bf2 = bs.addField(3);
+            }, Error);
+            assert.throws(function () {
+                var bs = new lo.BitStructure(lo.u8()),
+                    bf1 = addField(2),
+                    bf2 = addField(7);
+            }, Error);
+            assert.throws(function () {
+                var bs = new lo.BitStructure(lo.u8()),
+                    bf1 = addField(0);
+            }, Error);
+            assert.throws(function () {
+                var bs = new lo.BitStructure(lo.u8()),
+                    bf1 = addField(6),
+                    bf2 = addField(-2);
+            }, Error);
+        });
+        test("basic LSB", function () {
+            var pbl = lo.u32(),
+                bs = new lo.BitStructure(pbl);
+            assert(bs instanceof lo.Layout);
+            assert.strictEqual(pbl, bs.word);
+            assert(! bs.msb);
+            assert(bs.fields instanceof Array);
+            assert.equal(0, bs.fields.length);
+
+            var bf1 = bs.addField(1, 'a'),
+                bf2 = bs.addField(2, 'b');
+            assert.equal(2, bs.fields.length);
+
+            assert(bf1 instanceof lo.BitField);
+            assert(! (bf1 instanceof lo.Layout));
+            assert.strictEqual(bs, bf1.container);
+            assert.equal(1, bf1.bits);
+            assert.equal(0, bf1.start);
+            assert.equal(0x01, bf1.value_mask);
+            assert.equal(0x01, bf1.word_mask);
+
+            assert(bf2 instanceof lo.BitField);
+            assert(! (bf2 instanceof lo.Layout));
+            assert.strictEqual(bs, bf2.container);
+            assert.equal(2, bf2.bits);
+            assert.equal(1, bf2.start);
+            assert.equal(0x03, bf2.value_mask);
+            assert.equal(0x06, bf2.word_mask);
+
+            assert.throws(function () { bs.addField(30); });
+            bs.addField(29, 'x');
+            var bf3 = bs.fields[2];
+            assert.equal(29, bf3.bits);
+            assert.equal(3, bf3.start);
+            assert.equal(0xFFFFFFF8, bf3.word_mask);
+        });
+        test("basic MSB", function () {
+            var pbl = lo.u32(),
+                bs = new lo.BitStructure(pbl, true);
+            assert(bs instanceof lo.Layout);
+            assert.strictEqual(pbl, bs.word);
+            assert(bs.msb);
+            assert(bs.fields instanceof Array);
+            assert.equal(0, bs.fields.length);
+
+            var bf1 = bs.addField(1, 'a'),
+                bf2 = bs.addField(2, 'b');
+            assert.equal(2, bs.fields.length);
+
+            assert(bf1 instanceof lo.BitField);
+            assert(! (bf1 instanceof lo.Layout));
+            assert.strictEqual(bs, bf1.container);
+            assert.equal('a', bf1.property);
+            assert.equal(1, bf1.bits);
+            assert.equal(31, bf1.start);
+            assert.equal(0x01, bf1.value_mask);
+            assert.equal(0x80000000, bf1.word_mask);
+
+            assert(bf2 instanceof lo.BitField);
+            assert(! (bf2 instanceof lo.Layout));
+            assert.strictEqual(bs, bf2.container);
+            assert.equal('b', bf2.property);
+            assert.equal(2, bf2.bits);
+            assert.equal(29, bf2.start);
+            assert.equal(0x3, bf2.value_mask);
+            assert.equal(0x60000000, bf2.word_mask);
+
+            assert.throws(function () { bs.addField(30); });
+            bs.addField(29, 'x');
+            var bf3 = bs.fields[2];
+            assert.equal(29, bf3.bits);
+            assert.equal(0, bf3.start);
+            assert.equal(0x1FFFFFFF, bf3.word_mask);
+        });
+        test("lsb 32-bit field", function () {
+            var bs = new lo.BitStructure(lo.u32()),
+                bf = bs.addField(32, 'x');
+            assert.equal(32, bf.bits);
+            assert.equal(0, bf.start);
+            assert.equal(0xFFFFFFFF, bf.value_mask);
+            assert.equal(0xFFFFFFFF, bf.word_mask);
+        });
+        test("msb 32-bit field", function () {
+            var bs = new lo.BitStructure(lo.u32(), true),
+                bf = bs.addField(32, 'x');
+            assert.equal(32, bf.bits);
+            assert.equal(0, bf.start);
+            assert.equal(0xFFFFFFFF, bf.value_mask);
+            assert.equal(0xFFFFFFFF, bf.word_mask);
+        });
+        test("lsb coding", function () {
+            var bs = new lo.BitStructure(lo.u32()),
+                b = new Buffer(bs.span);
+            bs.addField(1, 'a1');
+            bs.addField(4, 'b4');
+            bs.addField(11, 'c11');
+            bs.addField(16, 'd16');
+            b.fill(0);
+            assert(_.isEqual({a1:0, b4:0, c11:0, d16:0}, bs.decode(b)));
+            b.fill(0xFF);
+            assert(_.isEqual({a1:1, b4:0x0F, c11:0x7FF, d16:0xFFFF}, bs.decode(b)));
+            bs.encode({a1:0, b4:9, c11:0x4F1, d16:0x8a51}, b);
+            assert(_.isEqual({a1:0, b4:9, c11:0x4F1, d16:0x8a51}, bs.decode(b)));
+            assert.equal(0, Buffer('329e518a', 'hex').compare(b));
+        });
+        test("msb coding", function () {
+            var bs = new lo.BitStructure(lo.u32(), true),
+                b = new Buffer(bs.span);
+            bs.addField(1, 'a1');
+            bs.addField(4, 'b4');
+            bs.addField(11, 'c11');
+            bs.addField(16, 'd16');
+            b.fill(0);
+            assert(_.isEqual({a1:0, b4:0, c11:0, d16:0}, bs.decode(b)));
+            b.fill(0xFF);
+            assert(_.isEqual({a1:1, b4:0x0F, c11:0x7FF, d16:0xFFFF}, bs.decode(b)));
+            bs.encode({a1:0, b4:9, c11:0x4F1, d16:0x8a51}, b);
+            assert(_.isEqual({a1:0, b4:9, c11:0x4F1, d16:0x8a51}, bs.decode(b)));
+            assert.equal(0, Buffer('518af14c', 'hex').compare(b));
+        });
+        test("gap coding", function () {
+            var lsb = new lo.BitStructure(lo.u24()),
+                msb = new lo.BitStructure(lo.u24(), true),
+                b = new Buffer(lsb.span);
+            lsb.addField(5, 'a5');
+            lsb.addField(13);
+            lsb.addField(6, 'b6');
+            msb.addField(5, 'a5');
+            msb.addField(13);
+            msb.addField(6, 'b6');
+            b.fill(0xA5);
+            var lb = lsb.decode(b),
+                mb = msb.decode(b);
+            assert(_.isEqual({ a5: 5, b6: 41 }, lb));
+            assert(_.isEqual({ a5: 20, b6: 37 }, mb));
+            lsb.encode(lb, b);
+            assert.equal(0, Buffer('0500a4', 'hex').compare(b));
+            b.fill(0xFF);
+            msb.encode(mb, b);
+            assert.equal(0, Buffer('2500a0', 'hex').compare(b));
+        });
+    });
 });
