@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: FloatBE</title>
+    <title>JSDoc: Class: BitStructure</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: FloatBE</h1>
+    <h1 class="page-title">Class: BitStructure</h1>
 
     
 
@@ -31,7 +31,7 @@
         <h2>
             <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>
         
-        FloatBE
+        BitStructure
         </h2>
         
     
@@ -44,15 +44,19 @@
 
     
 
-    <h4 class="name" id="FloatBE"><span class="type-signature"></span>new FloatBE<span class="signature">(property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="BitStructure"><span class="type-signature"></span>new BitStructure<span class="signature">(word, msb, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Represent a 32-bit floating point number in big-endian format.</p>
-<p>Factory function is <a href="module-Layout.html#.f32be">f32be</a>.</p>
+    <p>Contain a sequence of bit fields as an unsigned integer.</p>
+<p>This is a container element; within it there are <a href="module-Layout-BitField.html">BitField</a> instances that provide the extracted properties.
+The container simply defines the aggregate representation and its
+bit ordering.  The representation is an object containing
+properties with numeric values.</p>
+<p><a href="module-Layout-BitField.html">BitField</a>s are added with the <a href="module-Layout-BitStructure.html#addField">addField</a> method.</p>
 </div>
 
 
@@ -86,6 +90,72 @@
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>word</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-Layout-Layout.html">module:Layout~Layout</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>initializer for <a href="module-Layout-BitStructure.html#word">word</a>.  The parameter must be an instance of
+<a href="module-Layout-UInt.html">UInt</a> (or <a href="module-Layout-UIntBE.html">UIntBE</a>) that is no more than 4
+bytes wide.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>msb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p><code>true</code> if the bit numbering starts at the most
+significant bit of the containing word; <code>false</code> (default) if it
+starts at the least significant bit of the containing word.</p></td>
+        </tr>
+
     
 
         <tr>
@@ -157,7 +227,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line438">line 438</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line974">line 974</a>
     </li></ul></dd>
     
 
@@ -209,6 +279,138 @@
 
     
         <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="fields"><span class="type-signature"></span>fields<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>The sequence of <a href="module-Layout-BitField.html">BitField</a> layouts that
+comprise the packed structure.</p>
+<p><strong>NOTE</strong> The array remains mutable to allow fields to be <a href="module-Layout-BitStructure.html#addField">added</a> after construction.  Users should
+not manipulate the content of this property.</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1004">line 1004</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="msb"><span class="type-signature"></span>msb<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Whether the bit sequences are packed starting at the most
+significant bit growing down (<code>true</code>), or the least significant
+bit growing up (<code>false</code>).</p>
+<p><strong>NOTE</strong> Regardless of this value, the least significant bit of
+any <a href="module-Layout-BitField.html">BitField</a> value is the least significant
+bit of the corresponding section of the packed value.</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line996">line 996</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
 
         
             
@@ -351,10 +553,246 @@ the decoded Object.</p>
 
 
         
+            
+<h4 class="name" id="word"><span class="type-signature"></span>word<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>The layout used for the packed value.  <a href="module-Layout-BitField.html">BitField</a> instances are packed sequentially depending
+on <a href="module-Layout-BitStructure.html#msb">msb</a>.</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line987">line 987</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
     
 
     
         <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="addField"><span class="type-signature"></span>addField<span class="signature">(bits, property)</span><span class="type-signature"> &rarr; {<a href="module-Layout-BitField.html">module:Layout~BitField</a>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Register a new bitfield with a containing bit structure.  The
+resulting bitfield is returned.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>bits</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>initializer for <a href="module-Layout-BitField.html#bits">bits</a>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>property</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>initializer for <a href="module-Layout-Layout.html#property">property</a>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1068">line 1068</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="module-Layout-BitField.html">module:Layout~BitField</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
 
         
             
@@ -368,7 +806,7 @@ the decoded Object.</p>
 
 
 <div class="description">
-    <p>Implement <a href="module-Layout-Layout.html#decode">decode</a> for <a href="module-Layout-FloatBE.html">FloatBE</a>.</p>
+    <p>Implement <a href="module-Layout-Layout.html#decode">decode</a> for <a href="module-Layout-BitStructure.html">BitStructure</a>.</p>
 </div>
 
 
@@ -417,7 +855,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line445">line 445</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1023">line 1023</a>
     </li></ul></dd>
     
 
@@ -455,7 +893,9 @@ the decoded Object.</p>
 
 
 <div class="description">
-    <p>Implement <a href="module-Layout-Layout.html#encode">encode</a> for <a href="module-Layout-FloatBE.html">FloatBE</a>.</p>
+    <p>Implement <a href="module-Layout-Layout.html#encode">encode</a> for <a href="module-Layout-BitStructure.html">BitStructure</a>.</p>
+<p>If <code>src</code> is missing a property for a member with a defined <a href="module-Layout-Layout.html#property">property</a> the corresponding region of the packed
+value is zero-filled.  Unused bits are also zeroed.</p>
 </div>
 
 
@@ -504,7 +944,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line452">line 452</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1044">line 1044</a>
     </li></ul></dd>
     
 

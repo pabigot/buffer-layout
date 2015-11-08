@@ -225,7 +225,7 @@ instance of <a href="module-Layout-UInt.html">UInt</a> (or <a href="module-Layou
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line675">line 675</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line703">line 703</a>
     </li></ul></dd>
     
 
@@ -328,7 +328,7 @@ name.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line723">line 723</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line751">line 751</a>
     </li></ul></dd>
     
 
@@ -392,7 +392,7 @@ structurally equivalent to the first component of <a href="module-Layout-Union.h
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line714">line 714</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line742">line 742</a>
     </li></ul></dd>
     
 
@@ -461,7 +461,7 @@ structurally equivalent to the first component of <a href="module-Layout-Union.h
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line707">line 707</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line735">line 735</a>
     </li></ul></dd>
     
 
@@ -534,7 +534,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line151">line 151</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line179">line 179</a>
     </li></ul></dd>
     
 
@@ -603,7 +603,7 @@ manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line736">line 736</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line764">line 764</a>
     </li></ul></dd>
     
 
@@ -670,7 +670,7 @@ manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line142">line 142</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line170">line 170</a>
     </li></ul></dd>
     
 
@@ -704,7 +704,8 @@ manipulate the content of this property.</p>
 
 
 <div class="description">
-    <p>Register a new variant structure within a union.</p>
+    <p>Register a new variant structure within a union.  The newly
+created variant is returned.</p>
 </div>
 
 
@@ -843,7 +844,7 @@ manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line790">line 790</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line819">line 819</a>
     </li></ul></dd>
     
 
@@ -948,7 +949,7 @@ manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line743">line 743</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line771">line 771</a>
     </li></ul></dd>
     
 
@@ -1035,7 +1036,7 @@ manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line764">line 764</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line792">line 792</a>
     </li></ul></dd>
     
 
@@ -1075,11 +1076,12 @@ manipulate the content of this property.</p>
 <div class="description">
     <p>Create an object from layout properties and an array of values.</p>
 <p><strong>NOTE</strong> This function returns <code>undefined</code> if invoked on a layout
-that does not return its value as an Object.  That would generally
-be anything that isn't fundamentally a <a href="module-Layout-Structure.html">Structure</a>,
-which includes <a href="module-Layout-VariantLayout.html">variant layouts</a> if they are
-structures, and excludes <a href="module-Layout-Union.html">Union</a>s.  If you want this
-feature for a union you must use getVariant to select the desired layout.</p>
+that does not return its value as an Object.  Objects are returned
+for things that are a <a href="module-Layout-Structure.html">Structure</a>, which includes
+<a href="module-Layout-VariantLayout.html">variant layouts</a> if they are structures, and
+excludes <a href="module-Layout-Union.html">Union</a>s.  If you want this feature for a
+union you must use getVariant to select
+the desired layout.</p>
 </div>
 
 
@@ -1206,7 +1208,7 @@ required but not provided an empty Object will be used.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line231">line 231</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line259">line 259</a>
     </li></ul></dd>
     
 
@@ -1388,7 +1390,7 @@ union.  Used only when <code>vb</code> is an instance of {Buffer}.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line807">line 807</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line836">line 836</a>
     </li></ul></dd>
     
 
@@ -1545,7 +1547,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line202">line 202</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line230">line 230</a>
     </li></ul></dd>
     
 
@@ -1612,13 +1614,13 @@ set to <code>property</code>.</li>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sun Oct 25 2015 16:28:35 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sat Nov 07 2015 21:04:07 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>
