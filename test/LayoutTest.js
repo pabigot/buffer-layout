@@ -528,6 +528,21 @@ suite("Layout", function () {
             assert.equal(un.layout.fields[0].property, 'number');
             assert.equal(un.layout.fields[1].property, 'payload');
         });
+        test("issue#6", function () {
+            var dlo = lo.u8('number'),
+                vlo = new lo.Sequence(lo.u8(), 8, 'payload'),
+                un = new lo.Union(dlo, vlo),
+                b = Buffer("000102030405060708", 'hex'),
+                obj = un.decode(b);
+            assert.equal(obj.number, 0);
+            assert(_.isEqual(obj.payload, [1,2,3,4,5,6,7,8]));
+            var b2 = new Buffer(un.span);
+            un.encode(obj, b2);
+            assert.equal(b2.toString('hex'), b.toString('hex'));
+            var obj2 = { 'variant': obj.number,
+                         'content': obj.payload };
+            assert.throws(function () { un.encode(obj2, b2); });
+        });
     });
     test("fromArray", function () {
         assert.strictEqual(lo.u8().fromArray([1]), undefined);
