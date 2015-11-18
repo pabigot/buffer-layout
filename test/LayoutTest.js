@@ -620,6 +620,40 @@ suite("Layout", function () {
             assert(_.isEqual(obj.content, {payload: [0,1,2,3,4,5,6,7], vid:8}));
             assert.equal(obj.vid, 8);
         });
+        test("issue#7.external", function () {
+            var dlo = lo.u8('vid'),
+                ud = new lo.UnionLayoutDiscriminator(dlo, -3, 'uid'),
+                un = new lo.Union(ud, lo.u32('u32'), 'u'),
+                st = new lo.Structure([dlo, lo.u16('u16'), un, lo.s16('s16')]);
+            assert.equal(un.span, 4);
+            assert.equal(st.span, 9);
+            var b = Buffer("000102030405060708", 'hex'),
+                obj = st.decode(b);
+            assert.equal(obj.vid, 0);
+            assert.equal(obj.u16, 0x201);
+            assert.equal(obj.s16, 0x807);
+            assert.equal(obj.u.uid, 0);
+            assert.equal(obj.u.u32, 0x06050403);
+            var b2 = new Buffer(st.span);
+            st.encode(obj, b2);
+            assert.equal(b2.compare(b), 0);
+
+            un.addVariant(0, lo.u32());
+            obj = st.decode(b);
+            assert.equal(obj.vid, 0);
+            assert.equal(obj.u16, 0x201);
+            assert.equal(obj.s16, 0x807);
+            assert.equal(obj.u, 0x06050403);
+
+            var flo = lo.f32('f32'),
+                vf = un.addVariant(1, flo),
+                fb = Buffer("01234500805a429876", 'hex'),
+                fobj = st.decode(fb);
+            assert.equal(fobj.vid, 1);
+            assert.equal(fobj.u16, 0x4523);
+            assert.equal(fobj.s16, 0x7698);
+            assert.equal(fobj.u, 54.625);
+        });
     });
     test("fromArray", function () {
         assert.strictEqual(lo.u8().fromArray([1]), undefined);
