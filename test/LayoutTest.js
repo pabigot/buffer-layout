@@ -458,10 +458,13 @@ suite("Layout", function () {
                 b = new Buffer(9);
             assert(un instanceof lo.Union);
             assert(un instanceof lo.Layout);
-            assert.strictEqual(un.discr_layout, dlo);
+            assert(un.usesPrefixDiscriminator);
+            assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
             assert.strictEqual(un.default_layout, vlo);
             assert(un.layout instanceof lo.Structure);
-            assert.equal(un.layout.fields[0].property, 'variant');
+            assert.equal(un.layout.fields.length, 2);
+            assert.equal(un.discriminator.layout.property, 'variant');
+            assert.strictEqual(un.layout.fields[0].property, undefined);
             assert.equal(un.layout.fields[1].property, 'content');
             assert.equal(dlo.span + vlo.span, un.span);
             assert.strictEqual(un.property, undefined);
@@ -501,13 +504,13 @@ suite("Layout", function () {
             assert.equal(rv, 0x01010101);
             var lo2 = lo.f32(),
                 v2 = un.addVariant(2, lo2);
-            un.discr_layout.encode(v2.variant, b);
+            un.discriminator.encode(v2.variant, b);
             assert.strictEqual(un.getVariant(b), v2);
             assert.equal(v2.decode(b), 2.3694278276172396e-38);
             assert.equal(un.decode(b), 2.3694278276172396e-38);
             var lo3 = new lo.Structure([lo.u8('a'), lo.u8('b'), lo.u16('c')]),
                 v3 = un.addVariant(3, lo3);
-            un.discr_layout.encode(v3.variant, b);
+            un.discriminator.encode(v3.variant, b);
             assert.strictEqual(un.getVariant(b), v3);
             assert(_.isEqual(v3.decode(b), {a:1, b:1, c:257}));
             assert(_.isEqual(un.decode(b), {a:1, b:1, c:257}));
@@ -522,9 +525,12 @@ suite("Layout", function () {
                 un = new lo.Union(dlo, vlo);
             assert(un instanceof lo.Union);
             assert(un instanceof lo.Layout);
-            assert.strictEqual(un.discr_layout, dlo);
+            assert(un.usesPrefixDiscriminator);
+            assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
+            assert.strictEqual(un.discriminator.layout, dlo);
             assert.strictEqual(un.default_layout, vlo);
             assert(un.layout instanceof lo.Structure);
+            assert.equal(un.layout.fields.length, 2);
             assert.equal(un.layout.fields[0].property, 'number');
             assert.equal(un.layout.fields[1].property, 'payload');
         });
