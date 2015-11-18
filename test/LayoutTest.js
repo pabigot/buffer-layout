@@ -549,6 +549,57 @@ suite("Layout", function () {
                          'content': obj.payload };
             assert.throws(function () { un.encode(obj2, b2); });
         });
+        test("issue#7.internal.anon", function () {
+            var dlo = lo.u8(),
+                plo = new lo.Sequence(lo.u8(), 8, 'payload');
+                vlo = new lo.Structure([plo, dlo]),
+                ud = new lo.UnionLayoutDiscriminator(dlo, plo.span),
+                un = new lo.Union(ud, vlo),
+                b = Buffer("000102030405060708", 'hex'),
+                obj = un.decode(b);
+            assert(! un.usesPrefixDiscriminator);
+            assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
+            assert.equal(un.discriminator.property, 'variant');
+            assert.equal(un.layout.fields.length, 1);
+            assert.equal(un.layout.fields[0].property, 'content');
+            assert.strictEqual(un.default_layout, vlo);
+            assert(_.isEqual(obj.content, {payload: [0,1,2,3,4,5,6,7]}));
+            assert.equal(obj.variant, 8);
+        });
+        test("issue#7.internal.named", function () {
+            var dlo = lo.u8(),
+                plo = new lo.Sequence(lo.u8(), 8, 'payload');
+                vlo = new lo.Structure([plo, dlo]),
+                ud = new lo.UnionLayoutDiscriminator(dlo, plo.span, 'tag'),
+                un = new lo.Union(ud, vlo),
+                b = Buffer("000102030405060708", 'hex'),
+                obj = un.decode(b);
+            assert(! un.usesPrefixDiscriminator);
+            assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
+            assert.equal(un.discriminator.property, 'tag');
+            assert.equal(un.layout.fields.length, 1);
+            assert.equal(un.layout.fields[0].property, 'content');
+            assert.strictEqual(un.default_layout, vlo);
+            assert(_.isEqual(obj.content, {payload: [0,1,2,3,4,5,6,7]}));
+            assert.equal(obj.tag, 8);
+        });
+        test("issue#7.internal.named2", function () {
+            var dlo = lo.u8('vid'),
+                plo = new lo.Sequence(lo.u8(), 8, 'payload');
+                vlo = new lo.Structure([plo, dlo]),
+                ud = new lo.UnionLayoutDiscriminator(dlo, plo.span),
+                un = new lo.Union(ud, vlo),
+                b = Buffer("000102030405060708", 'hex'),
+                obj = un.decode(b);
+            assert(! un.usesPrefixDiscriminator);
+            assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
+            assert.equal(un.discriminator.property, 'vid');
+            assert.equal(un.layout.fields.length, 1);
+            assert.equal(un.layout.fields[0].property, 'content');
+            assert.strictEqual(un.default_layout, vlo);
+            assert(_.isEqual(obj.content, {payload: [0,1,2,3,4,5,6,7], vid:8}));
+            assert.equal(obj.vid, 8);
+        });
     });
     test("fromArray", function () {
         assert.strictEqual(lo.u8().fromArray([1]), undefined);
