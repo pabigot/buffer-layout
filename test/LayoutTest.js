@@ -534,6 +534,26 @@ suite("Layout", function () {
             assert.equal(un.layout.fields[0].property, 'number');
             assert.equal(un.layout.fields[1].property, 'payload');
         });
+        test("inStruct", function () {
+            var dlo = lo.u8('uid'),
+                vlo = new lo.Sequence(lo.u8(), 3, 'payload'),
+                un = new lo.Union(dlo, vlo, 'u'),
+                st = new lo.Structure([lo.u16('u16'),
+                                       un,
+                                       lo.s16('s16')]),
+                b = Buffer("0001020304050607", 'hex'),
+                obj = st.decode(b);
+            assert.equal(obj.u16, 0x0100);
+            assert.equal(obj.u.uid, 2);
+            assert(_.isEqual(obj.u.payload, [3,4,5]));
+            assert.equal(obj.s16, 1798);
+            obj.u16 = 0x5432;
+            obj.s16 = -3;
+            obj.u.payload[1] = 23;
+            var b2 = new Buffer(st.span);
+            st.encode(obj, b2);
+            assert.equal(Buffer('325402031705fdff', 'hex').compare(b2), 0);
+        });
         test("issue#6", function () {
             var dlo = lo.u8('number'),
                 vlo = new lo.Sequence(lo.u8(), 8, 'payload'),
