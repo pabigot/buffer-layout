@@ -18,6 +18,7 @@
     "author": "Peter A. Bigot <pab@pabigot.com>",
     "main": "./lib/Layout.js",
     "devDependencies": {
+        "coveralls": "~2.11.4",
         "istanbul": "~0.4.0",
         "jsdoc": "~3.3.3",
         "jshint": "^2.8.0",
@@ -30,6 +31,7 @@
     },
     "scripts": {
         "coverage": "istanbul cover _mocha -- -u tdd",
+        "coveralls": "istanbul cover _mocha --report lcovonly -- -u tdd && cat ./coverage/lcov.info | coveralls",
         "jslint": "jslint lib/Layout.js || true",
         "lint": "jshint lib/Layout.js || true",
         "lint.strict": "jshint lib/Layout.js",
