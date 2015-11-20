@@ -201,6 +201,9 @@ suite("Layout", function () {
             assert.equal(lo.u48be().decode(b), 0x8fb779f22087);
             assert.equal(lo.u48().decode(b), 0x8720f279b78f);
         });
+        test("invalid ctor", function () {
+            assert.throws(function () { new lo.IntBE(8, 'u64'); }, TypeError);
+        });
     });
     test("Float", function () {
         var be = lo.f32be('eff'),
@@ -449,6 +452,21 @@ suite("Layout", function () {
             assert.strictEqual(d.property, undefined);
         });
     });
+    suite("UnionDiscriminator", function () {
+        test("abstract", function () {
+            var ud = new lo.UnionDiscriminator('p');
+            assert.equal(ud.property, 'p');
+            assert.throws(function () { ud.decode(Buffer('00', 'hex')); }, Error);
+            assert.throws(function () { ud.encode(0, new Buffer(1)); }, Error);
+        });
+    });
+    suite("UnionLayoutDiscriminator", function () {
+        test("invalid ctor", function () {
+            assert.throws(function () { new lo.UnionLayoutDiscriminator('hi'); }, TypeError);
+            assert.throws(function () { new lo.UnionLayoutDiscriminator(lo.f32()); }, TypeError);
+            assert.throws(function () { new lo.UnionLayoutDiscriminator(lo.u8(), 'hi'); }, TypeError);
+        });
+    });
     suite("Union", function () {
         test("invalid ctor", function () {
             assert.throws(function () { new lo.Union(); }, TypeError);
@@ -524,6 +542,13 @@ suite("Layout", function () {
             rv = un.decode(b, 0, obj);
             assert.strictEqual(rv, obj);
             assert(_.isEqual(rv, {a:1, b:1, c:257, destination:true}));
+            un.discriminator.encode(v2.variant, b);
+            assert.equal(Buffer('0201010101', 'hex').compare(b), 0);
+            obj = {a:5, b:6, c:1540};
+            v3.encode(obj, b);
+            assert(_.isEqual(un.decode(b), obj));
+            assert.equal(Buffer('0305060406', 'hex').compare(b), 0);
+            assert.throws(function () { v2.decode(b); }, Error);
         })
         test("custom default", function () {
             var dlo = lo.u8('number'),
@@ -680,6 +705,12 @@ suite("Layout", function () {
             assert.throws(function () { new lo.BitStructure(lo.f32()); }, TypeError);
             assert.throws(function () { new lo.BitStructure(lo.s32()); }, TypeError);
             assert.throws(function () { new lo.BitStructure(lo.u40()); }, Error);
+
+            var bs = new lo.BitStructure(lo.u32());
+            assert.throws(function () { new lo.BitField(lo.u32(), 8); }, TypeError);
+            assert.throws(function () { new lo.BitField(bs, 'hi'); }, TypeError);
+            assert.throws(function () { new lo.BitField(bs, 0); }, TypeError);
+            assert.throws(function () { new lo.BitField(bs, 40); }, Error);
         });
         test("invalid add", function () {
             assert.throws(function () {
@@ -701,6 +732,26 @@ suite("Layout", function () {
                     bf1 = addField(6),
                     bf2 = addField(-2);
             }, Error);
+        });
+        test("size", function () {
+            var bs = new lo.BitStructure(lo.u16()),
+                bf10 = bs.addField(10, 'ten'),
+                bf6 = bs.addField(6, 'six'),
+                b = new Buffer(bs.span);
+            assert.equal((1 << 10) - 1, 1023);
+            assert.equal((1 << 6) - 1, 63);
+            var obj = bs.decode(Buffer('ffff', 'hex'));
+            assert.equal(obj.ten, (1 << 10) - 1);
+            assert.equal(obj.six, (1 << 6) - 1);
+            bs.encode(obj, b);
+            assert.equal(Buffer('ffff', 'hex').compare(b), 0);
+            b.fill(0);
+            assert.equal(Buffer('0000', 'hex').compare(b), 0);
+            bf10.encode((1 << 10) - 1);
+            bf6.encode((1 << 6) - 1);
+            assert.equal(bs._packedGetValue(), 0xFFFF);
+            assert.throws(function () { bf6.encode('hi', b); }, Error);
+            assert.throws(function () { bf6.encode(1 << 6, b); }, Error);
         });
         test("basic LSB", function () {
             var pbl = lo.u32(),
@@ -867,6 +918,8 @@ suite("Layout", function () {
             assert.equal(Buffer("030405", 'hex').compare(bv), 0);
             bl.encode(Buffer("112233", 'hex'), b, 1);
             assert.equal(Buffer("0111223305", 'hex').compare(b), 0);
+            assert.throws(function () { bl.encode('ABC', b); }, Error);
+            assert.throws(function () { bl.encode(Buffer('0102', 'hex'), b); }, Error);
         });
     });
     suite("issue#8", function () {
