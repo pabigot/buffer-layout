@@ -280,8 +280,8 @@ suite("Layout", function () {
             assert(_.isEqual(seq.decode(b), [1,5,6,4]));
         });
         test("in struct", function () {
-            var seq = new lo.Sequence(lo.u8(), 4, 'id'),
-                str = new lo.Structure([seq]),
+            var seq = lo.seq(lo.u8(), 4, 'id'),
+                str = lo.struct([seq]),
                 d = str.decode(Buffer('01020304', 'hex'));
             assert(_.isEqual(d, {id:[1,2,3,4]}));
         });
@@ -714,21 +714,21 @@ suite("Layout", function () {
         });
         test("invalid add", function () {
             assert.throws(function () {
-                var bs = new lo.BitStructure(lo.u32()),
+                var bs = lo.bits(lo.u32()),
                     bf1 = bs.addField(30),
                     bf2 = bs.addField(3);
             }, Error);
             assert.throws(function () {
-                var bs = new lo.BitStructure(lo.u8()),
+                var bs = lo.bits(lo.u8()),
                     bf1 = addField(2),
                     bf2 = addField(7);
             }, Error);
             assert.throws(function () {
-                var bs = new lo.BitStructure(lo.u8()),
+                var bs = lo.bits(lo.u8()),
                     bf1 = addField(0);
             }, Error);
             assert.throws(function () {
-                var bs = new lo.BitStructure(lo.u8()),
+                var bs = lo.bits(lo.u8()),
                     bf1 = addField(6),
                     bf2 = addField(-2);
             }, Error);
@@ -972,6 +972,22 @@ suite("Layout", function () {
             dp = pkt.decode(b);
             /* Ditto on want */
             //assert(_.isEqual(dp, {id:1, ver:2, u32: [0x13121110, 0x17161514]}));
+        });
+    });
+    suite("factories", function () {
+        test("anon", function () {
+            var ver = lo.u8('ver'),
+                hdr = lo.struct([lo.u8('id'),
+                                 lo.u8('ver')]),
+                ud = lo.unionLayoutDiscriminator(ver, -1),
+                pld = lo.union(ud, lo.blob(8, 'blob')),
+                pkt = lo.struct([hdr, pld]),
+                exp_blob = Buffer('1011121314151617', 'hex'),
+                b = Buffer('01021011121314151617', 'hex');
+            assert(hdr instanceof lo.Structure);
+            assert(ud instanceof lo.UnionDiscriminator);
+            assert(pld instanceof lo.Union);
+            assert(pld.default_layout instanceof lo.Blob);
         });
     });
 });
