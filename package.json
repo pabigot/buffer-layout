@@ -3,39 +3,39 @@
     "version": "0.4.0",
     "description": "Translation between JavaScript values and Buffers",
     "keywords": [
-	"Buffer",
-	"struct",
-	"endian",
-	"pack data"
+        "Buffer",
+        "struct",
+        "endian",
+        "pack data"
     ],
     "homepage": "https://github.com/pabigot/buffer-layout",
     "bugs": "https://github.com/pabigot/buffer-layout/issues",
     "repository" : {
-	"type": "git",
-	"url": "https://github.com/pabigot/buffer-layout.git"
+        "type": "git",
+        "url": "https://github.com/pabigot/buffer-layout.git"
     },
     "license": "MIT",
     "author": "Peter A. Bigot <pab@pabigot.com>",
     "main": "./lib/Layout.js",
     "devDependencies": {
-	"jsdoc": "~3.3.3",
-	"jshint": "^2.8.0",
-	"jslint": "~0.9.3",
-	"lodash": "~3.9.3",
-	"mocha": "~2.2.5"
+        "jsdoc": "~3.3.3",
+        "jshint": "^2.8.0",
+        "jslint": "~0.9.3",
+        "lodash": "~3.9.3",
+        "mocha": "~2.2.5"
     },
     "engines": {
-	"node": ">=0.12"
+        "node": ">=0.12"
     },
     "scripts": {
-	"mkdoc": "jsdoc -c jsdoc/conf.json",
-	"lint": "jshint lib/Layout.js || true",
-	"lint.strict": "jshint lib/Layout.js",
-	"jslint": "jslint lib/Layout.js || true",
-	"test": "mocha -u tdd"
+        "mkdoc": "jsdoc -c jsdoc/conf.json",
+        "lint": "jshint lib/Layout.js || true",
+        "lint.strict": "jshint lib/Layout.js",
+        "jslint": "jslint lib/Layout.js || true",
+        "test": "mocha -u tdd"
     },
     "jshintConfig": {
-	"node": true,
-	"laxbreak": true
+        "node": true,
+        "laxbreak": true
     }
 }
