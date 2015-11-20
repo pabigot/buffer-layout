@@ -1,5 +1,9 @@
 # buffer-layout
 
+[![NPM version](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.org/package/buffer-layout)
+[![Build Status](https://travis-ci.org/pabigot/buffer-layout.svg?branch=next)](https://travis-ci.org/pabigot/buffer-layout)
+[![Coverage Status](https://coveralls.io/repos/pabigot/buffer-layout/badge.svg?branch=next&service=github)](https://coveralls.io/github/pabigot/buffer-layout?branch=next)
+
 buffer-layout is a utility module implemented in pure JavaScript that
 supports translations between JavaScript values and Buffers.  It is made
 available through [github](https://github.com/pabigot/buffer-layout) and
