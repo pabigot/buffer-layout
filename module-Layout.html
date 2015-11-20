@@ -72,7 +72,8 @@ of bytes, using an unsigned integer at the start the span to
 determine the layout used to interpret the remainder of the span.</li>
 <li><a href="module-Layout-BitStructure.html">BitStructure</a>s that contain a
 sequence of individual <a href="module-Layout-BitField.html">BitField</a>s
-packed into an 8, 16, 24, or 32-bit unsigned integer.</li>
+packed into an 8, 16, 24, or 32-bit unsigned integer;</li>
+<li><a href="module-Layout-Blob.html">Blobs</a> of fixed length.</li>
 </ul>
 <p>All <a href="module-Layout-Layout.html">Layout</a> instances are immutable
 after construction, to prevent internal state from becoming
@@ -186,6 +187,9 @@ inconsistent.</p></div>
             <dt><a href="module-Layout-BitStructure.html">BitStructure</a></dt>
             <dd></dd>
         
+            <dt><a href="module-Layout-Blob.html">Blob</a></dt>
+            <dd></dd>
+        
             <dt><a href="module-Layout-Double.html">Double</a></dt>
             <dd></dd>
         
@@ -220,6 +224,12 @@ inconsistent.</p></div>
             <dd></dd>
         
             <dt><a href="module-Layout-Union.html">Union</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></dt>
             <dd></dd>
         
             <dt><a href="module-Layout-VariantLayout.html">VariantLayout</a></dt>
@@ -292,7 +302,7 @@ inconsistent.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1273">line 1273</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1481">line 1481</a>
     </li></ul></dd>
     
 
@@ -374,7 +384,7 @@ inconsistent.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1276">line 1276</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1484">line 1484</a>
     </li></ul></dd>
     
 
@@ -456,7 +466,7 @@ inconsistent.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1279">line 1279</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1487">line 1487</a>
     </li></ul></dd>
     
 
@@ -538,7 +548,7 @@ inconsistent.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1282">line 1282</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1490">line 1490</a>
     </li></ul></dd>
     
 
@@ -621,7 +631,7 @@ byte.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1230">line 1230</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1438">line 1438</a>
     </li></ul></dd>
     
 
@@ -704,7 +714,7 @@ spanning two bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1234">line 1234</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1442">line 1442</a>
     </li></ul></dd>
     
 
@@ -787,7 +797,7 @@ spanning two bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1254">line 1254</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1462">line 1462</a>
     </li></ul></dd>
     
 
@@ -870,7 +880,7 @@ spanning three bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1238">line 1238</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1446">line 1446</a>
     </li></ul></dd>
     
 
@@ -953,7 +963,7 @@ spanning three bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1258">line 1258</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1466">line 1466</a>
     </li></ul></dd>
     
 
@@ -1036,7 +1046,7 @@ spanning four bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1242">line 1242</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1450">line 1450</a>
     </li></ul></dd>
     
 
@@ -1119,7 +1129,7 @@ spanning four bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1262">line 1262</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1470">line 1470</a>
     </li></ul></dd>
     
 
@@ -1202,7 +1212,7 @@ spanning five bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1246">line 1246</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1454">line 1454</a>
     </li></ul></dd>
     
 
@@ -1285,7 +1295,7 @@ spanning five bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1266">line 1266</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1474">line 1474</a>
     </li></ul></dd>
     
 
@@ -1368,7 +1378,7 @@ spanning six bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1250">line 1250</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1458">line 1458</a>
     </li></ul></dd>
     
 
@@ -1451,7 +1461,7 @@ spanning six bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1270">line 1270</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1478">line 1478</a>
     </li></ul></dd>
     
 
@@ -1534,7 +1544,7 @@ byte.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1186">line 1186</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1394">line 1394</a>
     </li></ul></dd>
     
 
@@ -1617,7 +1627,7 @@ spanning two bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1190">line 1190</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1398">line 1398</a>
     </li></ul></dd>
     
 
@@ -1700,7 +1710,7 @@ spanning two bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1210">line 1210</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1418">line 1418</a>
     </li></ul></dd>
     
 
@@ -1783,7 +1793,7 @@ spanning three bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1194">line 1194</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1402">line 1402</a>
     </li></ul></dd>
     
 
@@ -1866,7 +1876,7 @@ spanning three bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1214">line 1214</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1422">line 1422</a>
     </li></ul></dd>
     
 
@@ -1949,7 +1959,7 @@ spanning four bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1198">line 1198</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1406">line 1406</a>
     </li></ul></dd>
     
 
@@ -2032,7 +2042,7 @@ spanning four bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1218">line 1218</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1426">line 1426</a>
     </li></ul></dd>
     
 
@@ -2115,7 +2125,7 @@ spanning five bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1202">line 1202</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1410">line 1410</a>
     </li></ul></dd>
     
 
@@ -2198,7 +2208,7 @@ spanning five bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1222">line 1222</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1430">line 1430</a>
     </li></ul></dd>
     
 
@@ -2281,7 +2291,7 @@ spanning six bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1206">line 1206</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1414">line 1414</a>
     </li></ul></dd>
     
 
@@ -2364,7 +2374,7 @@ spanning six bytes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1226">line 1226</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1434">line 1434</a>
     </li></ul></dd>
     
 
@@ -2451,7 +2461,7 @@ results.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line942">line 942</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1115">line 1115</a>
     </li></ul></dd>
     
 
@@ -2493,13 +2503,13 @@ results.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sat Nov 07 2015 21:04:07 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Fri Nov 20 2015 00:00:14 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

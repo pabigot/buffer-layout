@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: BitField</title>
+    <title>JSDoc: Class: UnionLayoutDiscriminator</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: BitField</h1>
+    <h1 class="page-title">Class: UnionLayoutDiscriminator</h1>
 
     
 
@@ -31,7 +31,7 @@
         <h2>
             <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>
         
-        BitField
+        UnionLayoutDiscriminator
         </h2>
         
     
@@ -44,18 +44,15 @@
 
     
 
-    <h4 class="name" id="BitField"><span class="type-signature"></span>new BitField<span class="signature">(container, bits, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="UnionLayoutDiscriminator"><span class="type-signature"></span>new UnionLayoutDiscriminator<span class="signature">(layout, offset<span class="signature-attributes">opt</span>, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Represent a sequence of bits within a <a href="module-Layout-BitStructure.html">BitStructure</a>.</p>
-<p>All bit field values are represented as unsigned integers.</p>
-<p><strong>NOTE</strong> User code should not invoke this construtor directly.  Use
-the container <a href="module-Layout-BitStructure.html#addField">addField</a> helper method.</p>
-<p><strong>NOTE</strong> BitField instances are not instances of <a href="module-Layout-Layout.html">Layout</a> since <a href="module-Layout-Layout.html#span">span</a> measures 8-bit units.</p>
+    <p>An object that can provide a discriminator API for <a href="module-Layout-Union.html">Union</a> using an unsigned integral <a href="module-Layout-Layout.html">Layout</a>
+instance located either inside or outside the union.</p>
 </div>
 
 
@@ -93,13 +90,13 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
 
         <tr>
             
-                <td class="name"><code>container</code></td>
+                <td class="name"><code>layout</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="module-Layout-BitStructure.html">module:Layout~BitStructure</a></span>
+<span class="param-type"><a href="module-Layout-Layout.html">module:Layout~Layout</a></span>
 
 
             
@@ -117,14 +114,15 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
 
             
 
-            <td class="description last"><p>initializer for <a href="module-Layout-BitField.html#container">container</a>.</p></td>
+            <td class="description last"><p>initializer for <a href="module-Layout-UnionLayoutDiscriminator.html#layout">layout</a>.  Must be an instance of
+<a href="module-Layout-UInt.html">UInt</a> or <a href="module-Layout-UIntBE.html">UIntBE</a>.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>bits</code></td>
+                <td class="name"><code>offset</code></td>
             
 
             <td class="type">
@@ -139,6 +137,8 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
             
                 <td class="attributes">
                 
+                    &lt;optional><br>
+                
 
                 
 
@@ -148,7 +148,8 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
 
             
 
-            <td class="description last"><p>initializer for <a href="module-Layout-BitField.html#bits">bits</a>.</p></td>
+            <td class="description last"><p>Initializes <a href="module-Layout-UnionLayoutDiscriminator.html#offset">offset</a>.  If not provided the
+discriminator is assumed to be a <a href="module-Layout-Union.html#usesPrefixDiscriminator">prefix</a> internal to the union.</p></td>
         </tr>
 
     
@@ -181,7 +182,9 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
 
             
 
-            <td class="description last"><p>initializer for <a href="module-Layout-Layout.html#property">property</a>.</p></td>
+            <td class="description last"><p>Default for <a href="module-Layout-UnionDiscriminator.html#property">property</a>, superseding the property
+from <code>layout</code>, but defaulting to <code>variant</code> if neither <code>property</code>
+nor layout provide a property name.</p></td>
         </tr>
 
     
@@ -222,7 +225,7 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1267">line 1267</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line732">line 732</a>
     </li></ul></dd>
     
 
@@ -252,6 +255,17 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
     </div>
 
     
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="module-Layout-UnionDiscriminator.html">module:Layout~UnionDiscriminator</a></li>
+    </ul>
+
+
+    
 
     
 
@@ -266,13 +280,16 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
 
         
             
-<h4 class="name" id="bits"><span class="type-signature"></span>bits<span class="type-signature"></span></h4>
+<h4 class="name" id="layout"><span class="type-signature"></span>layout<span class="type-signature"></span></h4>
 
 
 
 
 <div class="description">
-    <p>The span of this value in bits.</p>
+    <p>The layout for the discriminator.</p>
+<p>This is a <a href="module-Layout-UInt.html">UInt</a> (or <a href="module-Layout-UIntBE.html">UIntBE</a>) instance
+that identifies which variant is present in some <a href="module-Layout-Union.html">Union</a> structure for which this object serves as the
+<a href="module-Layout-Union.html#discriminator">discriminator</a>.</p>
 </div>
 
 
@@ -310,7 +327,7 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1287">line 1287</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line759">line 759</a>
     </li></ul></dd>
     
 
@@ -328,14 +345,17 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
 
         
             
-<h4 class="name" id="container"><span class="type-signature"></span>container<span class="type-signature"></span></h4>
+<h4 class="name" id="offset"><span class="type-signature"></span>offset<span class="type-signature"></span></h4>
 
 
 
 
 <div class="description">
-    <p>The <a href="module-Layout-BitStructure.html">BitStructure</a> instance to which this
-bit field belongs.</p>
+    <p>The location of the layout relative to the start of the union.</p>
+<p>If zero the discriminator overlays the start of the union (and
+may be an internal discriminator).  Non-zero values are used
+when the discriminator is external to the union or located
+inside the union but not at its start.</p>
 </div>
 
 
@@ -373,7 +393,7 @@ bit field belongs.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1284">line 1284</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line767">line 767</a>
     </li></ul></dd>
     
 
@@ -397,12 +417,9 @@ bit field belongs.</p>
 
 
 <div class="description">
-    <p>The property name used when this bitfield is represented in an
-Object.</p>
-<p>Intended to be functionally equivalent to <a href="module-Layout-Layout.html#property">module:Layout~Layout#property</a>.</p>
-<p>If left undefined the corresponding span of bits will be
-treated as padding: it will not be mutated by <a href="module-Layout-Layout.html#encode">encode</a> nor represented as a property in the
-decoded Object.</p>
+    <p>The <a href="module-Layout-Layout.html#property">property</a> to be used when the
+discriminator is referenced in isolation (generally when <a href="module-Layout-Union.html#decode">Union decode</a> cannot delegate to a specific
+variant).</p>
 </div>
 
 
@@ -418,29 +435,9 @@ decoded Object.</p>
     
 
     
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1318">line 1318</a>
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-UnionDiscriminator.html#property">module:Layout~UnionDiscriminator#property</a>
     </li></ul></dd>
     
 
@@ -449,45 +446,6 @@ decoded Object.</p>
     
 
     
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="start"><span class="type-signature"></span>start<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    <p>The offset of the value within the containing packed unsigned
-integer.  The least significant bit of the packed value is at
-offset zero, regardless of bit ordering used.</p>
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 
     
 
@@ -504,133 +462,7 @@ offset zero, regardless of bit ordering used.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1299">line 1299</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="value_mask"><span class="type-signature"></span>value_mask<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    <p>A mask of <a href="module-Layout-BitField.html#bits">bits</a> bits isolating value bits
-that fit within the field.</p>
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1291">line 1291</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="word_mask"><span class="type-signature"></span>word_mask<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    <p>A mask of <a href="module-Layout-BitField.html#bits">bits</a> isolating the field value
-within the containing packed unsigned integer.</p>
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1306">line 1306</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line695">line 695</a>
     </li></ul></dd>
     
 
@@ -664,8 +496,7 @@ within the containing packed unsigned integer.</p>
 
 
 <div class="description">
-    <p>Store a value into the corresponding subsequence of the containing
-bit field.</p>
+    <p>Delegate decoding to <a href="module-Layout-UnionLayoutDiscriminator.html#layout">layout</a>.</p>
 </div>
 
 
@@ -689,6 +520,11 @@ bit field.</p>
     
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="module-Layout-UnionDiscriminator.html#decode">module:Layout~UnionDiscriminator#decode</a>
+    </li></ul></dd>
+    
 
     
 
@@ -709,7 +545,7 @@ bit field.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1323">line 1323</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line776">line 776</a>
     </li></ul></dd>
     
 
@@ -747,8 +583,7 @@ bit field.</p>
 
 
 <div class="description">
-    <p>Store a value into the corresponding subsequence of the containing
-bit field.</p>
+    <p>Delegate encoding to <a href="module-Layout-UnionLayoutDiscriminator.html#layout">layout</a>.</p>
 </div>
 
 
@@ -772,6 +607,11 @@ bit field.</p>
     
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="module-Layout-UnionDiscriminator.html#encode">module:Layout~UnionDiscriminator#encode</a>
+    </li></ul></dd>
+    
 
     
 
@@ -792,7 +632,7 @@ bit field.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1331">line 1331</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line780">line 780</a>
     </li></ul></dd>
     
 

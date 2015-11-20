@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: IntBE</title>
+    <title>JSDoc: Class: Blob</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: IntBE</h1>
+    <h1 class="page-title">Class: Blob</h1>
 
     
 
@@ -31,7 +31,7 @@
         <h2>
             <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>
         
-        IntBE
+        Blob
         </h2>
         
     
@@ -44,14 +44,15 @@
 
     
 
-    <h4 class="name" id="IntBE"><span class="type-signature"></span>new IntBE<span class="signature">(span, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Blob"><span class="type-signature"></span>new Blob<span class="signature">(length)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Represent a signed integer in big-endian format.</p>
+    <p>Contain an arbitrary block of data of fixed length, represented as
+a Buffer.</p>
 </div>
 
 
@@ -75,8 +76,6 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -89,7 +88,7 @@
 
         <tr>
             
-                <td class="name"><code>span</code></td>
+                <td class="name"><code>length</code></td>
             
 
             <td class="type">
@@ -102,52 +101,10 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last"><p>initializer for <a href="module-Layout-Layout.html#span">span</a>.
-The parameter can range from 1 through 6.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>property</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>initializer for <a href="module-Layout-Layout.html#property">property</a>.</p></td>
+            <td class="description last"><p>the number of bytes in the blob.</p></td>
         </tr>
 
     
@@ -188,7 +145,7 @@ The parameter can range from 1 through 6.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line379">line 379</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1348">line 1348</a>
     </li></ul></dd>
     
 
@@ -399,7 +356,7 @@ the decoded Object.</p>
 
 
 <div class="description">
-    <p>Implement <a href="module-Layout-Layout.html#decode">decode</a> for <a href="module-Layout-IntBE.html">IntBE</a>.</p>
+    <p>Implement <a href="module-Layout-Layout.html#decode">decode</a> for <a href="module-Layout-Blob.html">Blob</a>.</p>
 </div>
 
 
@@ -448,7 +405,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line389">line 389</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1358">line 1358</a>
     </li></ul></dd>
     
 
@@ -486,7 +443,7 @@ the decoded Object.</p>
 
 
 <div class="description">
-    <p>Implement <a href="module-Layout-Layout.html#encode">encode</a> for <a href="module-Layout-IntBE.html">IntBE</a>.</p>
+    <p>Implement <a href="module-Layout-Layout.html#encode">encode</a> for <a href="module-Layout-Blob.html">Blob</a>.</p>
 </div>
 
 
@@ -535,7 +492,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line396">line 396</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1365">line 1365</a>
     </li></ul></dd>
     
 

@@ -52,11 +52,11 @@
 
 <div class="description">
     <p>Represent a specific variant within a containing union.</p>
-<p><strong>NOTE</strong> The <a href="module-Layout-Layout.html#span">span</a> of the variant includes the
-span of the <a href="module-Layout-Union.html#discr_layout">discriminator</a> used to
+<p><strong>NOTE</strong> The <a href="module-Layout-Layout.html#span">span</a> of the variant may include
+the span of the <a href="module-Layout-Union.html#discriminator">discriminator</a> used to
 identify it, but values read and written using the variant strictly
 conform to the content of <a href="module-Layout-VariantLayout.html#layout">layout</a>.</p>
-<p><strong>NOTE</strong> User code should not invoke this construtor directly.  Use
+<p><strong>NOTE</strong> User code should not invoke this constructor directly.  Use
 the union <a href="module-Layout-Union.html#addVariant">addVariant</a> helper method.</p>
 </div>
 
@@ -219,7 +219,7 @@ the union <a href="module-Layout-Union.html#addVariant">addVariant</a> helper me
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line871">line 871</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1036">line 1036</a>
     </li></ul></dd>
     
 
@@ -319,7 +319,7 @@ non-discriminator part of the <a href="module-Layout-VariantLayout.html#union">u
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line901">line 901</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1068">line 1068</a>
     </li></ul></dd>
     
 
@@ -392,7 +392,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line179">line 179</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line183">line 183</a>
     </li></ul></dd>
     
 
@@ -459,7 +459,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line170">line 170</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line174">line 174</a>
     </li></ul></dd>
     
 
@@ -521,7 +521,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line891">line 891</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1058">line 1058</a>
     </li></ul></dd>
     
 
@@ -546,7 +546,7 @@ the decoded Object.</p>
 
 <div class="description">
     <p>The unsigned integral value identifying this variant within
-the <a href="module-Layout-Union.html#discr_layout">discriminator</a> of the containing
+the <a href="module-Layout-Union.html#discriminator">discriminator</a> of the containing
 union.</p>
 </div>
 
@@ -585,7 +585,7 @@ union.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line896">line 896</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1063">line 1063</a>
     </li></ul></dd>
     
 
@@ -668,7 +668,7 @@ union.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line908">line 908</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1075">line 1075</a>
     </li></ul></dd>
     
 
@@ -755,7 +755,7 @@ union.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line919">line 919</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1089">line 1089</a>
     </li></ul></dd>
     
 
@@ -842,7 +842,7 @@ union.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line929">line 929</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1102">line 1102</a>
     </li></ul></dd>
     
 
@@ -978,7 +978,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line230">line 230</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line234">line 234</a>
     </li></ul></dd>
     
 
@@ -1045,13 +1045,13 @@ set to <code>property</code>.</li>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sat Nov 07 2015 21:04:07 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Fri Nov 20 2015 00:00:14 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>
