@@ -276,6 +276,12 @@ suite("Layout", function () {
             seq.encode([5,6], b, 1);
             assert(_.isEqual(seq.decode(b), [1,5,6,4]));
         });
+        test("in struct", function () {
+            var seq = new lo.Sequence(lo.u8(), 4, 'id'),
+                str = new lo.Structure([seq]),
+                d = str.decode(Buffer('01020304', 'hex'));
+            assert(_.isEqual(d, {id:[1,2,3,4]}));
+        });
         test("struct elts", function () {
             var st = new lo.Structure([lo.u8('u8'),
                                        lo.s32('s32')]),
@@ -861,6 +867,58 @@ suite("Layout", function () {
             assert.equal(Buffer("030405", 'hex').compare(bv), 0);
             bl.encode(Buffer("112233", 'hex'), b, 1);
             assert.equal(Buffer("0111223305", 'hex').compare(b), 0);
+        });
+    });
+    suite("issue#8", function () {
+        test("named", function () {
+            var ver = lo.u8('ver'),
+                hdr = new lo.Structure([lo.u8('id'),
+                                        lo.u8('ver')], 'hdr'),
+                ud = new lo.UnionLayoutDiscriminator(ver, -1),
+                pld = new lo.Union(ud, new lo.Blob(8, 'blob'), 'u'),
+                pkt = new lo.Structure([hdr, pld], 's'),
+                exp_blob = Buffer('1011121314151617', 'hex'),
+                b = Buffer('01021011121314151617', 'hex');
+            assert(_.isEqual(hdr.decode(b), {id:1, ver:2}));
+            var du = pld.decode(b, 2);
+            assert.equal(du.ver, 2);
+            assert.equal(exp_blob.compare(du.blob), 0);
+            var dp = pkt.decode(b);
+            assert(_.isEqual(dp.hdr, {id: 1, ver: 2}));
+            assert.equal(dp.u.ver, 2);
+            assert.equal(exp_blob.compare(dp.u.blob), 0);
+
+            var v3 = pld.addVariant(2, new lo.Sequence(lo.u32(), 2, 'u32'));
+            assert(_.isEqual(pld.decode(b, 2), [0x13121110, 0x17161514]));
+
+            dp = pkt.decode(b);
+            assert(_.isEqual(dp, {hdr:{id:1, ver:2}, u: [0x13121110, 0x17161514]}));
+        });
+        test("anon", function () {
+            var ver = lo.u8('ver'),
+                hdr = new lo.Structure([lo.u8('id'),
+                                        lo.u8('ver')]),
+                ud = new lo.UnionLayoutDiscriminator(ver, -1),
+                pld = new lo.Union(ud, new lo.Blob(8, 'blob')),
+                pkt = new lo.Structure([hdr, pld]),
+                exp_blob = Buffer('1011121314151617', 'hex'),
+                b = Buffer('01021011121314151617', 'hex');
+            assert(_.isEqual(hdr.decode(b), {id:1, ver:2}));
+            var du = pld.decode(b, 2);
+            assert.equal(du.ver, 2);
+            assert.equal(exp_blob.compare(du.blob), 0);
+            var dp = pkt.decode(b);
+            /* This is what I want, but can't get. */
+            //assert.equal(dp.id, 1);
+            //assert.equal(dp.ver, 2);
+            //assert.equal(exp_blob.compare(dp.blob), 0);
+
+            var v3 = pld.addVariant(2, new lo.Sequence(lo.u32(), 2, 'u32'));
+            assert(_.isEqual(pld.decode(b, 2), [0x13121110, 0x17161514]));
+
+            dp = pkt.decode(b);
+            /* Ditto on want */
+            //assert(_.isEqual(dp, {id:1, ver:2, u32: [0x13121110, 0x17161514]}));
         });
     });
 });
