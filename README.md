@@ -2,7 +2,8 @@
 
 buffer-layout is a utility module implemented in pure JavaScript that
 supports translations between JavaScript values and Buffers.  It is made
-available under the MIT license.
+available through [github](https://github.com/pabigot/buffer-layout) and
+released under the MIT license.
 
 Layout support is provided for these types of data:
 
@@ -14,7 +15,8 @@ Layout support is provided for these types of data:
 * Bit fields within 8, 16, 24, or 32-bit unsigned integers, numbering
   from the least or most significant bit;
 * Unions of variant layouts where the type of data is recorded in a
-  prefix value.
+  prefix value, another layout element, or provided externally;
+* Blobs of fixed length raw data.
 
 ## Installation
 

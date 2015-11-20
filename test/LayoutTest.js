@@ -838,4 +838,29 @@ suite("Layout", function () {
             assert.equal(Buffer('2500a0', 'hex').compare(b), 0);
         });
     });
+    suite("Blob", function () {
+        test("invalid ctor", function () {
+            assert.throws(function () { new lo.Blob(); }, TypeError);
+            assert.throws(function () { new lo.Blob(lo.u8()); }, TypeError);
+        });
+        test("ctor", function () {
+            var bl = new lo.Blob(3, 'bl');
+            assert(bl instanceof lo.Blob);
+            assert(bl instanceof lo.Layout);
+            assert.equal(bl.span, 3);
+            assert.equal(bl.property, 'bl');
+        });
+        test("basics", function () {
+            var bl = new lo.Blob(3, 'bl'),
+                b = Buffer("0102030405", 'hex'),
+                bv = bl.decode(b);
+            assert(bv instanceof Buffer);
+            assert.equal(bv.length, bl.span);
+            assert.equal(Buffer("010203", 'hex').compare(bv), 0);
+            bv = bl.decode(b, 2);
+            assert.equal(Buffer("030405", 'hex').compare(bv), 0);
+            bl.encode(Buffer("112233", 'hex'), b, 1);
+            assert.equal(Buffer("0111223305", 'hex').compare(b), 0);
+        });
+    });
 });
