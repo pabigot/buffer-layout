@@ -272,6 +272,8 @@ suite("Layout", function () {
             assert.throws(function () { new lo.Sequence(); }, TypeError);
             assert.throws(function () { new lo.Sequence(lo.u8()); }, TypeError);
             assert.throws(function () { new lo.Sequence(lo.u8(), "5 is not an integer"); }, TypeError);
+            assert.throws(function () { new lo.Sequence(lo.u8(), lo.u8()); }, TypeError);
+            assert.throws(function () { new lo.Sequence(lo.u8(), lo.offset(lo.f32())); }, TypeError);
         });
         test("basics", function () {
             var seq = new lo.Sequence(lo.u8(), 4, 'id'),
@@ -311,6 +313,37 @@ suite("Layout", function () {
             assert(_.isEqual(seq.decode(b), tv));
             seq.encode([{u8:2,s32:0x12345678}], b, st.span);
             assert.equal(Buffer('0110270000027856341203bcfeffff', 'hex').compare(b), 0);
+        });
+        test("var count", function () {
+            var clo = lo.u8('n'),
+                seq = lo.seq(lo.u8(), lo.offset(clo, -1), 'a'),
+                st = lo.struct([clo, seq]),
+                b = Buffer('03010203', 'hex'),
+                obj = st.decode(b);
+            assert.equal(obj.n, 3);
+            assert(_.isEqual(obj.a, [1,2,3]));
+            b = new Buffer(10);
+            obj = { n:3, a: [5,6,7,8,9] };
+            st.encode(obj, b);
+            var span = st.getSpan(b);
+            assert.equal(span, 6);
+            assert.equal(Buffer('050506070809', 'hex').compare(b.slice(0, span)), 0);
+        });
+        // For variable span alone see CString in seq
+        test("var count+span", function () {
+            var clo = lo.u8('n'),
+                seq = lo.seq(lo.cstr(), lo.offset(clo, -1), 'a'),
+                st = lo.struct([clo, seq]),
+                b = Buffer('036100620063646500', 'hex'),
+                obj = st.decode(b);
+            assert.equal(obj.n, 3);
+            assert(_.isEqual(obj.a, ['a', 'b', 'cde']));
+            b = new Buffer(10);
+            obj = { n:6, a: ['one', 'two'] };
+            st.encode(obj, b);
+            var span = st.getSpan(b);
+            assert.equal(span, 9);
+            assert.equal(Buffer('026f6e650074776f00', 'hex').compare(b.slice(0, span)), 0);
         });
     });
     suite("Structure", function () {
