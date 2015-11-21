@@ -8,12 +8,14 @@ suite("Layout", function () {
             var d = new lo.Layout(8);
             assert(d instanceof lo.Layout);
             assert.equal(d.span, 8);
+            assert.equal(d.getSpan(), d.span);
             assert.strictEqual(d.property, undefined);
         });
         test("named ctor", function () {
             var d = new lo.Layout(8, 'tag');
             assert(d instanceof lo.Layout);
             assert.equal(d.span, 8);
+            assert.equal(d.getSpan(), d.span);
             assert.equal(d.property, 'tag');
         });
         test("invalid ctor", function () {
@@ -27,6 +29,10 @@ suite("Layout", function () {
             assert.throws(function () { d.decode(b); });
             assert.throws(function () { d.encode('sth', b); });
         });
+        test("#getSpan", function () {
+            assert.equal((new lo.Layout(3)).getSpan(), 3);
+            assert.throws(function () { (new lo.Layout(-1)).getSpan(); }, RangeError);
+        });
     });
     suite("UInt", function () {
         test("u8", function () {
@@ -35,6 +41,7 @@ suite("Layout", function () {
             assert(d instanceof lo.UInt);
             assert(d instanceof lo.Layout);
             assert.equal(d.span, 1);
+            assert.equal(d.getSpan(), d.span);
             assert.equal(d.property, 't');
             b.fill(0);
             assert.equal(d.decode(b), 0);
@@ -48,6 +55,7 @@ suite("Layout", function () {
             assert(d instanceof lo.UInt);
             assert(d instanceof lo.Layout);
             assert.equal(d.span, 2);
+            assert.equal(d.getSpan(), d.span);
             assert.equal(d.property, 't');
             b.fill(0);
             assert.equal(d.decode(b), 0);
@@ -61,6 +69,7 @@ suite("Layout", function () {
             assert(d instanceof lo.UInt);
             assert(d instanceof lo.Layout);
             assert.equal(d.span, 6);
+            assert.equal(d.getSpan(), d.span);
             assert.equal(d.property, 't');
             b.fill(0);
             assert.equal(d.decode(b), 0);
@@ -214,6 +223,7 @@ suite("Layout", function () {
         assert(be instanceof lo.FloatBE);
         assert(be instanceof lo.Layout);
         assert.equal(be.span, 4);
+        assert.equal(be.getSpan(), be.span);
         assert.equal(be.property, 'eff');
         assert(le instanceof lo.Float);
         assert(le instanceof lo.Layout);
@@ -271,6 +281,7 @@ suite("Layout", function () {
             assert(seq.elt_layout instanceof lo.UInt);
             assert.equal(seq.count, 4);
             assert.equal(seq.span, 4);
+            assert.equal(seq.getSpan(), seq.span);
             assert.equal(seq.property, 'id');
             b.fill(0);
             assert(_.isEqual(seq.decode(b), [0,0,0,0]));
@@ -316,6 +327,7 @@ suite("Layout", function () {
             assert(st instanceof lo.Structure);
             assert(st instanceof lo.Layout);
             assert.equal(st.span, 5);
+            assert.equal(st.getSpan(), st.span);
             assert.strictEqual(st.property, undefined);
             b.fill(0);
             var obj = st.decode(b);
@@ -524,6 +536,8 @@ suite("Layout", function () {
                 b = new Buffer(9);
             assert(un instanceof lo.Union);
             assert(un instanceof lo.Layout);
+            assert.equal(un.span, 9);
+            assert.equal(un.getSpan(), un.span);
             assert(un.usesPrefixDiscriminator);
             assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
             assert.strictEqual(un.default_layout, vlo);
