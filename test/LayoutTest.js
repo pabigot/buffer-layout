@@ -529,7 +529,7 @@ suite("Layout", function () {
             assert.strictEqual(un.default_layout, vlo);
             assert(un.layout instanceof lo.Structure);
             assert.equal(un.layout.fields.length, 2);
-            assert.equal(un.discriminator.layout.property, 'variant');
+            assert.equal(un.discriminator.property, 'variant');
             assert.strictEqual(un.layout.fields[0].property, undefined);
             assert.equal(un.layout.fields[1].property, 'content');
             assert.equal(dlo.span + vlo.span, un.span);
