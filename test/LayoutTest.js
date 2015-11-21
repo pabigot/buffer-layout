@@ -981,6 +981,7 @@ suite("Layout", function () {
         test("invalid ctor", function () {
             assert.throws(function () { new lo.Blob(); }, TypeError);
             assert.throws(function () { new lo.Blob(lo.u8()); }, TypeError);
+            assert.throws(function () { new lo.Blob(lo.offset(lo.f32())); }, TypeError);
         });
         test("ctor", function () {
             var bl = new lo.Blob(3, 'bl');
@@ -1002,6 +1003,22 @@ suite("Layout", function () {
             assert.equal(Buffer("0111223305", 'hex').compare(b), 0);
             assert.throws(function () { bl.encode('ABC', b); }, Error);
             assert.throws(function () { bl.encode(Buffer('0102', 'hex'), b); }, Error);
+        });
+        test("var length", function () {
+            var llo = lo.u8('l'),
+                blo = lo.blob(lo.offset(llo, -1), 'b'),
+                st = lo.struct([llo, blo]),
+                b = new Buffer(10);
+            assert(0 > st.span);
+
+            assert.strictEqual(blo.length.layout, llo);
+            st.encode({b: Buffer('03040506', 'hex')}, b);
+            var span = st.getSpan(b);
+            assert.equal(span, 5);
+            assert.equal(Buffer('0403040506', 'hex').compare(b.slice(0, span)), 0);
+            var obj = st.decode(b);
+            assert.equal(obj.l, 4);
+            assert.equal(obj.b.toString('hex'), '03040506');
         });
     });
     suite("issue#8", function () {
