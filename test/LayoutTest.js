@@ -590,7 +590,8 @@ suite("Layout", function () {
             assert(un instanceof lo.Layout);
             assert(un.usesPrefixDiscriminator);
             assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
-            assert.strictEqual(un.discriminator.layout, dlo);
+            assert.equal(un.discriminator.property, dlo.property);
+            assert.equal(un.discriminator.layout.offset, 0);
             assert.strictEqual(un.default_layout, vlo);
             assert(un.layout instanceof lo.Structure);
             assert.equal(un.layout.fields.length, 2);
