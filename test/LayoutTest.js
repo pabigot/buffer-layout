@@ -1036,6 +1036,7 @@ suite("Layout", function () {
             assert(ud instanceof lo.UnionDiscriminator);
             assert(pld instanceof lo.Union);
             assert(pld.default_layout instanceof lo.Blob);
+            assert.equal(pld.default_layout.property, 'blob');
         });
     });
 });
