@@ -318,6 +318,8 @@ suite("Layout", function () {
             assert.throws(function () { new lo.Structure(); }, TypeError);
             assert.throws(function () { new lo.Structure("stuff"); }, TypeError);
             assert.throws(function () { new lo.Structure(["stuff"]); }, TypeError);
+            // no unnamed variable-length fields
+            assert.throws(function () { new lo.Structure([lo.cstr()]); }, Error);
         });
         test("basics", function () {
             var st = new lo.Structure([lo.u8('u8'),
@@ -397,7 +399,6 @@ suite("Layout", function () {
             assert.equal(Buffer('785634121798ffcfc7c01dfe', 'hex').compare(b), 0);
             assert(_.isEqual(cst.decode(b), obj));
         });
-
     });
     suite("replicate", function () {
         test("uint", function () {
@@ -1037,6 +1038,56 @@ suite("Layout", function () {
             assert(pld instanceof lo.Union);
             assert(pld.default_layout instanceof lo.Blob);
             assert.equal(pld.default_layout.property, 'blob');
+        });
+    });
+    suite("CString", function () {
+        test("#getSpan", function () {
+            var cst = new lo.CString();
+            assert.throws(function () { cst.getSpan(); }, TypeError);
+            assert.equal(cst.getSpan(Buffer('00', 'hex')), 1);
+            assert.equal(cst.getSpan(Buffer('4100', 'hex')), 2);
+            assert.equal(cst.getSpan(Buffer('4100', 'hex'), 1), 1);
+            assert.equal(cst.getSpan(Buffer('4142', 'hex')), 3);
+        });
+        test("#decode", function () {
+            var cst = new lo.CString();
+            assert.equal(cst.decode(Buffer('00', 'hex')), '');
+            assert.equal(cst.decode(Buffer('4100', 'hex')), 'A');
+            assert.equal(cst.decode(Buffer('4100', 'hex'), 1), '');
+            assert.equal(cst.decode(Buffer('4142', 'hex')), 'AB');
+        });
+        test("#encode", function () {
+            var cst = new lo.CString(),
+                b = new Buffer(4);
+            b.fill(0xFF);
+            assert.equal(Buffer('A', 'utf8').length, 1);
+            cst.encode('', b);
+            assert.equal(Buffer('00ffffff', 'hex').compare(b), 0);
+            cst.encode('A', b);
+            assert.equal(Buffer('4100ffff', 'hex').compare(b), 0);
+            cst.encode('B', b, 1);
+            assert.equal(Buffer('414200ff', 'hex').compare(b), 0);
+            cst.encode(5, b);
+            assert.equal(Buffer('350000ff', 'hex').compare(b), 0);
+        });
+        test("in struct", function () {
+            var st = lo.struct([lo.cstr('k'),
+                                lo.cstr('v')]),
+                b = Buffer('6100323300', 'hex');
+            assert.throws(function () { st.getSpan(); }, RangeError);
+            assert.equal(st.fields[0].getSpan(b), 2);
+            assert.equal(st.fields[1].getSpan(b, 2), 3);
+            assert.equal(st.getSpan(b), 5);
+            assert(_.isEqual(st.decode(b), {k: 'a', v: '23'}));
+            b.fill(0xff);
+            st.encode({'k':'a', 'v': 23}, b);
+        });
+        test("in seq", function () {
+            var seq = lo.seq(lo.cstr(), 3),
+                b = Buffer('61006263003500', 'hex');
+            assert(_.isEqual(seq.decode(b), ['a', 'bc', '5']));
+            seq.encode(['hi','u','c'], b);
+            assert.equal(Buffer('68690075006300', 'hex').compare(b), 0);
         });
     });
 });
