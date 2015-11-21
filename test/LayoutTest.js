@@ -451,6 +451,49 @@ suite("Layout", function () {
             assert.equal(d.property, 'd');
         });
     });
+    suite("OffsetLayout", function () {
+        test("ctor", function () {
+            var u8 = lo.u8(),
+                l0 = new lo.OffsetLayout(u8),
+                nl = new lo.OffsetLayout(u8, -3, 'nl'),
+                dl = new lo.OffsetLayout(lo.u8('ol'), 5),
+                al = new lo.OffsetLayout(u8, 21);
+            assert.strictEqual(l0.layout, u8);
+            assert.equal(l0.offset, 0);
+            assert.strictEqual(l0.property, undefined);
+            assert.strictEqual(nl.layout, u8);
+            assert.equal(nl.offset, -3);
+            assert.equal(nl.property, 'nl');
+            assert.equal(dl.offset, 5);
+            assert.equal(dl.property, 'ol');
+            assert.strictEqual(al.layout, u8);
+            assert.equal(al.offset, 21);
+            assert.strictEqual(al.property, undefined);
+        });
+        test("codec", function () {
+            var u8 = lo.u8(),
+                bl = lo.offset(u8, -1, 'bl'),
+                al = lo.offset(u8, 1, 'al'),
+                b = Buffer("0001020304050607", 'hex');
+            assert.equal(u8.decode(b), 0);
+            assert.equal(al.decode(b), 1);
+            assert.throws(function () { bl.decode(b); }, RangeError);
+            assert.equal(u8.decode(b, 4), 4);
+            assert.equal(al.decode(b, 4), 5);
+            assert.equal(bl.decode(b, 4), 3);
+            u8.encode(0x80, b);
+            al.encode(0x91, b);
+            assert.throws(function () { bl.encode(0x70, b); }, RangeError);
+            u8.encode(0x84, b, 4);
+            al.encode(0x94, b, 4);
+            bl.encode(0x74, b, 4);
+            assert.equal(Buffer('8091027484940607', 'hex').compare(b), 0);
+        });
+        test("invalid ctor", function () {
+            assert.throws(function () { new lo.OffsetLayout('hi'); }, TypeError);
+            assert.throws(function () { new lo.OffsetLayout(lo.u8(), 'hi'); }, TypeError);
+        });
+    });
     suite("UnionDiscriminator", function () {
         test("abstract", function () {
             var ud = new lo.UnionDiscriminator('p');
