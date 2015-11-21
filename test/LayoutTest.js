@@ -910,22 +910,22 @@ suite("Layout", function () {
             var lsb = new lo.BitStructure(lo.u24()),
                 msb = new lo.BitStructure(lo.u24(), true),
                 b = new Buffer(lsb.span);
-            lsb.addField(5, 'a5');
-            lsb.addField(13);
-            lsb.addField(6, 'b6');
-            msb.addField(5, 'a5');
-            msb.addField(13);
-            msb.addField(6, 'b6');
+            lsb.addField(7, 'a5');
+            lsb.addField(8);
+            lsb.addField(9, 'b6');
+            msb.addField(7, 'a5');
+            msb.addField(8);
+            msb.addField(9, 'b6');
             b.fill(0xA5);
             var lb = lsb.decode(b),
                 mb = msb.decode(b);
-            assert(_.isEqual(lb, { a5: 5, b6: 41 }));
-            assert(_.isEqual(mb, { a5: 20, b6: 37 }));
+            assert(_.isEqual(lb, { a5: 0x25, b6: 0x14b }));
+            assert(_.isEqual(mb, { a5: 0x52, b6: 0x1a5 }));
             lsb.encode(lb, b);
-            assert.equal(Buffer('0500a4', 'hex').compare(b), 0);
+            assert.equal(Buffer('2580a5', 'hex').compare(b), 0);
             b.fill(0xFF);
             msb.encode(mb, b);
-            assert.equal(Buffer('2500a0', 'hex').compare(b), 0);
+            assert.equal(Buffer('a501a4', 'hex').compare(b), 0);
         });
     });
     suite("Blob", function () {
