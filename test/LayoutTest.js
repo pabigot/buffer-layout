@@ -349,11 +349,11 @@ suite("Layout", function () {
             b.fill(0);
             var obj = st.decode(b);
             assert(_.isEqual(obj, {u16:0, u8:0, s16be:0}));
-            b.fill(0xFF);
+            b.fill(0xa5);
             obj = {u16:0x1234, s16be:-5432};
             st.encode(obj, b);
-            assert.equal(Buffer('341200eac8', 'hex').compare(b), 0);
-            assert(_.isEqual(st.decode(b), _.extend(obj, {u8:0})));
+            assert.equal(Buffer('3412a5eac8', 'hex').compare(b), 0);
+            assert(_.isEqual(st.decode(b), _.extend(obj, {u8:0xa5})));
         });
         test("update", function () {
             var st = new lo.Structure([lo.u8('u8'),
@@ -921,11 +921,12 @@ suite("Layout", function () {
                 mb = msb.decode(b);
             assert(_.isEqual(lb, { a5: 0x25, b6: 0x14b }));
             assert(_.isEqual(mb, { a5: 0x52, b6: 0x1a5 }));
+            b.fill(0x69);
             lsb.encode(lb, b);
-            assert.equal(Buffer('2580a5', 'hex').compare(b), 0);
-            b.fill(0xFF);
+            assert.equal(Buffer('25e9a5', 'hex').compare(b), 0);
+            b.fill(0x69);
             msb.encode(mb, b);
-            assert.equal(Buffer('a501a4', 'hex').compare(b), 0);
+            assert.equal(Buffer('a569a5', 'hex').compare(b), 0);
         });
     });
     suite("Blob", function () {
