@@ -345,6 +345,12 @@ suite("Layout", function () {
             assert.equal(span, 9);
             assert.equal(Buffer('026f6e650074776f00', 'hex').compare(b.slice(0, span)), 0);
         });
+        test("zero-count", function () {
+            var seq = lo.seq(lo.u8(), 0),
+                b = Buffer('', 'hex');
+            assert.equal(seq.span, 0);
+            assert(_.isEqual(seq.decode(b), []));
+        });
     });
     suite("Structure", function () {
         test("invalid ctor", function () {
@@ -431,6 +437,12 @@ suite("Layout", function () {
             cst.encode(obj, b);
             assert.equal(Buffer('785634121798ffcfc7c01dfe', 'hex').compare(b), 0);
             assert(_.isEqual(cst.decode(b), obj));
+        });
+        test("empty", function () {
+            var st = lo.struct([], 'st'),
+                b = Buffer('', 'hex');
+            assert.equal(st.span, 0);
+            assert(_.isEqual(st.decode(b), {}));
         });
     });
     suite("replicate", function () {
