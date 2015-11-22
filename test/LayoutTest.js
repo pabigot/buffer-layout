@@ -697,8 +697,7 @@ suite("Layout", function () {
             var dlo = lo.u8(),
                 plo = new lo.Sequence(lo.u8(), 8, 'payload');
                 vlo = new lo.Structure([plo, dlo]),
-                ud = new lo.UnionLayoutDiscriminator(dlo, plo.span),
-                un = new lo.Union(ud, vlo),
+                un = new lo.Union(lo.offset(dlo, plo.span), vlo),
                 b = Buffer("000102030405060708", 'hex'),
                 obj = un.decode(b);
             assert(! un.usesPrefixDiscriminator);
@@ -714,7 +713,7 @@ suite("Layout", function () {
             var dlo = lo.u8(),
                 plo = new lo.Sequence(lo.u8(), 8, 'payload');
                 vlo = new lo.Structure([plo, dlo]),
-                ud = new lo.UnionLayoutDiscriminator(dlo, plo.span, 'tag'),
+                ud = new lo.UnionLayoutDiscriminator(lo.offset(dlo, plo.span), 'tag'),
                 un = new lo.Union(ud, vlo),
                 b = Buffer("000102030405060708", 'hex'),
                 obj = un.decode(b);
@@ -731,8 +730,7 @@ suite("Layout", function () {
             var dlo = lo.u8('vid'),
                 plo = new lo.Sequence(lo.u8(), 8, 'payload');
                 vlo = new lo.Structure([plo, dlo]),
-                ud = new lo.UnionLayoutDiscriminator(dlo, plo.span),
-                un = new lo.Union(ud, vlo),
+                un = new lo.Union(lo.offset(dlo, plo.span), vlo),
                 b = Buffer("000102030405060708", 'hex'),
                 obj = un.decode(b);
             assert(! un.usesPrefixDiscriminator);
@@ -746,7 +744,7 @@ suite("Layout", function () {
         });
         test("issue#7.external", function () {
             var dlo = lo.u8('vid'),
-                ud = new lo.UnionLayoutDiscriminator(dlo, -3, 'uid'),
+                ud = new lo.UnionLayoutDiscriminator(lo.offset(dlo, -3), 'uid'),
                 un = new lo.Union(ud, lo.u32('u32'), 'u'),
                 st = new lo.Structure([dlo, lo.u16('u16'), un, lo.s16('s16')]);
             assert.equal(un.span, 4);
@@ -1038,8 +1036,7 @@ suite("Layout", function () {
             var ver = lo.u8('ver'),
                 hdr = new lo.Structure([lo.u8('id'),
                                         lo.u8('ver')], 'hdr'),
-                ud = new lo.UnionLayoutDiscriminator(ver, -1),
-                pld = new lo.Union(ud, new lo.Blob(8, 'blob'), 'u'),
+                pld = new lo.Union(lo.offset(ver, -ver.span), new lo.Blob(8, 'blob'), 'u'),
                 pkt = new lo.Structure([hdr, pld], 's'),
                 exp_blob = Buffer('1011121314151617', 'hex'),
                 b = Buffer('01021011121314151617', 'hex');
@@ -1062,8 +1059,7 @@ suite("Layout", function () {
             var ver = lo.u8('ver'),
                 hdr = new lo.Structure([lo.u8('id'),
                                         lo.u8('ver')]),
-                ud = new lo.UnionLayoutDiscriminator(ver, -1),
-                pld = new lo.Union(ud, new lo.Blob(8, 'blob')),
+                pld = new lo.Union(lo.offset(ver, -ver.span), new lo.Blob(8, 'blob')),
                 pkt = new lo.Structure([hdr, pld]),
                 exp_blob = Buffer('1011121314151617', 'hex'),
                 b = Buffer('01021011121314151617', 'hex');
@@ -1090,8 +1086,7 @@ suite("Layout", function () {
             var ver = lo.u8('ver'),
                 hdr = lo.struct([lo.u8('id'),
                                  lo.u8('ver')]),
-                ud = lo.unionLayoutDiscriminator(ver, -1),
-                pld = lo.union(ud, lo.blob(8, 'blob')),
+                pld = lo.union(lo.offset(ver, -ver.span), lo.blob(8, 'blob')),
                 pkt = lo.struct([hdr, pld]),
                 exp_blob = Buffer('1011121314151617', 'hex'),
                 b = Buffer('01021011121314151617', 'hex');
