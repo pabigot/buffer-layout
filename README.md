@@ -27,50 +27,186 @@ Layout support is provided for these types of data:
 Development and testing is done using Node.js, supporting versions 0.12
 and later.  Install with `npm install buffer-layout`.
 
-## Usage
+## Examples
 
-Assume you have a sensor that records environmental data using the
-following (packed) C structure:
+All examples are from the `test/examples.js` unit test and assume the
+following context:
 
-    struct reading {
-      uint8_t sensor_id;
-      int16_t T_Cel;
-      uint16_t RH_pph;
-      uint32_t timestamp_posix;
-    };
+    var assert = require("assert"),
+        _ = require("lodash"),
+        lo = require("buffer-layout");
 
-buffer-layout will allow you to process this data with code like this:
-
-    var lo = require('buffer-layout');
-    
-    var rds = new lo.Structure([lo.u8('sensor_id'),
-                                lo.s16('T_Cel'),
-                                lo.u16('RH_pph'),
-                                lo.u32('timestamp_posix')]),
-        rdb = Buffer('0517003200de262d56', 'hex');
-    console.log(rds.decode(rdb));
-
-which produces:
-
-    { sensor_id: 5,
-      T_Cel: 23,
-      RH_pph: 50,
-      timestamp_posix: 1445799646 }
-
-If you need to generate data encoded in this format:
-
-    function Reading (sn, temp, hum) {
-        this.sensor_id = sn;
-        this.T_Cel = temp;
-        this.RH_pph = hum;
-        this.timestamp_posix = 1445799646;
-    }
-    rd = new Reading(7, -5, 93);
-    rds.encode(rd, rdb);
-    console.log(rdb.toString('hex'));
-
-which produces:
-
-    07fbff5d00de262d56
+The examples give only a taste of what can be done.  Structures, unions,
+and sequences can nest; [union
+discriminators](http://pabigot.github.io/buffer-layout/module-Layout-UnionDiscriminator.html)
+can be within the union or external to it; sequence and blob lengths may
+be fixed or read from the buffer.
 
 For full details see the [documentation](http://pabigot.github.io/buffer-layout/).
+
+### Four-element array of 16-bit signed little-endian integers
+
+The C definition:
+
+    int16_t arr[4] = { 1, -1, 3, -3 };
+
+The buffer-layout way:
+
+    var ds = lo.seq(lo.s16(), 4),
+        b = new Buffer(8);
+    ds.encode([1, -1, 3, -3], b);
+    assert.equal(Buffer('0100ffff0300fdff', 'hex').compare(b), 0);
+    assert(_.isEqual(ds.decode(b), [1, -1, 3, -3]));
+
+See [Int](http://pabigot.github.io/buffer-layout/module-Layout-Int.html)
+and [Sequence](http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html).
+
+### A native C `struct` on a 32-bit little-endian machine
+
+The C definition:
+
+    struct ds {
+      uint8_t v;
+      uint32_t u32;
+    } st;
+
+The buffer-layout way:
+
+    var ds = lo.struct([lo.u8('v'),
+                        lo.seq(lo.u8(), 3), // alignment padding
+                        lo.u32('u32')]),
+        b = new Buffer(8);
+    b.fill(0xbd);
+    ds.encode({v:1, u32: 0x12345678}, b);
+    assert.equal(Buffer('01bdbdbd78563412', 'hex').compare(b), 0);
+    assert(_.isEqual(ds.decode(b), {v: 1, u32: 0x12345678}));
+
+Note that the C language requires padding which must be explicitly added
+in the buffer-layout structure definition.  Since the padding is not
+accessible, the corresponding layout has no
+[property](http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#property).
+
+See [Structure](http://pabigot.github.io/buffer-layout/module-Layout-Structure.html).
+
+### A packed C `struct` on a 32-bit little-endian machine
+
+The C definition:
+
+    struct ds {
+      uint8_t v;
+      uint32_t u32;
+    } __attribute__((__packed__)) st;
+
+The buffer-layout way:
+
+    var ds = lo.struct([lo.u8('v'),
+                        lo.u32('u32')]),
+        b = new Buffer(5);
+    b.fill(0xbd);
+    ds.encode({v:1, u32: 0x12345678}, b);
+    assert.equal(Buffer('0178563412', 'hex').compare(b), 0);
+    assert(_.isEqual(ds.decode(b), {v: 1, u32: 0x12345678}));
+
+### A tagged union of 4-byte values
+
+Assume a 5-byte packed structure where the interpretation of the last
+four bytes depends on the first byte.  The C definition:
+
+    struct {
+      uint8_t t;
+      union ds {
+        uint8_t u8[4];  // default interpretation
+        int16_t s16[2]; // when t is 'h'
+        uint32_t u32;   // when t is 'w'
+        float f32;      // when t is 'f'
+      } u;
+    } __attribute__((__packed__)) un;
+
+The buffer-layout way:
+
+    var t = lo.u8('t'),
+        un = lo.union(t, lo.seq(lo.u8(), 4, 'u8')),
+        u32 = un.addVariant('w'.charCodeAt(0), lo.u32(), 'u32'),
+        s16 = un.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16'),
+        f32 = un.addVariant('f'.charCodeAt(0), lo.f32(), 'f32'),
+        b = new Buffer(un.span);
+    assert(_.isEqual(un.decode(Buffer('7778563412', 'hex')), { u32: 0x12345678 }));
+    assert(_.isEqual(un.decode(Buffer('660000bd41', 'hex')), { f32: 23.625 }));
+    assert(_.isEqual(un.decode(Buffer('a5a5a5a5a5', 'hex')), { t: 0xa5, u8:[ 0xa5, 0xa5, 0xa5, 0xa5 ]}));
+    s16.encode({s16:[123, -123]}, b);
+    assert.equal(Buffer('687b0085ff', 'hex').compare(b), 0);
+
+See [Union](http://pabigot.github.io/buffer-layout/module-Layout-Union.html).
+
+#### Packed bit fields on a little-endian machine
+
+The C definition:
+
+    struct ds {
+      unsigned int b00l03: 3;
+      unsigned int b03l01: 1;
+      unsigned int b04l18: 24;
+      unsigned int b1Cl04: 4;
+    } st;
+
+The buffer-layout way:
+
+    var ds = lo.bits(lo.u32()),
+        b = new Buffer(4);
+    ds.addField(3, 'b00l03');
+    ds.addField(1, 'b03l01');
+    ds.addField(24, 'b04l18');
+    ds.addField(4, 'b1Cl04');
+    b.fill(0xff);
+    ds.encode({b00l03:3, b04l18:24, b1Cl04:4}, b);
+    assert.equal(Buffer('8b010040', 'hex').compare(b), 0);
+    assert(_.isEqual(ds.decode(b), {b00l03:3, b03l01:1, b04l18:24, b1Cl04:4}));
+
+See [BitStructure](http://pabigot.github.io/buffer-layout/module-Layout-BitStructure.html).
+
+### A NUL-terminated C string
+
+The C definition:
+
+    const char str[] = "hi!";
+
+The buffer-layout way:
+
+    var ds = lo.cstr(),
+        b = new Buffer(8);
+    ds.encode('hi!', b);
+    var slen = ds.getSpan(b);
+    assert.equal(slen, 4);
+    assert.equal(Buffer('68692100', 'hex').compare(b.slice(0, slen)), 0);
+    assert.equal(ds.decode(b), 'hi!');
+
+See [CString](http://pabigot.github.io/buffer-layout/module-Layout-CString.html).
+
+### A fixed-length block of data offset within a buffer
+
+The buffer-layout way:
+
+    var ds = lo.blob(4),
+        b = Buffer('0102030405060708', 'hex');
+    assert.equal(Buffer('03040506', 'hex').compare(ds.decode(b, 2)), 0);
+
+See [Blob](http://pabigot.github.io/buffer-layout/module-Layout-Blob.html).
+
+### A variable-length array of pairs of C strings
+
+The buffer-layout way:
+
+    var pr = lo.seq(lo.cstr(), 2),
+        n = lo.u8('n'),
+        vla = lo.seq(pr, lo.offset(n, -1), 'a'),
+        st = lo.struct([n, vla], 'st'),
+        b = new Buffer(32),
+        arr = [['k1', 'v1'], ['k2', 'v2'], ['k3', 'etc']];
+    b.fill(0);
+    st.encode({a: arr}, b);
+    var span = st.getSpan(b);
+    assert.equal(span, 20);
+    assert.equal(Buffer('036b31007631006b32007632006b330065746300', 'hex').compare(b.slice(0, span)), 0);
+    assert(_.isEqual(st.decode(b), { n:3, a:arr}));
+
+See [OffsetLayout](http://pabigot.github.io/buffer-layout/module-Layout-OffsetLayout.html).
