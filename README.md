@@ -14,13 +14,14 @@ Layout support is provided for these types of data:
 * Signed and unsigned integral values from 1 to 6 bytes in length, in
   little-endian or big-endian format;
 * Float and double values (also little-endian or big-endian);
+* Sequences of instances of an arbitrary layout;
 * Structures with named fields containing arbitrary layouts;
-* Sequences of up to a fixed number of instances of an arbitrary layout
-* Bit fields within 8, 16, 24, or 32-bit unsigned integers, numbering
-  from the least or most significant bit;
 * Unions of variant layouts where the type of data is recorded in a
   prefix value, another layout element, or provided externally;
-* Blobs of fixed length raw data.
+* Bit fields within 8, 16, 24, or 32-bit unsigned integers, numbering
+  from the least or most significant bit;
+* NUL-terminated C strings;
+* Blobs of fixed or variable-length raw data.
 
 ## Installation
 
