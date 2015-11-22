@@ -1189,4 +1189,24 @@ suite("Layout", function () {
             assert.equal(Buffer('68690075006300', 'hex').compare(b), 0);
         });
     });
+    suite("Constant", function () {
+        test("ctor", function () {
+            var c = new lo.Constant('value', 'p');
+            assert.equal(c.value, 'value');
+            assert.equal(c.property, 'p');
+            assert.equal(c.span, 0);
+        });
+        test("basics", function () {
+            var b = Buffer('', 'hex');
+            assert.strictEqual(lo.const(true).decode(b), true);
+            assert.strictEqual(lo.const(undefined).decode(b), undefined);
+            var obj = { a: 23 };
+            assert.strictEqual(lo.const(obj).decode(b), obj);
+            /* No return value to check, but this shouldn't throw an
+             * exception (which it would if it tried to mutate the
+             * zero-length buffer). */
+            lo.const(32).encode(b);
+            assert.equal(b.length, 0);
+        });
+    });
 });
