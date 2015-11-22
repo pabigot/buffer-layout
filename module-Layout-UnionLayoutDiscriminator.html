@@ -51,8 +51,9 @@
 
 
 <div class="description">
-    <p>An object that can provide a discriminator API for <a href="module-Layout-Union.html">Union</a> using an unsigned integral <a href="module-Layout-Layout.html">Layout</a>
-instance located either inside or outside the union.</p>
+    <p>An object that can provide a <a href="module-Layout-UnionDiscriminator.html">discriminator API</a> for <a href="module-Layout-Union.html">Union</a> using
+an unsigned integral <a href="module-Layout-Layout.html">Layout</a> instance located either
+inside or outside the union.</p>
 </div>
 
 
@@ -114,7 +115,7 @@ instance located either inside or outside the union.</p>
 
             
 
-            <td class="description last"><p>initializer for <a href="module-Layout-UnionLayoutDiscriminator.html#layout">layout</a>.  Must be an instance of
+            <td class="description last"><p>Base layout used in <a href="module-Layout-UnionLayoutDiscriminator.html#layout">layout</a>.  Must be an instance of
 <a href="module-Layout-UInt.html">UInt</a> or <a href="module-Layout-UIntBE.html">UIntBE</a>.</p></td>
         </tr>
 
@@ -148,8 +149,9 @@ instance located either inside or outside the union.</p>
 
             
 
-            <td class="description last"><p>Initializes <a href="module-Layout-UnionLayoutDiscriminator.html#offset">offset</a>.  If not provided the
-discriminator is assumed to be a <a href="module-Layout-Union.html#usesPrefixDiscriminator">prefix</a> internal to the union.</p></td>
+            <td class="description last"><p>The offset of <code>layout</code> relative to the
+start of the union.  Defaults to zero, in which case the
+discriminator is assumed to be a <a href="module-Layout-Union.html#usesPrefixDiscriminator">prefix</a> of the union.</p></td>
         </tr>
 
     
@@ -225,7 +227,7 @@ nor layout provide a property name.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line734">line 734</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line949">line 949</a>
     </li></ul></dd>
     
 
@@ -286,10 +288,8 @@ nor layout provide a property name.</p></td>
 
 
 <div class="description">
-    <p>The layout for the discriminator.</p>
-<p>This is a <a href="module-Layout-UInt.html">UInt</a> (or <a href="module-Layout-UIntBE.html">UIntBE</a>) instance
-that identifies which variant is present in some <a href="module-Layout-Union.html">Union</a> structure for which this object serves as the
-<a href="module-Layout-Union.html#discriminator">discriminator</a>.</p>
+    <p>The <a href="module-Layout-OffsetLayout.html">OffsetLayout</a> used to access the
+discriminator value.</p>
 </div>
 
 
@@ -327,73 +327,7 @@ that identifies which variant is present in some <a href="module-Layout-Union.ht
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line761">line 761</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="offset"><span class="type-signature"></span>offset<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    <p>The location of the layout relative to the start of the union.</p>
-<p>If zero the discriminator overlays the start of the union (and
-may be an internal discriminator).  Non-zero values are used
-when the discriminator is external to the union or located
-inside the union but not at its start.</p>
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line769">line 769</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line957">line 957</a>
     </li></ul></dd>
     
 
@@ -462,7 +396,7 @@ variant).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line697">line 697</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line911">line 911</a>
     </li></ul></dd>
     
 
@@ -545,7 +479,7 @@ variant).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line778">line 778</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line966">line 966</a>
     </li></ul></dd>
     
 
@@ -632,7 +566,7 @@ variant).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line782">line 782</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line970">line 970</a>
     </li></ul></dd>
     
 
@@ -674,13 +608,13 @@ variant).</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Fri Nov 20 2015 11:55:18 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sat Nov 21 2015 19:12:21 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -53,6 +53,16 @@
 <div class="description">
     <p>Represent a contiguous sequence of arbitrary layout elements as an
 Object.</p>
+<p><em>Factory</em>: <a href="module-Layout.html#.struct">struct</a></p>
+<p><strong>NOTE</strong> The <a href="module-Layout-Layout.html#span">span</a> of the structure is variable
+if any layout in <a href="module-Layout-Structure.html#fields">fields</a> has a variable
+span.  When <a href="module-Layout-Layout.html">encode|encoding</a> we must have a value for
+all variable-length fields, or we wouldn't be able to figure out
+how much space to use for storage.  We can only identify the value
+for a field when it has a <a href="module-Layout-Layout.html#property">property</a>.  As
+such, although a structure may contain both unnamed fields and
+variable-length fields, it cannot contain an unnamed
+variable-length field.</p>
 </div>
 
 
@@ -114,7 +124,9 @@ Object.</p>
 
             
 
-            <td class="description last"><p>initializer for <a href="module-Layout-Structure.html#fields">fields</a>.</p></td>
+            <td class="description last"><p>initializer for <a href="module-Layout-Structure.html#fields">fields</a>.  An error is raised if this contains a
+variable-length field for which a <a href="module-Layout-Layout.html#property">property</a>
+is not defined.</p></td>
         </tr>
 
     
@@ -188,7 +200,7 @@ Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line600">line 600</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line780">line 780</a>
     </li></ul></dd>
     
 
@@ -209,6 +221,38 @@ Object.</p>
 
 
 
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <ul>
+<li>if <code>fields</code> contains an unnamed variable-length
+layout.</li>
+</ul>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">Error</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
 
 
 
@@ -303,7 +347,7 @@ will not be mutated.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line618">line 618</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line811">line 811</a>
     </li></ul></dd>
     
 
@@ -376,7 +420,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line185">line 185</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line198">line 198</a>
     </li></ul></dd>
     
 
@@ -401,6 +445,8 @@ the decoded Object.</p>
 
 <div class="description">
     <p>The span of the layout in bytes.</p>
+<p>A negative value indicates that the span is value-specific, and
+must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.</p>
 </div>
 
 
@@ -443,7 +489,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line176">line 176</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line188">line 188</a>
     </li></ul></dd>
     
 
@@ -478,9 +524,6 @@ the decoded Object.</p>
 
 <div class="description">
     <p>Implement <a href="module-Layout-Layout.html#decode">decode</a> for <a href="module-Layout-Structure.html">Structure</a>.</p>
-<p>This layout makes use the <code>dest</code> parameter, allowing decoded
-properties to be stored directly into an existing object (e.g. when
-used in an object constructor).</p>
 </div>
 
 
@@ -529,7 +572,7 @@ used in an object constructor).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line629">line 629</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line838">line 838</a>
     </li></ul></dd>
     
 
@@ -569,7 +612,7 @@ used in an object constructor).</p>
 <div class="description">
     <p>Implement <a href="module-Layout-Layout.html#encode">encode</a> for <a href="module-Layout-Structure.html">Structure</a>.</p>
 <p>If <code>src</code> is missing a property for a member with a defined <a href="module-Layout-Layout.html#property">property</a> the corresponding region of the buffer is
-zero-filled.</p>
+left unmodified.</p>
 </div>
 
 
@@ -618,7 +661,7 @@ zero-filled.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line649">line 649</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line856">line 856</a>
     </li></ul></dd>
     
 
@@ -705,7 +748,94 @@ zero-filled.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line667">line 667</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line883">line 883</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getSpan"><span class="type-signature"></span>getSpan<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Implement <a href="module-Layout-Layout.html#getSpan">getSpan</a> for <a href="module-Layout-Structure.html">Structure</a>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="module-Layout-Layout.html#getSpan">module:Layout~Layout#getSpan</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line818">line 818</a>
     </li></ul></dd>
     
 
@@ -841,7 +971,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line236">line 236</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line263">line 263</a>
     </li></ul></dd>
     
 
@@ -908,13 +1038,13 @@ set to <code>property</code>.</li>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Fri Nov 20 2015 11:55:18 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sat Nov 21 2015 19:12:21 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

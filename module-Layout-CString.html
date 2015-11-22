@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: UInt</title>
+    <title>JSDoc: Class: CString</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: UInt</h1>
+    <h1 class="page-title">Class: CString</h1>
 
     
 
@@ -31,7 +31,7 @@
         <h2>
             <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>
         
-        UInt
+        CString
         </h2>
         
     
@@ -44,15 +44,17 @@
 
     
 
-    <h4 class="name" id="UInt"><span class="type-signature"></span>new UInt<span class="signature">(span, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="CString"><span class="type-signature"></span>new CString<span class="signature">(property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Represent an unsigned integer in little-endian format.</p>
-<p><em>Factory</em>: <a href="module-Layout.html#.u8">u8</a>, <a href="module-Layout.html#.u16">u16</a>, <a href="module-Layout.html#.u24">u24</a>, <a href="module-Layout.html#.u32">u32</a>, <a href="module-Layout.html#.u40">u40</a>, <a href="module-Layout.html#.u48">u48</a></p>
+    <p>Contain a <code>NUL</code>-terminated UTF8 string.</p>
+<p><em>Factory</em>: <a href="module-Layout.html#.cstr">cstr</a></p>
+<p><strong>NOTE</strong> Any UTF8 string that incorporates a zero-valued byte will
+not be correctly decoded by this layout.</p>
 </div>
 
 
@@ -90,45 +92,13 @@
 
         <tr>
             
-                <td class="name"><code>span</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>initializer for <a href="module-Layout-Layout.html#span">span</a>.
-The parameter can range from 1 through 6.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>property</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -189,7 +159,7 @@ The parameter can range from 1 through 6.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line378">line 378</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1625">line 1625</a>
     </li></ul></dd>
     
 
@@ -402,7 +372,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
 
 
 <div class="description">
-    <p>Implement <a href="module-Layout-Layout.html#decode">decode</a> for <a href="module-Layout-UInt.html">UInt</a>.</p>
+    <p>Implement <a href="module-Layout-Layout.html#decode">decode</a> for <a href="module-Layout-CString.html">CString</a>.</p>
 </div>
 
 
@@ -451,7 +421,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line388">line 388</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1647">line 1647</a>
     </li></ul></dd>
     
 
@@ -489,7 +459,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
 
 
 <div class="description">
-    <p>Implement <a href="module-Layout-Layout.html#encode">encode</a> for <a href="module-Layout-UInt.html">UInt</a>.</p>
+    <p>Implement <a href="module-Layout-Layout.html#encode">encode</a> for <a href="module-Layout-CString.html">CString</a>.</p>
 </div>
 
 
@@ -538,7 +508,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line395">line 395</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1655">line 1655</a>
     </li></ul></dd>
     
 
@@ -738,14 +708,14 @@ layouts.  Any unused values are ignored.</p></td>
 
     
 
-    <h4 class="name" id="getSpan"><span class="type-signature"></span>getSpan<span class="signature">(b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    <h4 class="name" id="getSpan"><span class="type-signature"></span>getSpan<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Calculate the span of a specific instance of a layout.</p>
+    <p>Implement <a href="module-Layout-Layout.html#getSpan">getSpan</a> for <a href="module-Layout-CString.html">CString</a>.</p>
 </div>
 
 
@@ -754,99 +724,6 @@ layouts.  Any unused values are ignored.</p></td>
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>b</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Buffer</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>the buffer that contains an encoded instance.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>the offset at which the encoded instance
-starts.  If absent a zero offset is inferred.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -860,8 +737,10 @@ starts.  If absent a zero offset is inferred.</p></td>
     
 
     
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
         <a href="module-Layout-Layout.html#getSpan">module:Layout~Layout#getSpan</a>
     </li></ul></dd>
     
@@ -883,11 +762,9 @@ starts.  If absent a zero offset is inferred.</p></td>
     
 
     
-
-    
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line242">line 242</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1632">line 1632</a>
     </li></ul></dd>
     
 
@@ -908,67 +785,8 @@ starts.  If absent a zero offset is inferred.</p></td>
 
 
 
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        <ul>
-<li>if the length of the value cannot be
-determined.</li>
-</ul>
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">RangeError</span>
 
 
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <ul>
-<li>the number of bytes covered by the layout
-instance.  If this method is not overridden in a subclass the
-definition-time constant <a href="module-Layout-Layout.html#span">span</a> will be
-returned.</li>
-</ul>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Number</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 

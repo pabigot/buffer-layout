@@ -52,6 +52,7 @@
 
 <div class="description">
     <p>Represent a contiguous sequence of a specific layout as an Array.</p>
+<p><em>Factory</em>: <a href="module-Layout.html#.seq">seq</a></p>
 </div>
 
 
@@ -127,6 +128,9 @@
             
                 
 <span class="param-type">Number</span>
+|
+
+<span class="param-type">Layout</span>
 
 
             
@@ -144,7 +148,8 @@
 
             
 
-            <td class="description last"><p>initializer for <a href="module-Layout-Sequence.html#count">count</a>.  The parameter must be a positive integer.</p></td>
+            <td class="description last"><p>initializer for <a href="module-Layout-Sequence.html#count">count</a>.  The parameter must be either a positive
+integer or an instance of <a href="module-Layout-OffsetLayout.html">module:Layout~OffsetLayout</a>.</p></td>
         </tr>
 
     
@@ -218,7 +223,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line538">line 538</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line655">line 655</a>
     </li></ul></dd>
     
 
@@ -280,6 +285,7 @@
 
 <div class="description">
     <p>The number of elements in the sequence.</p>
+<p>This will be either a positive integer or an instance of <a href="module-Layout-OffsetLayout.html">OffsetLayout</a>.</p>
 </div>
 
 
@@ -317,7 +323,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line552">line 552</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line678">line 678</a>
     </li></ul></dd>
     
 
@@ -379,7 +385,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line549">line 549</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line672">line 672</a>
     </li></ul></dd>
     
 
@@ -452,7 +458,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line185">line 185</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line198">line 198</a>
     </li></ul></dd>
     
 
@@ -477,6 +483,8 @@ the decoded Object.</p>
 
 <div class="description">
     <p>The span of the layout in bytes.</p>
+<p>A negative value indicates that the span is value-specific, and
+must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.</p>
 </div>
 
 
@@ -519,7 +527,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line176">line 176</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line188">line 188</a>
     </li></ul></dd>
     
 
@@ -602,7 +610,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line559">line 559</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line710">line 710</a>
     </li></ul></dd>
     
 
@@ -645,6 +653,8 @@ the decoded Object.</p>
 the unused space in the buffer is left unchanged.  If <code>src</code> is
 longer than <a href="module-Layout-Sequence.html#count">count</a> the unneeded elements are
 ignored.</p>
+<p><strong>NOTE</strong> If count is an instance of <a href="module-Layout-OffsetLayout.html">OffsetLayout</a> then the length of <code>src</code> will be encoded
+as the count after <code>src</code> is encoded.</p>
 </div>
 
 
@@ -693,7 +703,7 @@ ignored.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line578">line 578</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line737">line 737</a>
     </li></ul></dd>
     
 
@@ -724,7 +734,7 @@ ignored.</p>
 
     
 
-    <h4 class="name" id="fromArray"><span class="type-signature"></span>fromArray<span class="signature">(values, dest)</span><span class="type-signature"> &rarr; {Object|undefined}</span></h4>
+    <h4 class="name" id="fromArray"><span class="type-signature"></span>fromArray<span class="signature">(values)</span><span class="type-signature"> &rarr; {Object|undefined}</span></h4>
 
     
 
@@ -799,30 +809,6 @@ layouts.  Any unused values are ignored.</p></td>
         </tr>
 
     
-
-        <tr>
-            
-                <td class="name"><code>dest</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>as with <a href="module-Layout-Layout.html#decode">decode</a>.  If
-required but not provided an empty Object will be used.</p></td>
-        </tr>
-
-    
     </tbody>
 </table>
 
@@ -865,7 +851,7 @@ required but not provided an empty Object will be used.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line265">line 265</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line289">line 289</a>
     </li></ul></dd>
     
 
@@ -909,6 +895,93 @@ required but not provided an empty Object will be used.</p></td>
 </dl>
 
     
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getSpan"><span class="type-signature"></span>getSpan<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Implement <a href="module-Layout-Layout.html#getSpan">getSpan</a> for <a href="module-Layout-Sequence.html">Sequence</a>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="module-Layout-Layout.html#getSpan">module:Layout~Layout#getSpan</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line685">line 685</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1022,7 +1095,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line236">line 236</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line263">line 263</a>
     </li></ul></dd>
     
 
@@ -1089,13 +1162,13 @@ set to <code>property</code>.</li>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Fri Nov 20 2015 11:55:18 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sat Nov 21 2015 19:12:21 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

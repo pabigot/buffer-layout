@@ -168,7 +168,7 @@ the union <a href="module-Layout-Union.html#addVariant">addVariant</a> helper me
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -178,7 +178,9 @@ the union <a href="module-Layout-Union.html#addVariant">addVariant</a> helper me
 
             
 
-            <td class="description last"><p>initializer for <a href="module-Layout-Layout.html#property">property</a>.</p></td>
+            <td class="description last"><p>initializer for <a href="module-Layout-Layout.html#property">property</a>.  Unlike many other layouts, variant
+layouts must include a property so they can be identified within
+their containing @{link Union|Union}.</p></td>
         </tr>
 
     
@@ -219,7 +221,7 @@ the union <a href="module-Layout-Union.html#addVariant">addVariant</a> helper me
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1038">line 1038</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1228">line 1228</a>
     </li></ul></dd>
     
 
@@ -319,7 +321,7 @@ non-discriminator part of the <a href="module-Layout-VariantLayout.html#union">u
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1070">line 1070</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1263">line 1263</a>
     </li></ul></dd>
     
 
@@ -392,7 +394,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line185">line 185</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line198">line 198</a>
     </li></ul></dd>
     
 
@@ -417,6 +419,8 @@ the decoded Object.</p>
 
 <div class="description">
     <p>The span of the layout in bytes.</p>
+<p>A negative value indicates that the span is value-specific, and
+must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.</p>
 </div>
 
 
@@ -459,7 +463,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line176">line 176</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line188">line 188</a>
     </li></ul></dd>
     
 
@@ -521,7 +525,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1060">line 1060</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1253">line 1253</a>
     </li></ul></dd>
     
 
@@ -585,7 +589,7 @@ union.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1065">line 1065</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1258">line 1258</a>
     </li></ul></dd>
     
 
@@ -668,7 +672,7 @@ union.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1077">line 1077</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1270">line 1270</a>
     </li></ul></dd>
     
 
@@ -755,7 +759,7 @@ union.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1091">line 1091</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1286">line 1286</a>
     </li></ul></dd>
     
 
@@ -793,7 +797,7 @@ union.</p>
 
 
 <div class="description">
-    <p>Implement <a href="module-Layout-Layout.html#fromArray">fromArray</a> for <a href="module-Layout-VariantLayout.html">VariantLayout</a>.</p>
+    <p>Delegate <a href="module-Layout-Layout.html#fromArray">fromArray</a> to <a href="module-Layout-VariantLayout.html#layout">layout</a>.</p>
 </div>
 
 
@@ -842,7 +846,7 @@ union.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1104">line 1104</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1302">line 1302</a>
     </li></ul></dd>
     
 
@@ -865,6 +869,245 @@ union.</p>
 
 
 
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getSpan"><span class="type-signature"></span>getSpan<span class="signature">(b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Calculate the span of a specific instance of a layout.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Buffer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the buffer that contains an encoded instance.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>offset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the offset at which the encoded instance
+starts.  If absent a zero offset is inferred.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-Layout.html#getSpan">module:Layout~Layout#getSpan</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line242">line 242</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <ul>
+<li>if the length of the value cannot be
+determined.</li>
+</ul>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">RangeError</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>the number of bytes covered by the layout
+instance.  If this method is not overridden in a subclass the
+definition-time constant <a href="module-Layout-Layout.html#span">span</a> will be
+returned.</li>
+</ul>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Number</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -978,7 +1221,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line236">line 236</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line263">line 263</a>
     </li></ul></dd>
     
 
@@ -1045,13 +1288,13 @@ set to <code>property</code>.</li>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Fri Nov 20 2015 11:55:18 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sat Nov 21 2015 19:12:21 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>
