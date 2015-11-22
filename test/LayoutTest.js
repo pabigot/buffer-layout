@@ -776,6 +776,48 @@ suite("Layout", function () {
             assert.equal(fobj.s16, 0x7698);
             assert.equal(fobj.u.vf, 54.625);
         });
+        test("from src", function () {
+            var un = new lo.Union(lo.u8('v'), lo.u32('u32')),
+                v1 = un.addVariant(1, lo.f32(), 'f32'),
+                v2 = un.addVariant(2, lo.seq(lo.u8(), 4), 'u8.4'),
+                b = new Buffer(un.span);
+
+            var src = {v:5, u32:0x12345678},
+                vlo = un.getSourceVariant(src);
+            assert.strictEqual(vlo, undefined);
+            un.encode(src, b);
+            assert.equal(Buffer('0578563412', 'hex').compare(b), 0);
+
+            src = {f32:26.5};
+            vlo = un.getSourceVariant(src);
+            assert.strictEqual(vlo, v1);
+            vlo.encode(src, b);
+            assert.equal(Buffer('010000d441', 'hex').compare(b), 0);
+            un.encode(src, b);
+            assert.equal(Buffer('010000d441', 'hex').compare(b), 0);
+
+            src = {"u8.4":[1,2,3,4]};
+            vlo = un.getSourceVariant(src);
+            assert.strictEqual(vlo, v2);
+            vlo.encode(src, b);
+            assert.equal(Buffer('0201020304', 'hex').compare(b), 0);
+            un.encode(src, b);
+            assert.equal(Buffer('0201020304', 'hex').compare(b), 0);
+
+            assert.throws(function () { un.getSourceVariant({other:3}); }, Error);
+        });
+        test("customize src", function () {
+            var un = lo.union(lo.u8('v'), lo.u32('u32')),
+                csrc;
+            un.configGetSourceVariant(function (src) {
+                csrc = src;
+                return this.defaultGetSourceVariant(src);
+            });
+            var src = {v:3, u32:29},
+                vlo = un.getSourceVariant(src);
+            assert.strictEqual(src, csrc);
+            assert.strictEqual(vlo, undefined);
+        });
     });
     test("fromArray", function () {
         assert.strictEqual(lo.u8().fromArray([1]), undefined);
