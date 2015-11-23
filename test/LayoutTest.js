@@ -508,6 +508,18 @@ suite("Layout", function () {
             assert.equal(d.variant, 1);
             assert.equal(d.property, 'd');
         });
+        test("span", function () {
+            var un = new lo.Union(lo.u8(), lo.u32()),
+                d = new lo.VariantLayout(un, 1, lo.cstr(), 's'),
+                b = new Buffer(12);
+            d.encode({s: 'hi!'}, b);
+            assert.equal(un.getSpan(b), 5);
+            assert.equal(Buffer('0168692100', 'hex').compare(b.slice(0, 5)), 0);
+            // This one overruns the Buffer
+            assert.throws(function () { d.encode({s:'far too long'}, b); }, RangeError);
+            // This one fits in the buffer but overruns the union
+            assert.throws(function () { d.encode({s:'too long'}, b); }, Error);
+        });
     });
     suite("OffsetLayout", function () {
         test("ctor", function () {
@@ -572,8 +584,8 @@ suite("Layout", function () {
             assert.throws(function () { new lo.Union(); }, TypeError);
             assert.throws(function () { new lo.Union("other"); }, TypeError);
             assert.throws(function () { new lo.Union(lo.f32()); }, TypeError);
-            assert.throws(function () { new lo.Union(lo.u8()); }, TypeError);
             assert.throws(function () { new lo.Union(lo.u8(), "other"); }, TypeError);
+            assert.throws(function () { new lo.Union(lo.u8(), lo.cstr()); }, Error);
         });
         test("basics", function () {
             var dlo = lo.u8(),
@@ -785,7 +797,10 @@ suite("Layout", function () {
             var un = new lo.Union(lo.u8('v'), lo.u32('u32')),
                 v1 = un.addVariant(1, lo.f32(), 'f32'),
                 v2 = un.addVariant(2, lo.seq(lo.u8(), 4), 'u8.4'),
+                v3 = un.addVariant(3, lo.cstr(), 'str'),
                 b = new Buffer(un.span);
+
+            assert.equal(un.span, 5);
 
             var src = {v:5, u32:0x12345678},
                 vlo = un.getSourceVariant(src);
@@ -810,6 +825,16 @@ suite("Layout", function () {
             assert.equal(Buffer('0201020304', 'hex').compare(b), 0);
 
             assert.throws(function () { un.getSourceVariant({other:3}); }, Error);
+            src = { str: 'hi' };
+            vlo = un.getSourceVariant(src);
+            assert.strictEqual(vlo, v3);
+            b.fill(0xFF);
+            vlo.encode(src, b);
+            assert.equal(Buffer('03686900FF', 'hex').compare(b.slice(0, 5+2)), 0);
+            assert(0 > vlo.layout.span);
+            assert.equal(vlo.span, un.span);
+            assert.equal(vlo.layout.getSpan(b, 1), 3);
+            assert.equal(vlo.getSpan(b), un.span);
         });
         test("customize src", function () {
             var un = lo.union(lo.u8('v'), lo.u32('u32')),
@@ -822,6 +847,42 @@ suite("Layout", function () {
                 vlo = un.getSourceVariant(src);
             assert.strictEqual(src, csrc);
             assert.strictEqual(vlo, undefined);
+        });
+        test("variable span", function () {
+            var un = lo.union(lo.u8('v')),
+                v1 = un.addVariant(1, lo.u32(), 'u32'),
+                v2 = un.addVariant(2, lo.f64(), 'f64'),
+                v3 = un.addVariant(3, lo.cstr(), 'str'),
+                b = new Buffer(16);
+            assert(un.span < 0);
+
+            b.fill(0xFF);
+            assert.throws(function () { un.decode(b); }, Error);
+            var obj = {u32: 0x12345678};
+            un.encode(obj, b);
+            assert.equal(v1.getSpan(b), 5);
+            assert.equal(un.getSpan(b), 5);
+            assert.equal(Buffer('0178563412ffff', 'hex').compare(b.slice(0, 5+2)), 0);
+            assert(_.isEqual(un.decode(b), obj));
+
+            b.fill(0xFF);
+            obj = { f64: 1234.5 };
+            un.encode(obj, b);
+            assert.equal(v2.getSpan(b), 9);
+            assert.equal(un.getSpan(b), 9);
+            assert.equal(Buffer('0200000000004a9340ffff', 'hex').compare(b.slice(0, 9+2)), 0);
+            assert(_.isEqual(un.decode(b), obj));
+
+            b.fill(0xFF);
+            obj = { str: 'hi!' };
+            un.encode(obj, b);
+            assert.equal(v3.getSpan(b), 5);
+            assert.equal(un.getSpan(b), 5);
+            assert.equal(Buffer('0368692100ffff', 'hex').compare(b.slice(0, 5+2)), 0);
+            assert(_.isEqual(un.decode(b), obj));
+
+            b[0] = 5;
+            assert.throws(function () { un.getSpan(b); }, Error);
         });
     });
     test("fromArray", function () {
@@ -1145,6 +1206,10 @@ suite("Layout", function () {
         });
     });
     suite("CString", function () {
+        test("ctor", function () {
+            var cst = lo.cstr();
+            assert(0 > cst.span);
+        });
         test("#getSpan", function () {
             var cst = new lo.CString();
             assert.throws(function () { cst.getSpan(); }, TypeError);
