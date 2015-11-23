@@ -118,4 +118,51 @@ suite("Examples", function () {
         assert.equal(Buffer('036b31007631006b32007632006b330065746300', 'hex').compare(b.slice(0, span)), 0);
         assert.deepEqual(st.decode(b), { n:3, a:arr});
     });
+    test("variable-length union", function () {
+        var un = lo.union(lo.u8('t')),
+            u8 = un.addVariant('B'.charCodeAt(0), lo.u8(), 'u8'),
+            s16 = un.addVariant('h'.charCodeAt(0), lo.s16(), 's16'),
+            s48 = un.addVariant('Q'.charCodeAt(0), lo.s48(), 's48'),
+            cstr = un.addVariant('s'.charCodeAt(0), lo.cstr(), 'str'),
+            tr = un.addVariant('T'.charCodeAt(0), lo.const(true), 'b'),
+            fa = un.addVariant('F'.charCodeAt(0), lo.const(false), 'b'),
+            b = new Buffer(1+6);
+        un.configGetSourceVariant(function (src) {
+            if (src.hasOwnProperty('b')) {
+                return src.b ? tr : fa;
+            }
+            return this.defaultGetSourceVariant(src);
+        });
+
+        b.fill(0xff);
+        un.encode({u8: 1}, b);
+        assert.equal(un.getSpan(b), 2);
+        assert.equal(Buffer('4201ffffffffff', 'hex').compare(b), 0);
+        assert.equal(un.decode(b).u8, 1);
+
+        b.fill(0xff);
+        un.encode({s16: -32000}, b);
+        assert.equal(un.getSpan(b), 3);
+        assert.equal(Buffer('680083ffffffff', 'hex').compare(b), 0);
+        assert.equal(un.decode(b).s16, -32000);
+
+        b.fill(0xff);
+        var v48 = Math.pow(2, 47) - 1;
+        un.encode({s48: v48}, b);
+        assert.equal(un.getSpan(b), 7);
+        assert.equal(Buffer('51ffffffffff7f', 'hex').compare(b), 0);
+        assert.equal(un.decode(b).s48, v48);
+
+        b.fill(0xff);
+        un.encode({b: true}, b);
+        assert.equal(un.getSpan(b), 1);
+        assert.equal(Buffer('54ffffffffffff', 'hex').compare(b), 0);
+        assert.strictEqual(un.decode(b).b, true);
+
+        b.fill(0xff);
+        un.encode({b: false}, b);
+        assert.equal(un.getSpan(b), 1);
+        assert.equal(Buffer('46ffffffffffff', 'hex').compare(b), 0);
+        assert.strictEqual(un.decode(b).b, false);
+    });
 });
