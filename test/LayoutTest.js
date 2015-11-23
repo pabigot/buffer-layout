@@ -579,6 +579,7 @@ suite("Layout", function () {
             var dlo = lo.u8(),
                 vlo = new lo.Sequence(lo.u8(), 8),
                 un = new lo.Union(dlo, vlo),
+                clo = un.default_layout,
                 b = new Buffer(9);
             assert(un instanceof lo.Union);
             assert(un instanceof lo.Layout);
@@ -586,12 +587,12 @@ suite("Layout", function () {
             assert.equal(un.getSpan(), un.span);
             assert(un.usesPrefixDiscriminator);
             assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
-            assert.strictEqual(un.default_layout, vlo);
-            assert(un.layout instanceof lo.Structure);
-            assert.equal(un.layout.fields.length, 2);
+            assert.notStrictEqual(clo, vlo);
+            assert(clo instanceof vlo.constructor);
+            assert.equal(clo.count, vlo.count);
+            assert.strictEqual(clo.elt_layout, vlo.elt_layout);
             assert.equal(un.discriminator.property, 'variant');
-            assert.strictEqual(un.layout.fields[0].property, undefined);
-            assert.equal(un.layout.fields[1].property, 'content');
+            assert.equal(un.default_layout.property, 'content');
             assert.equal(dlo.span + vlo.span, un.span);
             assert.strictEqual(un.property, undefined);
             b.fill(0);
@@ -653,10 +654,8 @@ suite("Layout", function () {
             assert.equal(un.discriminator.property, dlo.property);
             assert.equal(un.discriminator.layout.offset, 0);
             assert.strictEqual(un.default_layout, vlo);
-            assert(un.layout instanceof lo.Structure);
-            assert.equal(un.layout.fields.length, 2);
-            assert.equal(un.layout.fields[0].property, 'number');
-            assert.equal(un.layout.fields[1].property, 'payload');
+            assert.equal(un.discriminator.property, 'number');
+            assert.equal(un.default_layout.property, 'payload');
         });
         test("inStruct", function () {
             var dlo = lo.u8('uid'),
@@ -698,14 +697,16 @@ suite("Layout", function () {
                 plo = new lo.Sequence(lo.u8(), 8, 'payload'),
                 vlo = new lo.Structure([plo, dlo]),
                 un = new lo.Union(lo.offset(dlo, plo.span), vlo),
+                clo = un.default_layout,
                 b = Buffer("000102030405060708", 'hex'),
                 obj = un.decode(b);
             assert(! un.usesPrefixDiscriminator);
             assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
             assert.equal(un.discriminator.property, 'variant');
-            assert.equal(un.layout.fields.length, 1);
-            assert.equal(un.layout.fields[0].property, 'content');
-            assert.strictEqual(un.default_layout, vlo);
+            assert.equal(un.default_layout.property, 'content');
+            assert.notStrictEqual(clo, vlo);
+            assert(clo instanceof vlo.constructor);
+            assert.strictEqual(clo.fields, vlo.fields);
             assert(_.isEqual(obj.content, {payload: [0,1,2,3,4,5,6,7]}));
             assert.equal(obj.variant, 8);
         });
@@ -715,14 +716,16 @@ suite("Layout", function () {
                 vlo = new lo.Structure([plo, dlo]),
                 ud = new lo.UnionLayoutDiscriminator(lo.offset(dlo, plo.span), 'tag'),
                 un = new lo.Union(ud, vlo),
+                clo = un.default_layout,
                 b = Buffer("000102030405060708", 'hex'),
                 obj = un.decode(b);
             assert(! un.usesPrefixDiscriminator);
             assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
             assert.equal(un.discriminator.property, 'tag');
-            assert.equal(un.layout.fields.length, 1);
-            assert.equal(un.layout.fields[0].property, 'content');
-            assert.strictEqual(un.default_layout, vlo);
+            assert.equal(clo.property, 'content');
+            assert.notStrictEqual(clo, vlo);
+            assert(clo instanceof vlo.constructor);
+            assert.strictEqual(clo.fields, vlo.fields);
             assert(_.isEqual(obj.content, {payload: [0,1,2,3,4,5,6,7]}));
             assert.equal(obj.tag, 8);
         });
@@ -731,14 +734,16 @@ suite("Layout", function () {
                 plo = new lo.Sequence(lo.u8(), 8, 'payload'),
                 vlo = new lo.Structure([plo, dlo]),
                 un = new lo.Union(lo.offset(dlo, plo.span), vlo),
+                clo = un.default_layout,
                 b = Buffer("000102030405060708", 'hex'),
                 obj = un.decode(b);
             assert(! un.usesPrefixDiscriminator);
             assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
             assert.equal(un.discriminator.property, 'vid');
-            assert.equal(un.layout.fields.length, 1);
-            assert.equal(un.layout.fields[0].property, 'content');
-            assert.strictEqual(un.default_layout, vlo);
+            assert.equal(clo.property, 'content');
+            assert.notStrictEqual(clo, vlo);
+            assert(clo instanceof vlo.constructor);
+            assert.strictEqual(clo.fields, vlo.fields);
             assert(_.isEqual(obj.content, {payload: [0,1,2,3,4,5,6,7], vid:8}));
             assert.equal(obj.vid, 8);
         });
