@@ -53,10 +53,20 @@
 <div class="description">
     <p>Represent any number of span-compatible layouts.</p>
 <p><em>Factory</em>: <a href="module-Layout.html#.union">union</a></p>
-<p>The span of a union includes its <a href="module-Layout-Union.html#discriminator">discriminator</a> if the variant is a <a href="module-Layout-Union.html#usesPrefixDiscriminator">prefix of the union</a>, plus its <a href="module-Layout-Union.html#default_layout">default layout</a>.</p>
-<p><a href="module-Layout-VariantLayout.html#layout">Variant layout</a>s are added through <a href="module-Layout-Union.html#addVariant">addVariant</a> and may be any layout that does not
-exceed span of the <a href="module-Layout-Union.html#default_layout">default layout</a>.</p>
+<p>If the union has a <a href="module-Layout-Union.html#default_layout">default layout</a> that
+layout must have a non-negative <a href="module-Layout-Layout.html#span">span</a>.  The span
+of a fixed-span union includes its <a href="module-Layout-Union.html#discriminator">discriminator</a> if the variant is a <a href="module-Layout-Union.html#usesPrefixDiscriminator">prefix of the union</a>, plus the span
+of its <a href="module-Layout-Union.html#default_layout">default layout</a>.</p>
+<p>If the union does not have a default layout then the encoded span
+of the union depends on the encoded span of its variant (which may
+be fixed or variable).</p>
+<p><a href="module-Layout-VariantLayout.html#layout">Variant layout</a>s are added through
+<a href="module-Layout-Union.html#addVariant">addVariant</a>.  If the union has a default
+layout, the span of the <a href="module-Layout-VariantLayout.html#layout">layout contained by the variant</a> must not exceed the span of the <a href="module-Layout-Union.html#default_layout">default layout</a> (minus the span of a <a href="module-Layout-Union.html#usesPrefixDiscriminator">prefix disriminator</a>, if used).  The
+span of the variant will equal the span of the union itself.</p>
 <p>The variant for a buffer can only be identified from the <a href="module-Layout-Union.html#discriminator">discriminator</a> <a href="module-Layout-UnionDiscriminator.html#property">property</a> (in the case of the <a href="module-Layout-Union.html#default_layout">default layout</a>), or by using <a href="module-Layout-Union.html#getVariant">getVariant</a> and examining the resulting <a href="module-Layout-VariantLayout.html">VariantLayout</a> instance.</p>
+<p>A variant compatible with a JavaScript object can be identified
+using <a href="module-Layout-Union.html#getSourceVariant">getSourceVariant</a>.</p>
 </div>
 
 
@@ -103,6 +113,9 @@ exceed span of the <a href="module-Layout-Union.html#default_layout">default lay
 <span class="param-type">UnionDiscriminator</span>
 |
 
+<span class="param-type">OffsetLayout</span>
+|
+
 <span class="param-type">Layout</span>
 
 
@@ -121,14 +134,12 @@ exceed span of the <a href="module-Layout-Union.html#default_layout">default lay
 
             
 
-            <td class="description last"><p>describes how to
+            <td class="description last"><p>How to
 identify the layout used to interpret the union contents.  The
-parameter must be an instance of <a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a> or <a href="module-Layout-UInt.html">UInt</a> (or
-<a href="module-Layout-UIntBE.html">UIntBE</a>).  When a layout element is passed the
-discriminator is a <a href="module-Layout-Union.html#usesPrefixDiscriminator">prefix</a> of
-the <a href="module-Layout-Union.html#layout">layout</a> and a <a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a> instance is
-synthesized.  In either case, the discriminator object is available
-as <a href="module-Layout-Union.html#discriminator">discriminator</a>.</p></td>
+parameter must be an instance of <a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a>, an <a href="module-Layout-OffsetLayout.html">OffsetLayout</a> that satisfies <a href="module-Layout-OffsetLayout.html#isCount">isCount()</a>, or <a href="module-Layout-UInt.html">UInt</a> (or <a href="module-Layout-UIntBE.html">UIntBE</a>).  When a non-offset layout element is passed the
+layout appears at the start of the union.  In all cases the
+(synthesized) <a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a>
+instance is recorded as <a href="module-Layout-Union.html#discriminator">discriminator</a>.</p></td>
         </tr>
 
     
@@ -141,7 +152,10 @@ as <a href="module-Layout-Union.html#discriminator">discriminator</a>.</p></td>
             <td class="type">
             
                 
-<span class="param-type"><a href="module-Layout-Layout.html">module:Layout~Layout</a></span>
+<span class="param-type">Layout</span>
+|
+
+<span class="param-type">null</span>
 
 
             
@@ -159,7 +173,12 @@ as <a href="module-Layout-Union.html#discriminator">discriminator</a>.</p></td>
 
             
 
-            <td class="description last"><p>initializer for <a href="module-Layout-Union.html#default_layout">default_layout</a>.</p></td>
+            <td class="description last"><p>initializer for <a href="module-Layout-Union.html#default_layout">default_layout</a>.  If absent defaults to
+<code>null</code>.  If <code>null</code> there is no default layout: the union has
+data-dependent length and attempts to decode or encode unrecognized
+variants will throw an exception.  A <a href="module-Layout-Layout.html">Layout</a> instance
+must have a non-negative <a href="module-Layout-Layout.html#span">span</a>, and if it lacks
+a <a href="module-Layout-Layout.html#property">property</a> the <a href="module-Layout-Union.html#default_layout">default_layout</a> will be a <a href="module-Layout-Layout.html#replicate">replica</a> with property <code>content</code>.</p></td>
         </tr>
 
     
@@ -233,7 +252,7 @@ as <a href="module-Layout-Union.html#discriminator">discriminator</a>.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1014">line 1014</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1114">line 1114</a>
     </li></ul></dd>
     
 
@@ -297,7 +316,7 @@ as <a href="module-Layout-Union.html#discriminator">discriminator</a>.</p></td>
     <p>The layout for non-discriminator content when the value of the
 discriminator is not recognized.</p>
 <p>This is the value passed to the constructor.  It is
-structurally equivalent to the second component of <a href="module-Layout-Union.html#layout">layout</a> but may have a different property
+structurally equivalent to the second component of layout but may have a different property
 name.</p>
 </div>
 
@@ -336,7 +355,7 @@ name.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1089">line 1089</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1181">line 1181</a>
     </li></ul></dd>
     
 
@@ -361,13 +380,10 @@ name.</p>
 
 <div class="description">
     <p>The interface for the discriminator value in isolation.</p>
-<p>This is the discriminator object passed to the constructor, or
-a <a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a> synthesized
-from an unsigned integer layout element passed as the
-discriminator.  In the latter case it is structurally identical
-to the first component of <a href="module-Layout-Union.html#layout">layout</a> but may
-use a different <a href="module-Layout-Layout.html#property">property</a>, and <a href="module-Layout-Union.html#usesPrefixDiscriminator">usesPrefixDiscriminator</a> will be
-<code>true</code>.</p>
+<p>This a <a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a> either
+passed to the constructor or synthesized from the <code>discr</code>
+constructor argument.  <a href="module-Layout-Union.html#usesPrefixDiscriminator">usesPrefixDiscriminator</a> will be
+<code>true</code> iff the <code>discr</code> parameter was a non-offset <a href="module-Layout-Layout.html">Layout</a> instance.</p>
 </div>
 
 
@@ -405,78 +421,7 @@ use a different <a href="module-Layout-Layout.html#property">property</a>, and <
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1072">line 1072</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="layout"><span class="type-signature"></span>layout<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    <p>The layout for unrecognized variants.</p>
-<p>This is a <a href="module-Layout-Structure.html">Structure</a> layout containing one or
-two fields.</p>
-<p>If the <a href="module-Layout-Union.html#discriminator">discriminator</a> is a <a href="module-Layout-Union.html#usesPrefixDiscriminator">prefix discriminator</a> there are
-two fields, the first being the discriminator layout element.
-If the provided discriminator layout element was not given a
-<a href="module-Layout-Layout.html#property">property</a>, <code>variant</code> will be used.</p>
-<p>The last field in the layout is the <a href="module-Layout-Union.html#default_layout">default layout</a>.  If the provided default
-layout was not given a <a href="module-Layout-Layout.html#property">property</a>,
-<code>content</code> will be used.</p>
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1060">line 1060</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1165">line 1165</a>
     </li></ul></dd>
     
 
@@ -549,7 +494,7 @@ the decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line198">line 198</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line283">line 283</a>
     </li></ul></dd>
     
 
@@ -618,7 +563,7 @@ manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1102">line 1102</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1194">line 1194</a>
     </li></ul></dd>
     
 
@@ -643,6 +588,9 @@ manipulate the content of this property.</p>
 
 <div class="description">
     <p>The span of the layout in bytes.</p>
+<p>Positive values are generally expected.</p>
+<p>Zero will only appear in <a href="module-Layout-Constant.html">Constant</a>s and in
+<a href="module-Layout-Sequence.html">Sequence</a>s where the <a href="module-Layout-Sequence.html#count">count</a> is zero.</p>
 <p>A negative value indicates that the span is value-specific, and
 must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.</p>
 </div>
@@ -687,7 +635,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line188">line 188</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line273">line 273</a>
     </li></ul></dd>
     
 
@@ -713,8 +661,8 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
 <div class="description">
     <p><code>true</code> if the <a href="module-Layout-Union.html#discriminator">discriminator</a> is the
 first field in the union.</p>
-<p>If <code>false</code> the discriminator is either external to the union or
-encoded within the <a href="module-Layout-Union.html#default_layout">default layout</a>.</p>
+<p>If <code>false</code> the discriminator is obtained from somewhere
+else.</p>
 </div>
 
 
@@ -752,7 +700,7 @@ encoded within the <a href="module-Layout-Union.html#default_layout">default lay
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1080">line 1080</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1172">line 1172</a>
     </li></ul></dd>
     
 
@@ -926,7 +874,7 @@ created variant is returned.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1174">line 1174</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1341">line 1341</a>
     </li></ul></dd>
     
 
@@ -967,6 +915,142 @@ created variant is returned.</p>
 </dl>
 
     
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="configGetSourceVariant"><span class="type-signature"></span>configGetSourceVariant<span class="signature">(gsv)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Function to override the implementation of <a href="module-Layout-Union.html#getSourceVariant">getSourceVariant</a>.</p>
+<p>Use this if the desired variant cannot be identified using the
+algorithm of <a href="module-Layout-Union.html#defaultGetSourceVariant">defaultGetSourceVariant</a>.</p>
+<p><strong>NOTE</strong> The provided function will be invoked bound to this
+Union instance, providing local access to <a href="module-Layout-Union.html#registry">registry</a>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>gsv</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a function that follows the API of
+<a href="module-Layout-Union.html#defaultGetSourceVariant">defaultGetSourceVariant</a>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1227">line 1227</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1034,7 +1118,7 @@ discriminator.  Otherwise the <a href="module-Layout-Union.html#default_layout">
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1114">line 1114</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1283">line 1283</a>
     </li></ul></dd>
     
 
@@ -1057,6 +1141,200 @@ discriminator.  Otherwise the <a href="module-Layout-Union.html#default_layout">
 
 
 
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="defaultGetSourceVariant"><span class="type-signature"></span>defaultGetSourceVariant<span class="signature">(src)</span><span class="type-signature"> &rarr; {undefined|VariantLayout}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Method to infer a registered Union variant compatible with <code>src</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>src</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>an object presumed to be compatible with the content of the Union.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1264">line 1264</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <ul>
+<li>if <code>src</code> cannot be associated with a default or
+registered variant.</li>
+</ul>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">Error</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>If <code>src</code> has properties
+matching the Union discriminator and default layout properties this
+returns <code>undefined</code>.  Otherwise, if <code>src</code> has a property matching a
+<a href="module-Layout-VariantLayout.html#property">variant property</a> that variant is
+returned.  Otherwise an error is thrown.</li>
+</ul>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">undefined</span>
+|
+
+<span class="param-type">VariantLayout</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1125,7 +1403,7 @@ method.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1142">line 1142</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1310">line 1310</a>
     </li></ul></dd>
     
 
@@ -1273,7 +1551,7 @@ layouts.  Any unused values are ignored.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line289">line 289</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line374">line 374</a>
     </li></ul></dd>
     
 
@@ -1325,14 +1603,16 @@ layouts.  Any unused values are ignored.</p></td>
 
     
 
-    <h4 class="name" id="getSpan"><span class="type-signature"></span>getSpan<span class="signature">(b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    <h4 class="name" id="getSourceVariant"><span class="type-signature"></span>getSourceVariant<span class="signature">(src)</span><span class="type-signature"> &rarr; {undefined|VariantLayout}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Calculate the span of a specific instance of a layout.</p>
+    <p>Function to infer the variant selected by a source object.</p>
+<p>Defaults to <a href="module-Layout-Union.html#defaultGetSourceVariant">defaultGetSourceVariant</a> but may
+be overridden using <a href="module-Layout-Union.html#configGetSourceVariant">configGetSourceVariant</a>.</p>
 </div>
 
 
@@ -1356,8 +1636,6 @@ layouts.  Any unused values are ignored.</p></td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -1370,65 +1648,23 @@ layouts.  Any unused values are ignored.</p></td>
 
         <tr>
             
-                <td class="name"><code>b</code></td>
+                <td class="name"><code>src</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Buffer</span>
+<span class="param-type">Object</span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last"><p>the buffer that contains an encoded instance.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>the offset at which the encoded instance
-starts.  If absent a zero offset is inferred.</p></td>
+            <td class="description last"><p>as with <a href="module-Layout-Union.html#defaultGetSourceVariant">defaultGetSourceVariant</a>.</p></td>
         </tr>
 
     
@@ -1446,11 +1682,6 @@ starts.  If absent a zero offset is inferred.</p></td>
 
     
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="module-Layout-Layout.html#getSpan">module:Layout~Layout#getSpan</a>
-    </li></ul></dd>
     
 
     
@@ -1474,7 +1705,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line242">line 242</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1212">line 1212</a>
     </li></ul></dd>
     
 
@@ -1495,50 +1726,15 @@ starts.  If absent a zero offset is inferred.</p></td>
 
 
 
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        <ul>
-<li>if the length of the value cannot be
-determined.</li>
-</ul>
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">RangeError</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
 
 
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
-    <ul>
-<li>the number of bytes covered by the layout
-instance.  If this method is not overridden in a subclass the
-definition-time constant <a href="module-Layout-Layout.html#span">span</a> will be
-returned.</li>
-</ul>
+    <p>The default variant
+(<code>undefined</code>) or first registered variant that uses a property
+available in <code>src</code>.</p>
 </div>
 
 
@@ -1549,13 +1745,103 @@ returned.</li>
     </dt>
     <dd>
         
-<span class="param-type">Number</span>
+<span class="param-type">undefined</span>
+|
+
+<span class="param-type">VariantLayout</span>
 
 
     </dd>
 </dl>
 
     
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getSpan"><span class="type-signature"></span>getSpan<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Implement <a href="module-Layout-Layout.html#getSpan">getSpan</a> for <a href="module-Layout-Union.html">Uniont</a>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="module-Layout-Layout.html#getSpan">module:Layout~Layout#getSpan</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1236">line 1236</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1694,7 +1980,7 @@ union.  Used only when <code>vb</code> is an instance of {Buffer}.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1191">line 1191</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1358">line 1358</a>
     </li></ul></dd>
     
 
@@ -1851,7 +2137,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line263">line 263</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line348">line 348</a>
     </li></ul></dd>
     
 
@@ -1918,13 +2204,13 @@ set to <code>property</code>.</li>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sat Nov 21 2015 19:12:21 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Mon Nov 23 2015 17:43:02 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -81,10 +81,12 @@
  *   module:Layout.s48be|48-bit} representation ranges;
  * * 32-bit floating point values with {@link
  *   module:Layout.f32|little-endian} and {@link
- *   module:Layout.f32be|big-endian} representations.
+ *   module:Layout.f32be|big-endian} representations;
  * * 64-bit floating point values with {@link
  *   module:Layout.f64|little-endian} and {@link
- *   module:Layout.f64be|big-endian} representations.
+ *   module:Layout.f64be|big-endian} representations;
+ * * {@link module:Layout.const|Constants} that take no space in the
+ *   encoded expression.
  *
  * and for these aggregate types:
  * * {@link module:Layout.seq|Sequence}s of instances of a {@link
@@ -94,14 +96,17 @@
  *   heterogeneous sequence of {@link module:Layout~Layout|Layout}
  *   instances, with JavaScript representation as an Object;
  * * {@link module:Layout.union|Union}s that support multiple {@link
- *   module:Layout~VariantLayout|variant layouts} over the same span
- *   of bytes, using an unsigned integer at the start the span or a
- *   separate {@link module:Layout.unionLayoutDiscriminator|layout
- *   element} to determine the layout used to interpret the remainder
- *   of the span.
- * * {@link module:Layout.bits|BitStructure}s that contain a
- *   sequence of individual {@link module:Layout~BitField#addField|BitField}s
- *   packed into an 8, 16, 24, or 32-bit unsigned integer;
+ *   module:Layout~VariantLayout|variant layouts} over a fixed
+ *   (padded) or variable (not padded) span of bytes, using an
+ *   unsigned integer at the start of the data or a separate {@link
+ *   module:Layout.unionLayoutDiscriminator|layout element} to
+ *   determine which layout to use when interpreting the buffer
+ *   contents;
+ * * {@link module:Layout.bits|BitStructure}s that contain a sequence
+ *   of individual {@link
+ *   module:Layout~BitStructure#addField|BitField}s packed into an 8,
+ *   16, 24, or 32-bit unsigned integer starting at the least- or
+ *   most-significant bit;
  * * {@link module:Layout.cstr|C strings} of varying length;
  * * {@link module:Layout.blob|Blobs} of fixed or varying length.
  *
@@ -129,6 +134,7 @@
  * @local BitField
  * @local Blob
  * @local CString
+ * @local Constant
  * @module Layout
  * @license MIT
  * @author Peter A. Bigot
@@ -142,6 +148,79 @@
 "use strict";
 
 var assert = require('assert');
+
+/* Determine whether node issue #3992 is fixed, and if not replace the
+ * Buffer functions with ones that work correctly.
+ *
+ * See: https://github.com/nodejs/node/issues/3992 */
+var issue_3992_is_resolved = (function () {
+    var buf = new Buffer(2);
+    buf.writeIntLE(-0x100, 0, 2);
+    return (0xFF === buf[1]);
+})();
+/* NB: Backfill code modified from node lib/buffer.js as of
+ * 8bc80386879538de63cd6f2aef288f59324eb004 (2015-11-20) */
+/* istanbul ignore next */
+function checkInt(buffer, value, offset, ext, max, min) {
+    if (!(buffer instanceof Buffer))
+        throw new TypeError('"buffer" argument must be a Buffer instance');
+    if (value > max || value &lt; min)
+        throw new TypeError('"value" argument is out of bounds');
+    if (offset + ext > buffer.length)
+        throw new RangeError('Index out of range');
+}
+/* The grotesquery here is because jshint whines about strict mode
+ * violations if the function doesn't appear to be a method, and about
+ * defining functions within a block if the test is in an if
+ * statement. */
+Buffer.prototype.writeIntLE = issue_3992_is_resolved ? Buffer.prototype.writeIntLE : function(value, offset, byteLength, noAssert) {
+    value = +value;
+    offset = offset >>> 0;
+    if (!noAssert) {
+        checkInt(this,
+                 value,
+                 offset,
+                 byteLength,
+                 Math.pow(2, 8 * byteLength - 1) - 1,
+                 -Math.pow(2, 8 * byteLength - 1));
+    }
+
+    var i = 0;
+    var mul = 1;
+    var sub = 0;
+    this[offset] = value;
+    while (++i &lt; byteLength &amp;&amp; (mul *= 0x100)) {
+        if (value &lt; 0 &amp;&amp; sub === 0 &amp;&amp; this[offset + i - 1] !== 0)
+            sub = 1;
+        this[offset + i] = ((value / mul) >> 0) - sub;
+    }
+
+    return offset + byteLength;
+};
+Buffer.prototype.writeIntBE = issue_3992_is_resolved ? Buffer.prototype.writeIntBE : function(value, offset, byteLength, noAssert) {
+    value = +value;
+    offset = offset >>> 0;
+    if (!noAssert) {
+        checkInt(this,
+                 value,
+                 offset,
+                 byteLength,
+                 Math.pow(2, 8 * byteLength - 1) - 1,
+                 -Math.pow(2, 8 * byteLength - 1));
+    }
+
+    var i = byteLength - 1;
+    var mul = 1;
+    var sub = 0;
+    this[offset + i] = value;
+    while (--i >= 0 &amp;&amp; (mul *= 0x100)) {
+        if (value &lt; 0 &amp;&amp; sub === 0 &amp;&amp; this[offset + i + 1] !== 0)
+            sub = 1;
+        this[offset + i] = ((value / mul) >> 0) - sub;
+    }
+
+    return offset + byteLength;
+};
 
 /* istanbul ignore next */
 /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isInteger */
@@ -197,19 +276,25 @@ if (!Object.assign) {
  * relationships between layouts are not inadvertently corrupted.
  *
  * @param {Number} span - Default for {@link Layout#span|span}.  The
- * parameter must be a positive integer, or a negative value to
- * indicate that the span is {@link Layout#getSpan|value-specific}.
+ * parameter must be an integer; a negative value signifies that the
+ * span is {@link Layout#getSpan|value-specific}.
  *
  * @param {string} [property] - Default for {@link
  * Layout#property|property}.
  *
  * @constructor */
 function Layout (span, property) {
-    if ((! Number.isInteger(span)) || (0 === span)) {
-        throw new TypeError("span must be non-zero integer");
+    if (! Number.isInteger(span)) {
+        throw new TypeError("span must be an integer");
     }
 
     /** The span of the layout in bytes.
+     *
+     * Positive values are generally expected.
+     *
+     * Zero will only appear in {@link Constant|Constant}s and in
+     * {@link Sequence|Sequence}s where the {@link
+     * Sequence#count|count} is zero.
      *
      * A negative value indicates that the span is value-specific, and
      * must be obtained using {@link Layout#getSpan|getSpan}. */
@@ -368,7 +453,8 @@ OffsetLayout.prototype.constructor = OffsetLayout;
 /** Return `true` iff {@link OffsetLayout#layout|layout} is an unsigned integer layout.
  *
  * In that case it can be used as the source of {@link
- * Sequence#count|Sequence} counts. */
+ * Sequence#count|Sequence} counts or as {@link
+ * UnionLayoutDiscriminator#layout|external union discriminators}. */
 OffsetLayout.prototype.isCount = function () {
     return ((this.layout instanceof UInt)
             || (this.layout instanceof UIntBE));
@@ -685,8 +771,8 @@ function Sequence (elt_layout, count, property) {
         throw new TypeError("elt_layout must be a Layout");
     }
     if (! (((count instanceof OffsetLayout) &amp;&amp; count.isCount())
-           || (Number.isInteger(count) &amp;&amp; (0 &lt; count)))) {
-        throw new TypeError("count must be positive integer or an unsigned integer OffsetLayout");
+           || (Number.isInteger(count) &amp;&amp; (0 &lt;= count)))) {
+        throw new TypeError("count must be non-negative integer or an unsigned integer OffsetLayout");
     }
     var span = -1;
     if ((! (count instanceof OffsetLayout))
@@ -711,7 +797,7 @@ Sequence.prototype = Object.create(Layout.prototype);
 Sequence.prototype.constructor = Sequence;
 /** Implement {@link Layout#getSpan|getSpan} for {@link Sequence|Sequence}. */
 Sequence.prototype.getSpan = function (b, offset) {
-    if (0 &lt; this.span) {
+    if (0 &lt;= this.span) {
         return this.span;
     }
     if (undefined === offset) {
@@ -844,7 +930,7 @@ Structure.prototype = Object.create(Layout.prototype);
 Structure.prototype.constructor = Structure;
 /** Implement {@link Layout#getSpan|getSpan} for {@link Structure|Structure}. */
 Structure.prototype.getSpan = function (b, offset) {
-    if (0 &lt; this.span) {
+    if (0 &lt;= this.span) {
         return this.span;
     }
     if (undefined === offset) {
@@ -958,14 +1044,9 @@ UnionDiscriminator.prototype.encode = function () {
  * an unsigned integral {@link Layout|Layout} instance located either
  * inside or outside the union.
  *
- * @param {Layout} layout - Base layout used in {@link
- * UnionLayoutDiscriminator#layout|layout}.  Must be an instance of
- * {@link UInt|UInt} or {@link UIntBE|UIntBE}.
- *
- * @param {Number} [offset] - The offset of `layout` relative to the
- * start of the union.  Defaults to zero, in which case the
- * discriminator is assumed to be a {@link
- * Union#usesPrefixDiscriminator|prefix} of the union.
+ * @param {OffsetLayout} layout - initializes {@link
+ * UnionLayoutDiscriminator#layout|layout}.  Must satisfy {@link
+ * OffsetLayout#isCount|isCount()}.
  *
  * @param {string} [property] - Default for {@link
  * UnionDiscriminator#property|property}, superseding the property
@@ -974,15 +1055,15 @@ UnionDiscriminator.prototype.encode = function () {
  *
  * @constructor
  * @augments {UnionDiscriminator} */
-function UnionLayoutDiscriminator (layout, offset, property) {
-    if (! ((layout instanceof UInt)
-           || (layout instanceof UIntBE))) {
-        throw new TypeError("layout must produce unsigned integer");
+function UnionLayoutDiscriminator (layout, property) {
+    if (! ((layout instanceof OffsetLayout)
+           &amp;&amp; layout.isCount())) {
+        throw new TypeError("layout must be an unsigned integer OffsetLayout");
     }
 
     /** The {@link OffsetLayout|OffsetLayout} used to access the
      * discriminator value. */
-    this.layout = new OffsetLayout(layout, offset);
+    this.layout = layout;
 
     UnionDiscriminator.call(this, property || layout.property || 'variant');
 
@@ -1003,15 +1084,24 @@ UnionLayoutDiscriminator.prototype.encode = function (src, b, offset) {
  *
  * *Factory*: {@link module:Layout.union|union}
  *
- * The {@link Layout.span|span} of a union includes its {@link
+ * If the union has a {@link Union#default_layout|default layout} that
+ * layout must have a non-negative {@link Layout#span|span}.  The span
+ * of a fixed-span union includes its {@link
  * Union#discriminator|discriminator} if the variant is a {@link
- * Union#usesPrefixDiscriminator|prefix of the union}, plus its {@link
- * Union#default_layout|default layout}.
+ * Union#usesPrefixDiscriminator|prefix of the union}, plus the span
+ * of its {@link Union#default_layout|default layout}.
  *
- * {@link
- * VariantLayout#layout|Variant layout}s are added through {@link
- * Union#addVariant|addVariant} and may be any layout that does not
- * exceed span of the {@link Union#default_layout|default layout}.
+ * If the union does not have a default layout then the encoded span
+ * of the union depends on the encoded span of its variant (which may
+ * be fixed or variable).
+ *
+ * {@link VariantLayout#layout|Variant layout}s are added through
+ * {@link Union#addVariant|addVariant}.  If the union has a default
+ * layout, the span of the {@link VariantLayout#layout|layout
+ * contained by the variant} must not exceed the span of the {@link
+ * Union#default_layout|default layout} (minus the span of a {@link
+ * Union#usesPrefixDiscriminator|prefix disriminator}, if used).  The
+ * span of the variant will equal the span of the union itself.
  *
  * The variant for a buffer can only be identified from the {@link
  * Union#discriminator|discriminator} {@link
@@ -1020,19 +1110,29 @@ UnionLayoutDiscriminator.prototype.encode = function (src, b, offset) {
  * Union#getVariant|getVariant} and examining the resulting {@link
  * VariantLayout|VariantLayout} instance.
  *
- * @param {(UnionDiscriminator|Layout)} discr - describes how to
+ * A variant compatible with a JavaScript object can be identified
+ * using {@link Union#getSourceVariant|getSourceVariant}.
+ *
+ * @param {(UnionDiscriminator|OffsetLayout|Layout)} discr - How to
  * identify the layout used to interpret the union contents.  The
  * parameter must be an instance of {@link
- * UnionDiscriminator|UnionDiscriminator} or {@link UInt|UInt} (or
- * {@link UIntBE|UIntBE}).  When a layout element is passed the
- * discriminator is a {@link Union#usesPrefixDiscriminator|prefix} of
- * the {@link Union#layout|layout} and a {@link
- * UnionLayoutDiscriminator|UnionLayoutDiscriminator} instance is
- * synthesized.  In either case, the discriminator object is available
- * as {@link Union#discriminator|discriminator}.
+ * UnionDiscriminator|UnionDiscriminator}, an {@link
+ * OffsetLayout|OffsetLayout} that satisfies {@link
+ * OffsetLayout#isCount|isCount()}, or {@link UInt|UInt} (or {@link
+ * UIntBE|UIntBE}).  When a non-offset layout element is passed the
+ * layout appears at the start of the union.  In all cases the
+ * (synthesized) {@link UnionDiscriminator|UnionDiscriminator}
+ * instance is recorded as {@link Union#discriminator|discriminator}.
  *
- * @param {Layout} default_layout - initializer for {@link
- * Union#default_layout|default_layout}.
+ * @param {(Layout|null)} default_layout - initializer for {@link
+ * Union#default_layout|default_layout}.  If absent defaults to
+ * `null`.  If `null` there is no default layout: the union has
+ * data-dependent length and attempts to decode or encode unrecognized
+ * variants will throw an exception.  A {@link Layout|Layout} instance
+ * must have a non-negative {@link Layout#span|span}, and if it lacks
+ * a {@link Layout#property|property} the {@link
+ * Union#default_layout|default_layout} will be a {@link
+ * Layout#replicate|replica} with property `content`.
  *
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
@@ -1046,65 +1146,57 @@ function Union (discr,
                || (discr instanceof UIntBE)),
         orig_discr = discr;
     if (upv) {
+        discr = new UnionLayoutDiscriminator(new OffsetLayout(discr));
+    } else if ((discr instanceof OffsetLayout)
+               &amp;&amp; discr.isCount()) {
         discr = new UnionLayoutDiscriminator(discr);
     } else if (! (discr instanceof UnionDiscriminator)) {
         throw new TypeError("discr must be a UnionDiscriminator or an unsigned integer layout");
     }
-    if (! (default_layout instanceof Layout)) {
-        throw new TypeError("default_layout must be a Layout");
+    if (undefined === default_layout) {
+        default_layout = null;
+    }
+    if (! ((null === default_layout)
+           || (default_layout instanceof Layout))) {
+        throw new TypeError("default_layout must be null or a Layout");
+    }
+    if (null !== default_layout) {
+        if (0 > default_layout.span) {
+            throw new Error("default_layout must have constant span");
+        }
+        if (undefined === default_layout.property) {
+            default_layout = default_layout.replicate('content');
+        }
     }
 
-    /* Synthesize the structure, starting with the internal
-     * discriminator if present, then the default layout. */
-    var lo_elts = [];
-    if (upv) {
-        lo_elts.push(orig_discr);
+    /* The union span can be estimated only if there's a default
+     * layout.  The union spans its default layout, plus any prefix
+     * variant layout.  By construction both layouts, if present, have
+     * non-negative span. */
+    var span = -1;
+    if (default_layout) {
+        span = default_layout.span;
+        if ((0 &lt;= span) &amp;&amp; upv) {
+            span += discr.layout.span;
+        }
     }
-    var clo = default_layout;
-    if (undefined === clo.property) {
-        clo = clo.replicate('content');
-    }
-    lo_elts.push(clo);
-    var layout = new Structure(lo_elts);
-
-    /* The union spans its layout. */
-    Layout.call(this, layout.span, property);
-
-    /** The layout for unrecognized variants.
-     *
-     * This is a {@link Structure|Structure} layout containing one or
-     * two fields.
-     *
-     * If the {@link Union#discriminator|discriminator} is a {@link
-     * Union#usesPrefixDiscriminator|prefix discriminator} there are
-     * two fields, the first being the discriminator layout element.
-     * If the provided discriminator layout element was not given a
-     * {@link Layout#property|property}, `variant` will be used.
-     *
-     * The last field in the layout is the {@link
-     * Union#default_layout|default layout}.  If the provided default
-     * layout was not given a {@link Layout#property|property},
-     * `content` will be used. */
-    this.layout = layout;
+    Layout.call(this, span, property);
 
     /** The interface for the discriminator value in isolation.
      *
-     * This is the discriminator object passed to the constructor, or
-     * a {@link UnionDiscriminator|UnionDiscriminator} synthesized
-     * from an unsigned integer layout element passed as the
-     * discriminator.  In the latter case it is structurally identical
-     * to the first component of {@link Union#layout|layout} but may
-     * use a different {@link Layout#property|property}, and {@link
+     * This a {@link UnionDiscriminator|UnionDiscriminator} either
+     * passed to the constructor or synthesized from the `discr`
+     * constructor argument.  {@link
      * Union#usesPrefixDiscriminator|usesPrefixDiscriminator} will be
-     * `true`. */
+     * `true` iff the `discr` parameter was a non-offset {@link
+     * Layout|Layout} instance. */
     this.discriminator = discr;
 
     /** `true` if the {@link Union#discriminator|discriminator} is the
      * first field in the union.
      *
-     * If `false` the discriminator is either external to the union or
-     * encoded within the {@link Union#default_layout|default
-     * layout}. */
+     * If `false` the discriminator is obtained from somewhere
+     * else. */
     this.usesPrefixDiscriminator = upv;
 
     /** The layout for non-discriminator content when the value of the
@@ -1129,10 +1221,87 @@ function Union (discr,
      * manipulate the content of this property. */
     this.registry = {};
 
+    /* Private variable used when invoking getSourceVariant */
+    var get_source_variant = this.defaultGetSourceVariant.bind(this);
+
+    /** Function to infer the variant selected by a source object.
+     *
+     * Defaults to {@link
+     * Union#defaultGetSourceVariant|defaultGetSourceVariant} but may
+     * be overridden using {@link
+     * Union#configGetSourceVariant|configGetSourceVariant}.
+     *
+     * @param {Object} src - as with {@link
+     * Union#defaultGetSourceVariant|defaultGetSourceVariant}.
+     *
+     * @returns {(undefined|VariantLayout)} The default variant
+     * (`undefined`) or first registered variant that uses a property
+     * available in `src`. */
+    this.getSourceVariant = function (src) { return get_source_variant(src); };
+
+    /** Function to override the implementation of {@link
+     * Union#getSourceVariant|getSourceVariant}.
+     *
+     * Use this if the desired variant cannot be identified using the
+     * algorithm of {@link
+     * Union#defaultGetSourceVariant|defaultGetSourceVariant}.
+     *
+     * **NOTE** The provided function will be invoked bound to this
+     * Union instance, providing local access to {@link
+     * Union#registry|registry}.
+     *
+     * @param {Function} gsv - a function that follows the API of
+     * {@link Union#defaultGetSourceVariant|defaultGetSourceVariant}. */
+    this.configGetSourceVariant = function (gsv) {
+        get_source_variant = gsv.bind(this);
+    };
+
     Object.freeze(this);
 }
 Union.prototype = Object.create(Layout.prototype);
 Union.prototype.constructor = Union;
+/** Implement {@link Layout#getSpan|getSpan} for {@link Union|Uniont}. */
+Union.prototype.getSpan = function (b, offset) {
+    if (0 &lt;= this.span) {
+        return this.span;
+    }
+    if (undefined === offset) {
+        offset = 0;
+    }
+    /* Default layouts always have non-negative span, so we don't have
+     * one and we have to recognize the variant which will in turn
+     * determine the span. */
+    var vlo = this.getVariant(b, offset);
+    if (! vlo) {
+        throw new Error("unable to determine span for unrecognized variant");
+    }
+    return vlo.getSpan(b, offset);
+};
+/** Method to infer a registered Union variant compatible with `src`.
+ *
+ * @param {Object} src - an object presumed to be compatible with the content of the Union.
+ *
+ * @return {(undefined|VariantLayout)} - If `src` has properties
+ * matching the Union discriminator and default layout properties this
+ * returns `undefined`.  Otherwise, if `src` has a property matching a
+ * {@link VariantLayout#property|variant property} that variant is
+ * returned.  Otherwise an error is thrown.
+ *
+ * @throws {Error} - if `src` cannot be associated with a default or
+ * registered variant. */
+Union.prototype.defaultGetSourceVariant = function (src) {
+    if (src.hasOwnProperty(this.discriminator.property)
+        &amp;&amp; src.hasOwnProperty(this.default_layout.property)) {
+        return undefined;
+    }
+    for (var k in this.registry) {
+        var lo = this.registry[k];
+        if (src.hasOwnProperty(lo.property)) {
+            return lo;
+        }
+    }
+    throw new Error("unable to infer src variant");
+};
 /** Implement {@link Layout#decode|decode} for {@link Union|Union}.
  *
  * If the variant is {@link Union#addVariant|registered} the return
@@ -1149,10 +1318,9 @@ Union.prototype.decode = function (b, offset) {
         clo = this.registry[discr];
     if (undefined === clo) {
         var content_offset = 0;
-        clo = this.layout.fields[0];
+        clo = this.default_layout;
         if (this.usesPrefixDiscriminator) {
             content_offset = dlo.layout.span;
-            clo = this.layout.fields[1];
         }
         dest[dlo.property] = discr;
         dest[clo.property] = this.default_layout.decode(b, offset + content_offset);
@@ -1171,20 +1339,19 @@ Union.prototype.encode = function (src, b, offset) {
     if (undefined === offset) {
         offset = 0;
     }
-    var dlo = this.discriminator,
-        discr = src[dlo.property];
-    var content_offset = 0,
-        clo = this.layout.fields[0];
-    if (this.usesPrefixDiscriminator) {
-        content_offset = dlo.layout.span;
-        clo = this.layout.fields[1];
+    var vlo = this.getSourceVariant(src);
+    if (undefined === vlo) {
+        var dlo = this.discriminator,
+            clo = this.default_layout,
+            content_offset = 0;
+        if (this.usesPrefixDiscriminator) {
+            content_offset = dlo.layout.span;
+        }
+        dlo.encode(src[dlo.property], b, offset);
+        clo.encode(src[clo.property], b, offset + content_offset);
+    } else {
+        vlo.encode(src, b, offset);
     }
-    var content = src[clo.property];
-    if ((undefined === discr) || (undefined === content)) {
-        throw new Error("default union encode must be provided " + dlo.property + " and " + clo.property);
-    }
-    dlo.encode(discr, b, offset);
-    clo.encode(content, b, offset + content_offset);
 };
 /** Register a new variant structure within a union.  The newly
  * created variant is returned.
@@ -1266,16 +1433,22 @@ function VariantLayout (union,
     if (! (layout instanceof Layout)) {
         throw new TypeError("layout must be a Layout");
     }
-    if (layout.span > union.default_layout.span) {
-        throw new Error("layout span exceeds content span of containing union");
+    if ((null !== union.default_layout)
+        &amp;&amp; (0 &lt;= layout.span)
+        &amp;&amp; (layout.span > union.default_layout.span)) {
+        throw new Error("variant span exceeds span of containing union");
     }
     if (typeof property != 'string') {
         throw new TypeError("variant must have a String property");
     }
-    Layout.call(this, layout.span, property);
-    if (union.usesPrefixDiscriminator) {
-        this.span += union.discriminator.layout.span;
+    var span = union.span;
+    if (0 > union.span) {
+        span = layout.span;
+        if ((0 &lt;= span) &amp;&amp; union.usesPrefixDiscriminator) {
+            span += union.discriminator.layout.span;
+        }
     }
+    Layout.call(this, span, property);
 
     /** The {@link Union|Union} to which this variant belongs. */
     this.union = union;
@@ -1294,6 +1467,24 @@ function VariantLayout (union,
 }
 VariantLayout.prototype = Object.create(Layout.prototype);
 VariantLayout.prototype.constructor = VariantLayout;
+/** Implement {@link Layout#getSpan|getSpan} for {@link VariantLayout|VariantLayout}. */
+VariantLayout.prototype.getSpan = function (b, offset) {
+    if (0 &lt;= this.span) {
+        /* Will be equal to the containing union span if that is not
+         * variable. */
+        return this.span;
+    }
+    if (undefined === offset) {
+        offset = 0;
+    }
+    var content_offset = 0;
+    if (this.union.usesPrefixDiscriminator) {
+        content_offset = this.union.discriminator.layout.span;
+    }
+    /* Span is defined solely by the variant (and prefix discriminator) */
+    return content_offset + this.layout.getSpan(b, offset + content_offset);
+};
+
 /** Implement {@link Layout#decode|decode} for {@link VariantLayout|VariantLayout}. */
 VariantLayout.prototype.decode = function (b, offset) {
     var dest = {};
@@ -1315,7 +1506,8 @@ VariantLayout.prototype.encode = function (src, b, offset) {
     if (undefined === offset) {
         offset = 0;
     }
-    var content_offset = 0;
+    var content_offset = 0,
+        clo = this.union.default_layout;
     if (this.union.usesPrefixDiscriminator) {
         content_offset = this.union.discriminator.layout.span;
     }
@@ -1324,6 +1516,11 @@ VariantLayout.prototype.encode = function (src, b, offset) {
     }
     this.union.discriminator.encode(this.variant, b, offset);
     this.layout.encode(src[this.property], b, offset + content_offset);
+    var span = this.layout.getSpan(b, offset + content_offset);
+    if ((0 &lt;= this.union.span)
+        &amp;&amp; ((content_offset + span) > this.union.span)) {
+        throw new Error('encoded variant overruns containing union');
+    }
 };
 /** Delegate {@link Layout#fromArray|fromArray} to {@link
  * VariantLayout#layout|layout}. */
@@ -1632,6 +1829,9 @@ Blob.prototype.encode = function (src, b, offset) {
            &amp;&amp; (span === src.length))) {
         throw new Error("Blob.encode requires length " + span + " Buffer as src");
     }
+    if ((offset + span) > b.length) {
+        throw new RangeError('encoding overruns Buffer');
+    }
     b.write(src.toString('hex'), offset, span, 'hex');
     if (this.length instanceof OffsetLayout) {
         this.length.encode(span, b, offset);
@@ -1692,8 +1892,54 @@ CString.prototype.encode = function (src, b, offset) {
     }
     var srcb = new Buffer(src, 'utf8');
     var span = srcb.length;
+    if ((offset + span) > b.length) {
+        throw new RangeError('encoding overruns Buffer');
+    }
     srcb.copy(b, offset);
     b[offset+span] = 0;
+};
+
+/** Contain a constant value.
+ *
+ * This layout may be used in cases where a JavaScript value can be
+ * inferred without an expression in the binary encoding.  An example
+ * would be a {@link VariantLayout|variant layout} where the content
+ * is implied by the union {@link Union#discriminator|discriminator}.
+ *
+ * @param value - initializer for {@link Constant#value|value}.  If
+ * the value is an object (or array) and the application intends the
+ * object to remain unchanged regardless of what is done to values
+ * decoded by this layout, the value should be frozen prior passing it
+ * to this constructor.
+ *
+ * @param {String} [property] - initializer for {@link
+ * Layout#property|property}.
+ *
+ * @constructor
+ * @augments {Layout} */
+function Constant (value, property) {
+    /** The value produced by this constant when the layout is {@link
+     * Constant#decode|decoded}.
+     *
+     * Any JavaScript value including `null` and `undefined` is
+     * permitted.
+     *
+     * **WARNING** If `value` passed in the constructor was not
+     * frozen, it is possible for users of decoded values to change
+     * the content of the value. */
+    this.value = value;
+    Layout.call(this, 0, property);
+    Object.freeze(this);
+}
+Constant.prototype = Object.create(Layout.prototype);
+Constant.prototype.constructor = Constant;
+/** Implement {@link Layout#decode|decode} for {@link Constant|Constant}. */
+Constant.prototype.decode = function (b, offset, dest) {
+    return this.value;
+};
+/** Implement {@link Layout#encode|encode} for {@link Constant|Constant}. */
+Constant.prototype.encode = function (src, b, offset) {
+    /* Nothing to do */
 };
 
 exports.Layout = Layout;
@@ -1716,6 +1962,7 @@ exports.BitStructure = BitStructure;
 exports.BitField = BitField;
 exports.Blob = Blob;
 exports.CString = CString;
+exports.Constant = Constant;
 
 /** Factory for {@link OffsetLayout|OffsetLayout} */
 exports.offset = function (layout, offset, property) { return new OffsetLayout(layout, offset, property); };
@@ -1833,13 +2080,16 @@ exports.seq = function (elt_layout, count, property) { return new Sequence(elt_l
 exports.union = function (discr, default_layout, property) { return new Union(discr, default_layout, property); };
 
 /** Factory for {@link UnionLayoutDiscriminator|UnionLayoutDiscriminator} values. */
-exports.unionLayoutDiscriminator = function (layout, offset, property) { return new UnionLayoutDiscriminator(layout, offset, property); };
+exports.unionLayoutDiscriminator = function (layout, property) { return new UnionLayoutDiscriminator(layout, property); };
 
 /** Factory for {@link Blob|Blob} values. */
 exports.blob = function (length, property) { return new Blob(length, property); };
 
 /** Factory for {@link CString|CString} values. */
 exports.cstr = function (property) { return new CString(property); };
+
+/** Factory for {@link Constant|Constant} values. */
+exports.const = function (value, property) { return new Constant(value, property); };
 </code></pre>
         </article>
     </section>
@@ -1850,13 +2100,13 @@ exports.cstr = function (property) { return new CString(property); };
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sat Nov 21 2015 19:12:21 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Mon Nov 23 2015 17:43:02 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>
