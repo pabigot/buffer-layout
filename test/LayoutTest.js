@@ -1076,6 +1076,7 @@ suite("Layout", function () {
             var obj = st.decode(b);
             assert.equal(obj.l, 4);
             assert.equal(obj.b.toString('hex'), '03040506');
+            assert.throws(function () { st.encode({b: new Buffer(b.length)}, b, 1); }, RangeError);
         });
     });
     suite("issue#8", function () {
@@ -1172,6 +1173,7 @@ suite("Layout", function () {
             assert.equal(Buffer('414200ff', 'hex').compare(b), 0);
             cst.encode(5, b);
             assert.equal(Buffer('350000ff', 'hex').compare(b), 0);
+            assert.throws(function () { cst.encode('too long', b); }, RangeError);
         });
         test("in struct", function () {
             var st = lo.struct([lo.cstr('k'),
