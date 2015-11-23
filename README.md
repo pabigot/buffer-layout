@@ -213,7 +213,7 @@ See [OffsetLayout](http://pabigot.github.io/buffer-layout/module-Layout-OffsetLa
 
 ### Tagged values, or variable-length unions
 
-Storing arbitrary date using a leading byte to identify the content then
+Storing arbitrary data using a leading byte to identify the content then
 a value that takes up only as much room as is necessary.
 
 The example also shows how to extend the variant recognition API to
