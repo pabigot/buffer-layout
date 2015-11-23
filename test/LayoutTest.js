@@ -3,6 +3,15 @@ var assert = require("assert"),
     lo = require("../lib/Layout");
 
 suite("Layout", function () {
+    suite("Buffer", function () {
+        test("issue 3992", function () {
+            var buf = new Buffer(4);
+            buf.writeIntLE(-0x120000, 0, 4);
+            assert.deepEqual(buf.toJSON().data, [ 0x00, 0x00, 0xee, 0xff ]);
+            buf.writeIntBE(-0x120000, 0, 4);
+            assert.deepEqual(buf.toJSON().data, [ 0xff, 0xee, 0x00, 0x00 ]);
+        });
+    });
     suite("Layout", function () {
         test("anonymous ctor", function () {
             var d = new lo.Layout(8);
@@ -286,17 +295,17 @@ suite("Layout", function () {
             assert.equal(seq.getSpan(), seq.span);
             assert.equal(seq.property, 'id');
             b.fill(0);
-            assert(_.isEqual(seq.decode(b), [0,0,0,0]));
+            assert.deepEqual(seq.decode(b), [0,0,0,0]);
             seq.encode([1,2,3,4], b);
-            assert(_.isEqual(seq.decode(b), [1,2,3,4]));
+            assert.deepEqual(seq.decode(b), [1,2,3,4]);
             seq.encode([5,6], b, 1);
-            assert(_.isEqual(seq.decode(b), [1,5,6,4]));
+            assert.deepEqual(seq.decode(b), [1,5,6,4]);
         });
         test("in struct", function () {
             var seq = lo.seq(lo.u8(), 4, 'id'),
                 str = lo.struct([seq]),
                 d = str.decode(Buffer('01020304', 'hex'));
-            assert(_.isEqual(d, {id:[1,2,3,4]}));
+            assert.deepEqual(d, {id:[1,2,3,4]});
         });
         test("struct elts", function () {
             var st = new lo.Structure([lo.u8('u8'),
@@ -310,7 +319,7 @@ suite("Layout", function () {
             assert.equal(seq.span, 15);
             seq.encode(tv, b);
             assert.equal(Buffer('0110270000000000000003bcfeffff', 'hex').compare(b), 0);
-            assert(_.isEqual(seq.decode(b), tv));
+            assert.deepEqual(seq.decode(b), tv);
             seq.encode([{u8:2,s32:0x12345678}], b, st.span);
             assert.equal(Buffer('0110270000027856341203bcfeffff', 'hex').compare(b), 0);
         });
@@ -321,7 +330,7 @@ suite("Layout", function () {
                 b = Buffer('03010203', 'hex'),
                 obj = st.decode(b);
             assert.equal(obj.n, 3);
-            assert(_.isEqual(obj.a, [1,2,3]));
+            assert.deepEqual(obj.a, [1,2,3]);
             b = new Buffer(10);
             obj = { n:3, a: [5,6,7,8,9] };
             st.encode(obj, b);
@@ -337,13 +346,19 @@ suite("Layout", function () {
                 b = Buffer('036100620063646500', 'hex'),
                 obj = st.decode(b);
             assert.equal(obj.n, 3);
-            assert(_.isEqual(obj.a, ['a', 'b', 'cde']));
+            assert.deepEqual(obj.a, ['a', 'b', 'cde']);
             b = new Buffer(10);
             obj = { n:6, a: ['one', 'two'] };
             st.encode(obj, b);
             var span = st.getSpan(b);
             assert.equal(span, 9);
             assert.equal(Buffer('026f6e650074776f00', 'hex').compare(b.slice(0, span)), 0);
+        });
+        test("zero-count", function () {
+            var seq = lo.seq(lo.u8(), 0),
+                b = Buffer('', 'hex');
+            assert.equal(seq.span, 0);
+            assert.deepEqual(seq.decode(b), []);
         });
     });
     suite("Structure", function () {
@@ -366,11 +381,11 @@ suite("Layout", function () {
             assert.strictEqual(st.property, undefined);
             b.fill(0);
             var obj = st.decode(b);
-            assert(_.isEqual(obj, {u8:0, u16:0, s16be:0}));
+            assert.deepEqual(obj, {u8:0, u16:0, s16be:0});
             obj = {u8:21, u16:0x1234, s16be:-5432};
             st.encode(obj, b);
             assert.equal(Buffer('153412eac8', 'hex').compare(b), 0);
-            assert(_.isEqual(st.decode(b), obj));
+            assert.deepEqual(st.decode(b), obj);
         });
         test("padding", function () {
             var st = new lo.Structure([lo.u16('u16'),
@@ -380,12 +395,12 @@ suite("Layout", function () {
             assert.equal(st.span, 5);
             b.fill(0);
             var obj = st.decode(b);
-            assert(_.isEqual(obj, {u16:0, s16be:0}));
+            assert.deepEqual(obj, {u16:0, s16be:0});
             b.fill(0xFF);
             obj = {u16:0x1234, s16be:-5432};
             st.encode(obj, b);
             assert.equal(Buffer('3412ffeac8', 'hex').compare(b), 0);
-            assert(_.isEqual(st.decode(b), obj));
+            assert.deepEqual(st.decode(b), obj);
         });
         test("missing", function () {
             var st = new lo.Structure([lo.u16('u16'),
@@ -395,12 +410,12 @@ suite("Layout", function () {
             assert.equal(st.span, 5);
             b.fill(0);
             var obj = st.decode(b);
-            assert(_.isEqual(obj, {u16:0, u8:0, s16be:0}));
+            assert.deepEqual(obj, {u16:0, u8:0, s16be:0});
             b.fill(0xa5);
             obj = {u16:0x1234, s16be:-5432};
             st.encode(obj, b);
             assert.equal(Buffer('3412a5eac8', 'hex').compare(b), 0);
-            assert(_.isEqual(st.decode(b), _.extend(obj, {u8:0xa5})));
+            assert.deepEqual(st.decode(b), _.extend(obj, {u8:0xa5}));
         });
         test("update", function () {
             var st = new lo.Structure([lo.u8('u8'),
@@ -408,7 +423,7 @@ suite("Layout", function () {
                                        lo.s16be('s16be')]),
                 b = Buffer('153412eac8', 'hex'),
                 rc = st.decode(b, 0);
-            assert(_.isEqual(rc, {u8:21, u16:0x1234, s16be:-5432}));
+            assert.deepEqual(rc, {u8:21, u16:0x1234, s16be:-5432});
         });
         test("nested", function () {
             var st = new lo.Structure([lo.u8('u8'),
@@ -430,7 +445,13 @@ suite("Layout", function () {
             assert.equal(cst.span, 12);
             cst.encode(obj, b);
             assert.equal(Buffer('785634121798ffcfc7c01dfe', 'hex').compare(b), 0);
-            assert(_.isEqual(cst.decode(b), obj));
+            assert.deepEqual(cst.decode(b), obj);
+        });
+        test("empty", function () {
+            var st = lo.struct([], 'st'),
+                b = Buffer('', 'hex');
+            assert.equal(st.span, 0);
+            assert.deepEqual(st.decode(b), {});
         });
     });
     suite("replicate", function () {
@@ -496,6 +517,18 @@ suite("Layout", function () {
             assert.equal(d.variant, 1);
             assert.equal(d.property, 'd');
         });
+        test("span", function () {
+            var un = new lo.Union(lo.u8(), lo.u32()),
+                d = new lo.VariantLayout(un, 1, lo.cstr(), 's'),
+                b = new Buffer(12);
+            d.encode({s: 'hi!'}, b);
+            assert.equal(un.getSpan(b), 5);
+            assert.equal(Buffer('0168692100', 'hex').compare(b.slice(0, 5)), 0);
+            // This one overruns the Buffer
+            assert.throws(function () { d.encode({s:'far too long'}, b); }, RangeError);
+            // This one fits in the buffer but overruns the union
+            assert.throws(function () { d.encode({s:'too long'}, b); }, Error);
+        });
     });
     suite("OffsetLayout", function () {
         test("ctor", function () {
@@ -560,13 +593,14 @@ suite("Layout", function () {
             assert.throws(function () { new lo.Union(); }, TypeError);
             assert.throws(function () { new lo.Union("other"); }, TypeError);
             assert.throws(function () { new lo.Union(lo.f32()); }, TypeError);
-            assert.throws(function () { new lo.Union(lo.u8()); }, TypeError);
             assert.throws(function () { new lo.Union(lo.u8(), "other"); }, TypeError);
+            assert.throws(function () { new lo.Union(lo.u8(), lo.cstr()); }, Error);
         });
         test("basics", function () {
             var dlo = lo.u8(),
                 vlo = new lo.Sequence(lo.u8(), 8),
                 un = new lo.Union(dlo, vlo),
+                clo = un.default_layout,
                 b = new Buffer(9);
             assert(un instanceof lo.Union);
             assert(un instanceof lo.Layout);
@@ -574,18 +608,18 @@ suite("Layout", function () {
             assert.equal(un.getSpan(), un.span);
             assert(un.usesPrefixDiscriminator);
             assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
-            assert.strictEqual(un.default_layout, vlo);
-            assert(un.layout instanceof lo.Structure);
-            assert.equal(un.layout.fields.length, 2);
+            assert.notStrictEqual(clo, vlo);
+            assert(clo instanceof vlo.constructor);
+            assert.equal(clo.count, vlo.count);
+            assert.strictEqual(clo.elt_layout, vlo.elt_layout);
             assert.equal(un.discriminator.property, 'variant');
-            assert.strictEqual(un.layout.fields[0].property, undefined);
-            assert.equal(un.layout.fields[1].property, 'content');
+            assert.equal(un.default_layout.property, 'content');
             assert.equal(dlo.span + vlo.span, un.span);
             assert.strictEqual(un.property, undefined);
             b.fill(0);
             var o = un.decode(b);
             assert.equal(o.variant, 0);
-            assert(_.isEqual(o.content, [0,0,0,0, 0,0,0,0]));
+            assert.deepEqual(o.content, [0,0,0,0, 0,0,0,0]);
             o.variant = 5;
             o.content[3] = 3;
             o.content[7] = 7;
@@ -599,7 +633,7 @@ suite("Layout", function () {
                 b = new Buffer(5);
             assert.strictEqual(un.getVariant(1), undefined);
             b.fill(0);
-            assert(_.isEqual(un.decode(b), {v: 0, c:[0,0,0,0]}));
+            assert.deepEqual(un.decode(b), {v: 0, c:[0,0,0,0]});
             var lo1 = lo.u32(),
                 v1 = un.addVariant(1, lo1, 'v1');
             assert(v1 instanceof lo.VariantLayout);
@@ -607,29 +641,29 @@ suite("Layout", function () {
             assert.strictEqual(v1.layout, lo1);
             b.fill(1);
             assert.strictEqual(un.getVariant(b), v1);
-            assert(_.isEqual(v1.decode(b), { v1: 0x01010101 }));
-            assert(_.isEqual(un.decode(b), { v1: 0x01010101 }));
+            assert.deepEqual(v1.decode(b), { v1: 0x01010101 });
+            assert.deepEqual(un.decode(b), { v1: 0x01010101 });
             var lo2 = lo.f32(),
                 v2 = un.addVariant(2, lo2, 'v2');
             un.discriminator.encode(v2.variant, b);
             assert.strictEqual(un.getVariant(b), v2);
-            assert(_.isEqual(v2.decode(b), { v2: 2.3694278276172396e-38 }));
-            assert(_.isEqual(un.decode(b), { v2: 2.3694278276172396e-38 }));
+            assert.deepEqual(v2.decode(b), { v2: 2.3694278276172396e-38 });
+            assert.deepEqual(un.decode(b), { v2: 2.3694278276172396e-38 });
             var lo3 = new lo.Structure([lo.u8('a'), lo.u8('b'), lo.u16('c')]),
                 v3 = un.addVariant(3, lo3, 'v3');
             un.discriminator.encode(v3.variant, b);
             assert.strictEqual(un.getVariant(b), v3);
-            assert(_.isEqual(v3.decode(b), {v3: {a:1, b:1, c:257}}));
-            assert(_.isEqual(un.decode(b), {v3: {a:1, b:1, c:257}}));
+            assert.deepEqual(v3.decode(b), {v3: {a:1, b:1, c:257}});
+            assert.deepEqual(un.decode(b), {v3: {a:1, b:1, c:257}});
             un.discriminator.encode(v2.variant, b);
             assert.equal(Buffer('0201010101', 'hex').compare(b), 0);
             var obj = { v3: {a:5, b:6, c:1540}};
             v3.encode(obj, b);
-            assert(_.isEqual(un.decode(b), obj));
+            assert.deepEqual(un.decode(b), obj);
             assert.equal(Buffer('0305060406', 'hex').compare(b), 0);
             assert.throws(function () { v2.encode(obj, b); }, TypeError);
             assert.throws(function () { v2.decode(b); }, Error);
-        })
+        });
         test("custom default", function () {
             var dlo = lo.u8('number'),
                 vlo = new lo.Sequence(lo.u8(), 8, 'payload'),
@@ -641,10 +675,8 @@ suite("Layout", function () {
             assert.equal(un.discriminator.property, dlo.property);
             assert.equal(un.discriminator.layout.offset, 0);
             assert.strictEqual(un.default_layout, vlo);
-            assert(un.layout instanceof lo.Structure);
-            assert.equal(un.layout.fields.length, 2);
-            assert.equal(un.layout.fields[0].property, 'number');
-            assert.equal(un.layout.fields[1].property, 'payload');
+            assert.equal(un.discriminator.property, 'number');
+            assert.equal(un.default_layout.property, 'payload');
         });
         test("inStruct", function () {
             var dlo = lo.u8('uid'),
@@ -657,7 +689,7 @@ suite("Layout", function () {
                 obj = st.decode(b);
             assert.equal(obj.u16, 0x0100);
             assert.equal(obj.u.uid, 2);
-            assert(_.isEqual(obj.u.payload, [3,4,5]));
+            assert.deepEqual(obj.u.payload, [3,4,5]);
             assert.equal(obj.s16, 1798);
             obj.u16 = 0x5432;
             obj.s16 = -3;
@@ -673,7 +705,7 @@ suite("Layout", function () {
                 b = Buffer("000102030405060708", 'hex'),
                 obj = un.decode(b);
             assert.equal(obj.number, 0);
-            assert(_.isEqual(obj.payload, [1,2,3,4,5,6,7,8]));
+            assert.deepEqual(obj.payload, [1,2,3,4,5,6,7,8]);
             var b2 = new Buffer(un.span);
             un.encode(obj, b2);
             assert.equal(b2.toString('hex'), b.toString('hex'));
@@ -683,58 +715,62 @@ suite("Layout", function () {
         });
         test("issue#7.internal.anon", function () {
             var dlo = lo.u8(),
-                plo = new lo.Sequence(lo.u8(), 8, 'payload');
+                plo = new lo.Sequence(lo.u8(), 8, 'payload'),
                 vlo = new lo.Structure([plo, dlo]),
-                ud = new lo.UnionLayoutDiscriminator(dlo, plo.span),
-                un = new lo.Union(ud, vlo),
+                un = new lo.Union(lo.offset(dlo, plo.span), vlo),
+                clo = un.default_layout,
                 b = Buffer("000102030405060708", 'hex'),
                 obj = un.decode(b);
             assert(! un.usesPrefixDiscriminator);
             assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
             assert.equal(un.discriminator.property, 'variant');
-            assert.equal(un.layout.fields.length, 1);
-            assert.equal(un.layout.fields[0].property, 'content');
-            assert.strictEqual(un.default_layout, vlo);
-            assert(_.isEqual(obj.content, {payload: [0,1,2,3,4,5,6,7]}));
+            assert.equal(un.default_layout.property, 'content');
+            assert.notStrictEqual(clo, vlo);
+            assert(clo instanceof vlo.constructor);
+            assert.strictEqual(clo.fields, vlo.fields);
+            assert.deepEqual(obj.content, {payload: [0,1,2,3,4,5,6,7]});
             assert.equal(obj.variant, 8);
         });
         test("issue#7.internal.named", function () {
             var dlo = lo.u8(),
-                plo = new lo.Sequence(lo.u8(), 8, 'payload');
+                plo = new lo.Sequence(lo.u8(), 8, 'payload'),
                 vlo = new lo.Structure([plo, dlo]),
-                ud = new lo.UnionLayoutDiscriminator(dlo, plo.span, 'tag'),
+                ud = new lo.UnionLayoutDiscriminator(lo.offset(dlo, plo.span), 'tag'),
                 un = new lo.Union(ud, vlo),
+                clo = un.default_layout,
                 b = Buffer("000102030405060708", 'hex'),
                 obj = un.decode(b);
             assert(! un.usesPrefixDiscriminator);
             assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
             assert.equal(un.discriminator.property, 'tag');
-            assert.equal(un.layout.fields.length, 1);
-            assert.equal(un.layout.fields[0].property, 'content');
-            assert.strictEqual(un.default_layout, vlo);
-            assert(_.isEqual(obj.content, {payload: [0,1,2,3,4,5,6,7]}));
+            assert.equal(clo.property, 'content');
+            assert.notStrictEqual(clo, vlo);
+            assert(clo instanceof vlo.constructor);
+            assert.strictEqual(clo.fields, vlo.fields);
+            assert.deepEqual(obj.content, {payload: [0,1,2,3,4,5,6,7]});
             assert.equal(obj.tag, 8);
         });
         test("issue#7.internal.named2", function () {
             var dlo = lo.u8('vid'),
-                plo = new lo.Sequence(lo.u8(), 8, 'payload');
+                plo = new lo.Sequence(lo.u8(), 8, 'payload'),
                 vlo = new lo.Structure([plo, dlo]),
-                ud = new lo.UnionLayoutDiscriminator(dlo, plo.span),
-                un = new lo.Union(ud, vlo),
+                un = new lo.Union(lo.offset(dlo, plo.span), vlo),
+                clo = un.default_layout,
                 b = Buffer("000102030405060708", 'hex'),
                 obj = un.decode(b);
             assert(! un.usesPrefixDiscriminator);
             assert(un.discriminator instanceof lo.UnionLayoutDiscriminator);
             assert.equal(un.discriminator.property, 'vid');
-            assert.equal(un.layout.fields.length, 1);
-            assert.equal(un.layout.fields[0].property, 'content');
-            assert.strictEqual(un.default_layout, vlo);
-            assert(_.isEqual(obj.content, {payload: [0,1,2,3,4,5,6,7], vid:8}));
+            assert.equal(clo.property, 'content');
+            assert.notStrictEqual(clo, vlo);
+            assert(clo instanceof vlo.constructor);
+            assert.strictEqual(clo.fields, vlo.fields);
+            assert.deepEqual(obj.content, {payload: [0,1,2,3,4,5,6,7], vid:8});
             assert.equal(obj.vid, 8);
         });
         test("issue#7.external", function () {
             var dlo = lo.u8('vid'),
-                ud = new lo.UnionLayoutDiscriminator(dlo, -3, 'uid'),
+                ud = new lo.UnionLayoutDiscriminator(lo.offset(dlo, -3), 'uid'),
                 un = new lo.Union(ud, lo.u32('u32'), 'u'),
                 st = new lo.Structure([dlo, lo.u16('u16'), un, lo.s16('s16')]);
             assert.equal(un.span, 4);
@@ -766,18 +802,109 @@ suite("Layout", function () {
             assert.equal(fobj.s16, 0x7698);
             assert.equal(fobj.u.vf, 54.625);
         });
+        test("from src", function () {
+            var un = new lo.Union(lo.u8('v'), lo.u32('u32')),
+                v1 = un.addVariant(1, lo.f32(), 'f32'),
+                v2 = un.addVariant(2, lo.seq(lo.u8(), 4), 'u8.4'),
+                v3 = un.addVariant(3, lo.cstr(), 'str'),
+                b = new Buffer(un.span);
+
+            assert.equal(un.span, 5);
+
+            var src = {v:5, u32:0x12345678},
+                vlo = un.getSourceVariant(src);
+            assert.strictEqual(vlo, undefined);
+            un.encode(src, b);
+            assert.equal(Buffer('0578563412', 'hex').compare(b), 0);
+
+            src = {f32:26.5};
+            vlo = un.getSourceVariant(src);
+            assert.strictEqual(vlo, v1);
+            vlo.encode(src, b);
+            assert.equal(Buffer('010000d441', 'hex').compare(b), 0);
+            un.encode(src, b);
+            assert.equal(Buffer('010000d441', 'hex').compare(b), 0);
+
+            src = {"u8.4":[1,2,3,4]};
+            vlo = un.getSourceVariant(src);
+            assert.strictEqual(vlo, v2);
+            vlo.encode(src, b);
+            assert.equal(Buffer('0201020304', 'hex').compare(b), 0);
+            un.encode(src, b);
+            assert.equal(Buffer('0201020304', 'hex').compare(b), 0);
+
+            assert.throws(function () { un.getSourceVariant({other:3}); }, Error);
+            src = { str: 'hi' };
+            vlo = un.getSourceVariant(src);
+            assert.strictEqual(vlo, v3);
+            b.fill(0xFF);
+            vlo.encode(src, b);
+            assert.equal(Buffer('03686900FF', 'hex').compare(b.slice(0, 5+2)), 0);
+            assert(0 > vlo.layout.span);
+            assert.equal(vlo.span, un.span);
+            assert.equal(vlo.layout.getSpan(b, 1), 3);
+            assert.equal(vlo.getSpan(b), un.span);
+        });
+        test("customize src", function () {
+            var un = lo.union(lo.u8('v'), lo.u32('u32')),
+                csrc;
+            un.configGetSourceVariant(function (src) {
+                csrc = src;
+                return this.defaultGetSourceVariant(src);
+            });
+            var src = {v:3, u32:29},
+                vlo = un.getSourceVariant(src);
+            assert.strictEqual(src, csrc);
+            assert.strictEqual(vlo, undefined);
+        });
+        test("variable span", function () {
+            var un = lo.union(lo.u8('v')),
+                v1 = un.addVariant(1, lo.u32(), 'u32'),
+                v2 = un.addVariant(2, lo.f64(), 'f64'),
+                v3 = un.addVariant(3, lo.cstr(), 'str'),
+                b = new Buffer(16);
+            assert(un.span < 0);
+
+            b.fill(0xFF);
+            assert.throws(function () { un.decode(b); }, Error);
+            var obj = {u32: 0x12345678};
+            un.encode(obj, b);
+            assert.equal(v1.getSpan(b), 5);
+            assert.equal(un.getSpan(b), 5);
+            assert.equal(Buffer('0178563412ffff', 'hex').compare(b.slice(0, 5+2)), 0);
+            assert.deepEqual(un.decode(b), obj);
+
+            b.fill(0xFF);
+            obj = { f64: 1234.5 };
+            un.encode(obj, b);
+            assert.equal(v2.getSpan(b), 9);
+            assert.equal(un.getSpan(b), 9);
+            assert.equal(Buffer('0200000000004a9340ffff', 'hex').compare(b.slice(0, 9+2)), 0);
+            assert.deepEqual(un.decode(b), obj);
+
+            b.fill(0xFF);
+            obj = { str: 'hi!' };
+            un.encode(obj, b);
+            assert.equal(v3.getSpan(b), 5);
+            assert.equal(un.getSpan(b), 5);
+            assert.equal(Buffer('0368692100ffff', 'hex').compare(b.slice(0, 5+2)), 0);
+            assert.deepEqual(un.decode(b), obj);
+
+            b[0] = 5;
+            assert.throws(function () { un.getSpan(b); }, Error);
+        });
     });
     test("fromArray", function () {
         assert.strictEqual(lo.u8().fromArray([1]), undefined);
         var st = new lo.Structure([lo.u8('a'), lo.u8('b'), lo.u16('c')]);
-        assert(_.isEqual(st.fromArray([1,2,3]), {a:1, b:2, c:3}));
-        assert(_.isEqual(st.fromArray([1,2]), {a:1, b:2}));
+        assert.deepEqual(st.fromArray([1,2,3]), {a:1, b:2, c:3});
+        assert.deepEqual(st.fromArray([1,2]), {a:1, b:2});
         var un = new lo.Union(lo.u8('v'), lo.u32('c'));
         assert.strictEqual(un.fromArray([1,2,3]), undefined);
         var v1 = un.addVariant(1, st, 'v1'),
             v2 = un.addVariant(2, lo.f32(), 'v2');
         assert(v1 instanceof lo.VariantLayout);
-        assert(_.isEqual(un.getVariant(1).fromArray([1,2,3]), {a:1, b:2, c:3}));
+        assert.deepEqual(un.getVariant(1).fromArray([1,2,3]), {a:1, b:2, c:3});
         assert.strictEqual(un.getVariant(2).fromArray([1,2,3]), undefined);
     });
     suite("BitStructure", function () {
@@ -932,11 +1059,11 @@ suite("Layout", function () {
             bs.addField(11, 'c11');
             bs.addField(16, 'd16');
             b.fill(0);
-            assert(_.isEqual(bs.decode(b), {a1:0, b4:0, c11:0, d16:0}));
+            assert.deepEqual(bs.decode(b), {a1:0, b4:0, c11:0, d16:0});
             b.fill(0xFF);
-            assert(_.isEqual(bs.decode(b), {a1:1, b4:0x0F, c11:0x7FF, d16:0xFFFF}));
+            assert.deepEqual(bs.decode(b), {a1:1, b4:0x0F, c11:0x7FF, d16:0xFFFF});
             bs.encode({a1:0, b4:9, c11:0x4F1, d16:0x8a51}, b);
-            assert(_.isEqual(bs.decode(b), {a1:0, b4:9, c11:0x4F1, d16:0x8a51}));
+            assert.deepEqual(bs.decode(b), {a1:0, b4:9, c11:0x4F1, d16:0x8a51});
             assert.equal(Buffer('329e518a', 'hex').compare(b), 0);
         });
         test("msb coding", function () {
@@ -947,11 +1074,11 @@ suite("Layout", function () {
             bs.addField(11, 'c11');
             bs.addField(16, 'd16');
             b.fill(0);
-            assert(_.isEqual(bs.decode(b), {a1:0, b4:0, c11:0, d16:0}));
+            assert.deepEqual(bs.decode(b), {a1:0, b4:0, c11:0, d16:0});
             b.fill(0xFF);
-            assert(_.isEqual(bs.decode(b), {a1:1, b4:0x0F, c11:0x7FF, d16:0xFFFF}));
+            assert.deepEqual(bs.decode(b), {a1:1, b4:0x0F, c11:0x7FF, d16:0xFFFF});
             bs.encode({a1:0, b4:9, c11:0x4F1, d16:0x8a51}, b);
-            assert(_.isEqual(bs.decode(b), {a1:0, b4:9, c11:0x4F1, d16:0x8a51}));
+            assert.deepEqual(bs.decode(b), {a1:0, b4:9, c11:0x4F1, d16:0x8a51});
             assert.equal(Buffer('518af14c', 'hex').compare(b), 0);
         });
         test("gap coding", function () {
@@ -967,8 +1094,8 @@ suite("Layout", function () {
             b.fill(0xA5);
             var lb = lsb.decode(b),
                 mb = msb.decode(b);
-            assert(_.isEqual(lb, { a5: 0x25, b6: 0x14b }));
-            assert(_.isEqual(mb, { a5: 0x52, b6: 0x1a5 }));
+            assert.deepEqual(lb, { a5: 0x25, b6: 0x14b });
+            assert.deepEqual(mb, { a5: 0x52, b6: 0x1a5 });
             b.fill(0x69);
             lsb.encode(lb, b);
             assert.equal(Buffer('25e9a5', 'hex').compare(b), 0);
@@ -1019,6 +1146,7 @@ suite("Layout", function () {
             var obj = st.decode(b);
             assert.equal(obj.l, 4);
             assert.equal(obj.b.toString('hex'), '03040506');
+            assert.throws(function () { st.encode({b: new Buffer(b.length)}, b, 1); }, RangeError);
         });
     });
     suite("issue#8", function () {
@@ -1026,36 +1154,34 @@ suite("Layout", function () {
             var ver = lo.u8('ver'),
                 hdr = new lo.Structure([lo.u8('id'),
                                         lo.u8('ver')], 'hdr'),
-                ud = new lo.UnionLayoutDiscriminator(ver, -1),
-                pld = new lo.Union(ud, new lo.Blob(8, 'blob'), 'u'),
+                pld = new lo.Union(lo.offset(ver, -ver.span), new lo.Blob(8, 'blob'), 'u'),
                 pkt = new lo.Structure([hdr, pld], 's'),
                 exp_blob = Buffer('1011121314151617', 'hex'),
                 b = Buffer('01021011121314151617', 'hex');
-            assert(_.isEqual(hdr.decode(b), {id:1, ver:2}));
+            assert.deepEqual(hdr.decode(b), {id:1, ver:2});
             var du = pld.decode(b, 2);
             assert.equal(du.ver, 2);
             assert.equal(exp_blob.compare(du.blob), 0);
             var dp = pkt.decode(b);
-            assert(_.isEqual(dp.hdr, {id: 1, ver: 2}));
+            assert.deepEqual(dp.hdr, {id: 1, ver: 2});
             assert.equal(dp.u.ver, 2);
             assert.equal(exp_blob.compare(dp.u.blob), 0);
 
             var v3 = pld.addVariant(2, new lo.Sequence(lo.u32(), 2, 'u32'), 'v3');
-            assert(_.isEqual(pld.decode(b, 2), { v3: [0x13121110, 0x17161514] }));
+            assert.deepEqual(pld.decode(b, 2), { v3: [0x13121110, 0x17161514] });
 
             dp = pkt.decode(b);
-            assert(_.isEqual(dp, {hdr:{id:1, ver:2}, u: { v3: [0x13121110, 0x17161514]}}));
+            assert.deepEqual(dp, {hdr:{id:1, ver:2}, u: { v3: [0x13121110, 0x17161514]}});
         });
         test("anon", function () {
             var ver = lo.u8('ver'),
                 hdr = new lo.Structure([lo.u8('id'),
                                         lo.u8('ver')]),
-                ud = new lo.UnionLayoutDiscriminator(ver, -1),
-                pld = new lo.Union(ud, new lo.Blob(8, 'blob')),
+                pld = new lo.Union(lo.offset(ver, -ver.span), new lo.Blob(8, 'blob')),
                 pkt = new lo.Structure([hdr, pld]),
                 exp_blob = Buffer('1011121314151617', 'hex'),
                 b = Buffer('01021011121314151617', 'hex');
-            assert(_.isEqual(hdr.decode(b), {id:1, ver:2}));
+            assert.deepEqual(hdr.decode(b), {id:1, ver:2});
             var du = pld.decode(b, 2);
             assert.equal(du.ver, 2);
             assert.equal(exp_blob.compare(du.blob), 0);
@@ -1066,11 +1192,11 @@ suite("Layout", function () {
             //assert.equal(exp_blob.compare(dp.blob), 0);
 
             var v3 = pld.addVariant(2, new lo.Sequence(lo.u32(), 2, 'u32'), 'v3');
-            assert(_.isEqual(pld.decode(b, 2), {v3: [0x13121110, 0x17161514]}));
+            assert.deepEqual(pld.decode(b, 2), {v3: [0x13121110, 0x17161514]});
 
             dp = pkt.decode(b);
             /* Ditto on want */
-            //assert(_.isEqual(dp, {id:1, ver:2, u32: [0x13121110, 0x17161514]}));
+            //assert.deepEqual(dp, {id:1, ver:2, u32: [0x13121110, 0x17161514]});
         });
     });
     suite("factories", function () {
@@ -1078,19 +1204,21 @@ suite("Layout", function () {
             var ver = lo.u8('ver'),
                 hdr = lo.struct([lo.u8('id'),
                                  lo.u8('ver')]),
-                ud = lo.unionLayoutDiscriminator(ver, -1),
-                pld = lo.union(ud, lo.blob(8, 'blob')),
+                pld = lo.union(lo.offset(ver, -ver.span), lo.blob(8, 'blob')),
                 pkt = lo.struct([hdr, pld]),
                 exp_blob = Buffer('1011121314151617', 'hex'),
                 b = Buffer('01021011121314151617', 'hex');
             assert(hdr instanceof lo.Structure);
-            assert(ud instanceof lo.UnionDiscriminator);
             assert(pld instanceof lo.Union);
             assert(pld.default_layout instanceof lo.Blob);
             assert.equal(pld.default_layout.property, 'blob');
         });
     });
     suite("CString", function () {
+        test("ctor", function () {
+            var cst = lo.cstr();
+            assert(0 > cst.span);
+        });
         test("#getSpan", function () {
             var cst = new lo.CString();
             assert.throws(function () { cst.getSpan(); }, TypeError);
@@ -1119,6 +1247,7 @@ suite("Layout", function () {
             assert.equal(Buffer('414200ff', 'hex').compare(b), 0);
             cst.encode(5, b);
             assert.equal(Buffer('350000ff', 'hex').compare(b), 0);
+            assert.throws(function () { cst.encode('too long', b); }, RangeError);
         });
         test("in struct", function () {
             var st = lo.struct([lo.cstr('k'),
@@ -1128,16 +1257,36 @@ suite("Layout", function () {
             assert.equal(st.fields[0].getSpan(b), 2);
             assert.equal(st.fields[1].getSpan(b, 2), 3);
             assert.equal(st.getSpan(b), 5);
-            assert(_.isEqual(st.decode(b), {k: 'a', v: '23'}));
+            assert.deepEqual(st.decode(b), {k: 'a', v: '23'});
             b.fill(0xff);
             st.encode({'k':'a', 'v': 23}, b);
         });
         test("in seq", function () {
             var seq = lo.seq(lo.cstr(), 3),
                 b = Buffer('61006263003500', 'hex');
-            assert(_.isEqual(seq.decode(b), ['a', 'bc', '5']));
+            assert.deepEqual(seq.decode(b), ['a', 'bc', '5']);
             seq.encode(['hi','u','c'], b);
             assert.equal(Buffer('68690075006300', 'hex').compare(b), 0);
+        });
+    });
+    suite("Constant", function () {
+        test("ctor", function () {
+            var c = new lo.Constant('value', 'p');
+            assert.equal(c.value, 'value');
+            assert.equal(c.property, 'p');
+            assert.equal(c.span, 0);
+        });
+        test("basics", function () {
+            var b = Buffer('', 'hex');
+            assert.strictEqual(lo.const(true).decode(b), true);
+            assert.strictEqual(lo.const(undefined).decode(b), undefined);
+            var obj = { a: 23 };
+            assert.strictEqual(lo.const(obj).decode(b), obj);
+            /* No return value to check, but this shouldn't throw an
+             * exception (which it would if it tried to mutate the
+             * zero-length buffer). */
+            lo.const(32).encode(b);
+            assert.equal(b.length, 0);
         });
     });
 });

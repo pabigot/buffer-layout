@@ -1,5 +1,4 @@
 var assert = require("assert"),
-    _ = require("lodash"),
     lo = require("../lib/Layout");
 
 suite("Examples", function () {
@@ -11,7 +10,7 @@ suite("Examples", function () {
             b = new Buffer(8);
         ds.encode([1, -1, 3, -3], b);
         assert.equal(Buffer('0100ffff0300fdff', 'hex').compare(b), 0);
-        assert(_.isEqual(ds.decode(b), [1, -1, 3, -3]));
+        assert.deepEqual(ds.decode(b), [1, -1, 3, -3]);
     });
     test("native C", function () {
         /*
@@ -27,7 +26,7 @@ suite("Examples", function () {
         b.fill(0xbd);
         ds.encode({v:1, u32: 0x12345678}, b);
         assert.equal(Buffer('01bdbdbd78563412', 'hex').compare(b), 0);
-        assert(_.isEqual(ds.decode(b), {v: 1, u32: 0x12345678}));
+        assert.deepEqual(ds.decode(b), {v: 1, u32: 0x12345678});
     });
     test("packed native C", function () {
         /*
@@ -42,7 +41,7 @@ suite("Examples", function () {
         b.fill(0xbd);
         ds.encode({v:1, u32: 0x12345678}, b);
         assert.equal(Buffer('0178563412', 'hex').compare(b), 0);
-        assert(_.isEqual(ds.decode(b), {v: 1, u32: 0x12345678}));
+        assert.deepEqual(ds.decode(b), {v: 1, u32: 0x12345678});
     });
     test("tagged union of 4-byte values", function () {
         /*
@@ -62,9 +61,9 @@ suite("Examples", function () {
             s16 = un.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16'),
             f32 = un.addVariant('f'.charCodeAt(0), lo.f32(), 'f32'),
             b = new Buffer(un.span);
-        assert(_.isEqual(un.decode(Buffer('7778563412', 'hex')), { u32: 0x12345678 }));
-        assert(_.isEqual(un.decode(Buffer('660000bd41', 'hex')), { f32: 23.625 }));
-        assert(_.isEqual(un.decode(Buffer('a5a5a5a5a5', 'hex')), { t: 0xa5, u8:[ 0xa5, 0xa5, 0xa5, 0xa5 ]}));
+        assert.deepEqual(un.decode(Buffer('7778563412', 'hex')), { u32: 0x12345678 });
+        assert.deepEqual(un.decode(Buffer('660000bd41', 'hex')), { f32: 23.625 });
+        assert.deepEqual(un.decode(Buffer('a5a5a5a5a5', 'hex')), { t: 0xa5, u8:[ 0xa5, 0xa5, 0xa5, 0xa5 ]});
         s16.encode({s16:[123, -123]}, b);
         assert.equal(Buffer('687b0085ff', 'hex').compare(b), 0);
     });
@@ -86,7 +85,7 @@ suite("Examples", function () {
         b.fill(0xff);
         ds.encode({b00l03:3, b04l18:24, b1Cl04:4}, b);
         assert.equal(Buffer('8b010040', 'hex').compare(b), 0);
-        assert(_.isEqual(ds.decode(b), {b00l03:3, b03l01:1, b04l18:24, b1Cl04:4}));
+        assert.deepEqual(ds.decode(b), {b00l03:3, b03l01:1, b04l18:24, b1Cl04:4});
     });
     test("C string", function () {
         /*
@@ -117,6 +116,53 @@ suite("Examples", function () {
         var span = st.getSpan(b);
         assert.equal(span, 20);
         assert.equal(Buffer('036b31007631006b32007632006b330065746300', 'hex').compare(b.slice(0, span)), 0);
-        assert(_.isEqual(st.decode(b), { n:3, a:arr}));
+        assert.deepEqual(st.decode(b), { n:3, a:arr});
+    });
+    test("variable-length union", function () {
+        var un = lo.union(lo.u8('t')),
+            u8 = un.addVariant('B'.charCodeAt(0), lo.u8(), 'u8'),
+            s16 = un.addVariant('h'.charCodeAt(0), lo.s16(), 's16'),
+            s48 = un.addVariant('Q'.charCodeAt(0), lo.s48(), 's48'),
+            cstr = un.addVariant('s'.charCodeAt(0), lo.cstr(), 'str'),
+            tr = un.addVariant('T'.charCodeAt(0), lo.const(true), 'b'),
+            fa = un.addVariant('F'.charCodeAt(0), lo.const(false), 'b'),
+            b = new Buffer(1+6);
+        un.configGetSourceVariant(function (src) {
+            if (src.hasOwnProperty('b')) {
+                return src.b ? tr : fa;
+            }
+            return this.defaultGetSourceVariant(src);
+        });
+
+        b.fill(0xff);
+        un.encode({u8: 1}, b);
+        assert.equal(un.getSpan(b), 2);
+        assert.equal(Buffer('4201ffffffffff', 'hex').compare(b), 0);
+        assert.equal(un.decode(b).u8, 1);
+
+        b.fill(0xff);
+        un.encode({s16: -32000}, b);
+        assert.equal(un.getSpan(b), 3);
+        assert.equal(Buffer('680083ffffffff', 'hex').compare(b), 0);
+        assert.equal(un.decode(b).s16, -32000);
+
+        b.fill(0xff);
+        var v48 = Math.pow(2, 47) - 1;
+        un.encode({s48: v48}, b);
+        assert.equal(un.getSpan(b), 7);
+        assert.equal(Buffer('51ffffffffff7f', 'hex').compare(b), 0);
+        assert.equal(un.decode(b).s48, v48);
+
+        b.fill(0xff);
+        un.encode({b: true}, b);
+        assert.equal(un.getSpan(b), 1);
+        assert.equal(Buffer('54ffffffffffff', 'hex').compare(b), 0);
+        assert.strictEqual(un.decode(b).b, true);
+
+        b.fill(0xff);
+        un.encode({b: false}, b);
+        assert.equal(un.getSpan(b), 1);
+        assert.equal(Buffer('46ffffffffffff', 'hex').compare(b), 0);
+        assert.strictEqual(un.decode(b).b, false);
     });
 });
