@@ -641,7 +641,7 @@ suite("Layout", function () {
             assert.equal(Buffer('0305060406', 'hex').compare(b), 0);
             assert.throws(function () { v2.encode(obj, b); }, TypeError);
             assert.throws(function () { v2.decode(b); }, Error);
-        })
+        });
         test("custom default", function () {
             var dlo = lo.u8('number'),
                 vlo = new lo.Sequence(lo.u8(), 8, 'payload'),
@@ -695,7 +695,7 @@ suite("Layout", function () {
         });
         test("issue#7.internal.anon", function () {
             var dlo = lo.u8(),
-                plo = new lo.Sequence(lo.u8(), 8, 'payload');
+                plo = new lo.Sequence(lo.u8(), 8, 'payload'),
                 vlo = new lo.Structure([plo, dlo]),
                 un = new lo.Union(lo.offset(dlo, plo.span), vlo),
                 b = Buffer("000102030405060708", 'hex'),
@@ -711,7 +711,7 @@ suite("Layout", function () {
         });
         test("issue#7.internal.named", function () {
             var dlo = lo.u8(),
-                plo = new lo.Sequence(lo.u8(), 8, 'payload');
+                plo = new lo.Sequence(lo.u8(), 8, 'payload'),
                 vlo = new lo.Structure([plo, dlo]),
                 ud = new lo.UnionLayoutDiscriminator(lo.offset(dlo, plo.span), 'tag'),
                 un = new lo.Union(ud, vlo),
@@ -728,7 +728,7 @@ suite("Layout", function () {
         });
         test("issue#7.internal.named2", function () {
             var dlo = lo.u8('vid'),
-                plo = new lo.Sequence(lo.u8(), 8, 'payload');
+                plo = new lo.Sequence(lo.u8(), 8, 'payload'),
                 vlo = new lo.Structure([plo, dlo]),
                 un = new lo.Union(lo.offset(dlo, plo.span), vlo),
                 b = Buffer("000102030405060708", 'hex'),
@@ -1133,7 +1133,6 @@ suite("Layout", function () {
                 exp_blob = Buffer('1011121314151617', 'hex'),
                 b = Buffer('01021011121314151617', 'hex');
             assert(hdr instanceof lo.Structure);
-            assert(ud instanceof lo.UnionDiscriminator);
             assert(pld instanceof lo.Union);
             assert(pld.default_layout instanceof lo.Blob);
             assert.equal(pld.default_layout.property, 'blob');
