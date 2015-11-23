@@ -3,6 +3,15 @@ var assert = require("assert"),
     lo = require("../lib/Layout");
 
 suite("Layout", function () {
+    suite("Buffer", function () {
+        test("issue 3992", function () {
+            var buf = new Buffer(4);
+            buf.writeIntLE(-0x120000, 0, 4);
+            assert.deepEqual(buf.toJSON().data, [ 0x00, 0x00, 0xee, 0xff ]);
+            buf.writeIntBE(-0x120000, 0, 4);
+            assert.deepEqual(buf.toJSON().data, [ 0xff, 0xee, 0x00, 0x00 ]);
+        });
+    });
     suite("Layout", function () {
         test("anonymous ctor", function () {
             var d = new lo.Layout(8);
