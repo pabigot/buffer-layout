@@ -185,7 +185,7 @@ Note that because the exact value is not less than 2^53 it cannot be
 represented as a JavaScript Number, and is instead approximated by a
 nearby representable integer that is equivalent within Numbers.
 
-See [NearUInt64](http://pabigot.github.io/buffer-layout/module-Layout-NearUInt64BE.html).
+See [NearUInt64](http://pabigot.github.io/buffer-layout/module-Layout-NearUInt64.html).
 
 ### A NUL-terminated C string
 
