@@ -276,5 +276,6 @@ decoding each of the alternatives:
 
 **NOTE** This code tickles a long-standing [bug in
 Buffer.writeInt{L,B}E](https://github.com/nodejs/node/pull/3994). `buffer-layout`
-patches `Buffer` to fix the bug if it detects that the running Node has
-has the error.
+provides a [module that patches
+`Buffer`](http://pabigot.github.io/buffer-layout/module-patchIssue3992.html)
+to fix the bug if it detects that the running Node has the error.
