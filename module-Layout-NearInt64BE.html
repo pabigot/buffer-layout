@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: IntBE</title>
+    <title>JSDoc: Class: NearInt64BE</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: IntBE</h1>
+    <h1 class="page-title">Class: NearInt64BE</h1>
 
     
 
@@ -31,7 +31,7 @@
         <h2>
             <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>
         
-        IntBE
+        NearInt64BE
         </h2>
         
     
@@ -44,16 +44,18 @@
 
     
 
-    <h4 class="name" id="IntBE"><span class="type-signature"></span>new IntBE<span class="signature">(span, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="NearInt64BE"><span class="type-signature"></span>new NearInt64BE<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Represent a signed integer in big-endian format.</p>
-<p><em>Factory</em>: s8be, <a href="module-Layout.html#.s16be">s16be</a>, <a href="module-Layout.html#.s24be">s24be</a>,
-<a href="module-Layout.html#.s32be">s32be</a>, <a href="module-Layout.html#.s40be">s40be</a>, <a href="module-Layout.html#.s48be">s48be</a></p>
+    <p>Represent a signed 64-bit integer in big-endian format when
+encoded and as a near integral JavaScript Number when decoded.</p>
+<p><em>Factory</em>: <a href="module-Layout.html#.ns64be">ns64be</a></p>
+<p><strong>NOTE</strong> Values with magnitude greater than 2^52 may not decode to
+the exact value of the encoded representation.</p>
 </div>
 
 
@@ -62,99 +64,6 @@
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>span</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>initializer for <a href="module-Layout-Layout.html#span">span</a>.
-The parameter can range from 1 through 6.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>property</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>initializer for <a href="module-Layout-Layout.html#property">property</a>.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -190,7 +99,7 @@ The parameter can range from 1 through 6.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line520">line 520</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line675">line 675</a>
     </li></ul></dd>
     
 
@@ -406,7 +315,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
 
 
 <div class="description">
-    <p>Implement <a href="module-Layout-Layout.html#decode">decode</a> for <a href="module-Layout-IntBE.html">IntBE</a>.</p>
+    <p>Implement <a href="module-Layout-Layout.html#decode">decode</a> for <a href="module-Layout-NearInt64BE.html">NearInt64BE</a>.</p>
 </div>
 
 
@@ -455,7 +364,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line530">line 530</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line682">line 682</a>
     </li></ul></dd>
     
 
@@ -493,7 +402,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
 
 
 <div class="description">
-    <p>Implement <a href="module-Layout-Layout.html#encode">encode</a> for <a href="module-Layout-IntBE.html">IntBE</a>.</p>
+    <p>Implement <a href="module-Layout-Layout.html#encode">encode</a> for <a href="module-Layout-NearInt64BE.html">NearInt64BE</a>.</p>
 </div>
 
 
@@ -542,7 +451,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line537">line 537</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line691">line 691</a>
     </li></ul></dd>
     
 

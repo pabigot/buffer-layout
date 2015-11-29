@@ -79,6 +79,12 @@
  *   module:Layout.s24be|24-bit}, {@link module:Layout.s32be|32-bit},
  *   {@link module:Layout.s40be|40-bit}, and {@link
  *   module:Layout.s48be|48-bit} representation ranges;
+ * * 64-bit integral values that decode to an exact (if magnitude is
+ *   less than 2^53) or nearby integral Number in {@link
+ *   module:Layout.nu64|unsigned little-endian}, {@link
+ *   module:Layout.nu64be|unsigned big-endian}, {@link
+ *   module:Layout.ns64|signed little-endian}, and {@link
+ *   module:Layout.ns64be|unsigned big-endian} encodings;
  * * 32-bit floating point values with {@link
  *   module:Layout.f32|little-endian} and {@link
  *   module:Layout.f32be|big-endian} representations;
@@ -120,6 +126,10 @@
  * @local UIntBE
  * @local Int
  * @local IntBE
+ * @local NearUInt64
+ * @local NearUInt64BE
+ * @local NearInt64
+ * @local NearInt64BE
  * @local Float
  * @local FloatBE
  * @local Double
@@ -149,78 +159,7 @@
 
 var assert = require('assert');
 
-/* Determine whether node issue #3992 is fixed, and if not replace the
- * Buffer functions with ones that work correctly.
- *
- * See: https://github.com/nodejs/node/issues/3992 */
-var issue_3992_is_resolved = (function () {
-    var buf = new Buffer(2);
-    buf.writeIntLE(-0x100, 0, 2);
-    return (0xFF === buf[1]);
-})();
-/* NB: Backfill code modified from node lib/buffer.js as of
- * 8bc80386879538de63cd6f2aef288f59324eb004 (2015-11-20) */
-/* istanbul ignore next */
-function checkInt(buffer, value, offset, ext, max, min) {
-    if (!(buffer instanceof Buffer))
-        throw new TypeError('"buffer" argument must be a Buffer instance');
-    if (value > max || value &lt; min)
-        throw new TypeError('"value" argument is out of bounds');
-    if (offset + ext > buffer.length)
-        throw new RangeError('Index out of range');
-}
-/* The grotesquery here is because jshint whines about strict mode
- * violations if the function doesn't appear to be a method, and about
- * defining functions within a block if the test is in an if
- * statement. */
-Buffer.prototype.writeIntLE = issue_3992_is_resolved ? Buffer.prototype.writeIntLE : function(value, offset, byteLength, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-        checkInt(this,
-                 value,
-                 offset,
-                 byteLength,
-                 Math.pow(2, 8 * byteLength - 1) - 1,
-                 -Math.pow(2, 8 * byteLength - 1));
-    }
-
-    var i = 0;
-    var mul = 1;
-    var sub = 0;
-    this[offset] = value;
-    while (++i &lt; byteLength &amp;&amp; (mul *= 0x100)) {
-        if (value &lt; 0 &amp;&amp; sub === 0 &amp;&amp; this[offset + i - 1] !== 0)
-            sub = 1;
-        this[offset + i] = ((value / mul) >> 0) - sub;
-    }
-
-    return offset + byteLength;
-};
-Buffer.prototype.writeIntBE = issue_3992_is_resolved ? Buffer.prototype.writeIntBE : function(value, offset, byteLength, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-        checkInt(this,
-                 value,
-                 offset,
-                 byteLength,
-                 Math.pow(2, 8 * byteLength - 1) - 1,
-                 -Math.pow(2, 8 * byteLength - 1));
-    }
-
-    var i = byteLength - 1;
-    var mul = 1;
-    var sub = 0;
-    this[offset + i] = value;
-    while (--i >= 0 &amp;&amp; (mul *= 0x100)) {
-        if (value &lt; 0 &amp;&amp; sub === 0 &amp;&amp; this[offset + i + 1] !== 0)
-            sub = 1;
-        this[offset + i] = ((value / mul) >> 0) - sub;
-    }
-
-    return offset + byteLength;
-};
+require('./patchIssue3992');
 
 /* istanbul ignore next */
 /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isInteger */
@@ -628,6 +567,162 @@ IntBE.prototype.encode = function (src, b, offset) {
         offset = 0;
     }
     b.writeIntBE(src, offset, this.span);
+};
+
+var V2E32 = Math.pow(2, 32);
+/* True modulus high and low 32-bit words, where low word is always
+ * non-negative. */
+function divmodInt64 (src) {
+    var hi32 = Math.floor(src / V2E32),
+        lo32 = src - (hi32 * V2E32);
+    //assert.equal(roundedInt64(hi32, lo32), src);
+    //assert(0 &lt;= lo32);
+    return { hi32: hi32,
+             lo32: lo32 };
+}
+/* Reconstruct Number from quotient and non-negative remainder */
+function roundedInt64 (hi32, lo32) {
+    return hi32 * V2E32 + lo32;
+}
+
+/** Represent an unsigned 64-bit integer in little-endian format when
+ * encoded and as a near integral JavaScript Number when decoded.
+ *
+ * *Factory*: {@link module:Layout.nu64|nu64}
+ *
+ * **NOTE** Values with magnitude greater than 2^52 may not decode to
+ * the exact value of the encoded representation.
+ *
+ * @constructor
+ * @augments {Layout} */
+function NearUInt64 (property) {
+    Layout.call(this, 8, property);
+    Object.freeze(this);
+}
+NearUInt64.prototype = Object.create(Layout.prototype);
+NearUInt64.prototype.constructor = NearUInt64;
+/** Implement {@link Layout#decode|decode} for {@link NearUInt64|NearUInt64}. */
+NearUInt64.prototype.decode = function (b, offset) {
+    if (undefined === offset) {
+        offset = 0;
+    }
+    var lo32 = b.readUInt32LE(offset),
+        hi32 = b.readUInt32LE(offset+4);
+    return roundedInt64(hi32, lo32);
+};
+/** Implement {@link Layout#encode|encode} for {@link NearUInt64|NearUInt64}. */
+NearUInt64.prototype.encode = function (src, b, offset) {
+    if (undefined === offset) {
+        offset = 0;
+    }
+    var split = divmodInt64(src);
+    b.writeUInt32LE(split.lo32, offset);
+    b.writeUInt32LE(split.hi32, offset+4);
+};
+
+/** Represent an unsigned 64-bit integer in big-endian format when
+ * encoded and as a near integral JavaScript Number when decoded.
+ *
+ * *Factory*: {@link module:Layout.nu64be|nu64be}
+ *
+ * **NOTE** Values with magnitude greater than 2^52 may not decode to
+ * the exact value of the encoded representation.
+ *
+ * @constructor
+ * @augments {Layout} */
+function NearUInt64BE (property) {
+    Layout.call(this, 8, property);
+    Object.freeze(this);
+}
+NearUInt64BE.prototype = Object.create(Layout.prototype);
+NearUInt64BE.prototype.constructor = NearUInt64BE;
+/** Implement {@link Layout#decode|decode} for {@link NearUInt64BE|NearUInt64BE}. */
+NearUInt64BE.prototype.decode = function (b, offset) {
+    if (undefined === offset) {
+        offset = 0;
+    }
+    var hi32 = b.readUInt32BE(offset),
+        lo32 = b.readUInt32BE(offset+4);
+    return roundedInt64(hi32, lo32);
+};
+/** Implement {@link Layout#encode|encode} for {@link NearUInt64BE|NearUInt64BE}. */
+NearUInt64BE.prototype.encode = function (src, b, offset) {
+    if (undefined === offset) {
+        offset = 0;
+    }
+    var split = divmodInt64(src);
+    b.writeUInt32BE(split.hi32, offset);
+    b.writeUInt32BE(split.lo32, offset+4);
+};
+
+/** Represent a signed 64-bit integer in little-endian format when
+ * encoded and as a near integral JavaScript Number when decoded.
+ *
+ * *Factory*: {@link module:Layout.ns64|ns64}
+ *
+ * **NOTE** Values with magnitude greater than 2^52 may not decode to
+ * the exact value of the encoded representation.
+ *
+ * @constructor
+ * @augments {Layout} */
+function NearInt64 (property) {
+    Layout.call(this, 8, property);
+    Object.freeze(this);
+}
+NearInt64.prototype = Object.create(Layout.prototype);
+NearInt64.prototype.constructor = NearInt64;
+/** Implement {@link Layout#decode|decode} for {@link NearInt64|NearInt64}. */
+NearInt64.prototype.decode = function (b, offset) {
+    if (undefined === offset) {
+        offset = 0;
+    }
+    var lo32 = b.readUInt32LE(offset),
+        hi32 = b.readInt32LE(offset+4);
+    return roundedInt64(hi32, lo32);
+};
+/** Implement {@link Layout#encode|encode} for {@link NearInt64|NearInt64}. */
+NearInt64.prototype.encode = function (src, b, offset) {
+    if (undefined === offset) {
+        offset = 0;
+    }
+    var split = divmodInt64(src);
+    b.writeUInt32LE(split.lo32, offset);
+    b.writeInt32LE(split.hi32, offset+4);
+};
+
+/** Represent a signed 64-bit integer in big-endian format when
+ * encoded and as a near integral JavaScript Number when decoded.
+ *
+ * *Factory*: {@link module:Layout.ns64be|ns64be}
+ *
+ * **NOTE** Values with magnitude greater than 2^52 may not decode to
+ * the exact value of the encoded representation.
+ *
+ * @constructor
+ * @augments {Layout} */
+function NearInt64BE (property) {
+    Layout.call(this, 8, property);
+    Object.freeze(this);
+}
+NearInt64BE.prototype = Object.create(Layout.prototype);
+NearInt64BE.prototype.constructor = NearInt64BE;
+/** Implement {@link Layout#decode|decode} for {@link NearInt64BE|NearInt64BE}. */
+NearInt64BE.prototype.decode = function (b, offset) {
+    if (undefined === offset) {
+        offset = 0;
+    }
+    var hi32 = b.readInt32BE(offset),
+        lo32 = b.readUInt32BE(offset+4);
+    return roundedInt64(hi32, lo32);
+};
+/** Implement {@link Layout#encode|encode} for {@link NearInt64BE|NearInt64BE}. */
+NearInt64BE.prototype.encode = function (src, b, offset) {
+    if (undefined === offset) {
+        offset = 0;
+    }
+    var split = divmodInt64(src);
+    b.writeInt32BE(split.hi32, offset);
+    b.writeUInt32BE(split.lo32, offset+4);
 };
 
 /** Represent a 32-bit floating point number in little-endian format.
@@ -1991,6 +2086,10 @@ exports.u40 = function (property) { return new UInt(5, property); };
  * spanning six bytes. */
 exports.u48 = function (property) { return new UInt(6, property); };
 
+/** Factory for {@link NearUInt64|little-endian unsigned int
+ * layouts} interpreted as Numbers. */
+exports.nu64 = function (property) { return new NearUInt64(property); };
+
 /** Factory for {@link UInt|big-endian unsigned int layouts}
  * spanning two bytes. */
 exports.u16be = function (property) { return new UIntBE(2, property); };
@@ -2010,6 +2109,10 @@ exports.u40be = function (property) { return new UIntBE(5, property); };
 /** Factory for {@link UInt|big-endian unsigned int layouts}
  * spanning six bytes. */
 exports.u48be = function (property) { return new UIntBE(6, property); };
+
+/** Factory for {@link NearUInt64BE|big-endian unsigned int
+ * layouts} interpreted as Numbers. */
+exports.nu64be = function (property) { return new NearUInt64BE(property); };
 
 /** Factory for {@link Int|signed int layouts} spanning one
  * byte. */
@@ -2035,6 +2138,10 @@ exports.s40 = function (property) { return new Int(5, property); };
  * spanning six bytes. */
 exports.s48 = function (property) { return new Int(6, property); };
 
+/** Factory for {@link NearInt64|little-endian signed int layouts}
+ * interpreted as Numbers. */
+exports.ns64 = function (property) { return new NearInt64(property); };
+
 /** Factory for {@link Int|big-endian signed int layouts}
  * spanning two bytes. */
 exports.s16be = function (property) { return new IntBE(2, property); };
@@ -2054,6 +2161,10 @@ exports.s40be = function (property) { return new IntBE(5, property); };
 /** Factory for {@link Int|big-endian signed int layouts}
  * spanning six bytes. */
 exports.s48be = function (property) { return new IntBE(6, property); };
+
+/** Factory for {@link NearInt64BE|big-endian signed int layouts}
+ * interpreted as Numbers. */
+exports.ns64be = function (property) { return new NearInt64BE(property); };
 
 /** Factory for {@link Float|little-endian 32-bit floating point} values. */
 exports.f32 = function (property) { return new Float(property); };
@@ -2100,13 +2211,13 @@ exports.const = function (value, property) { return new Constant(value, property
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li><li><a href="module-patchIssue3992.html">patchIssue3992</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Mon Nov 23 2015 17:43:02 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sun Nov 29 2015 09:08:55 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

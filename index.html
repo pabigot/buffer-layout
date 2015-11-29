@@ -54,6 +54,8 @@ released under the MIT license.</p>
 <ul>
 <li>Signed and unsigned integral values from 1 to 6 bytes in length, in
 little-endian or big-endian format;</li>
+<li>Signed and unsigned 64-bit integral values decoded as integral
+Numbers;</li>
 <li>Float and double values (also little-endian or big-endian);</li>
 <li>Sequences of instances of an arbitrary layout;</li>
 <li>Structures with named fields containing arbitrary layouts;</li>
@@ -150,6 +152,17 @@ b.fill(0xff);
 ds.encode({b00l03:3, b04l18:24, b1Cl04:4}, b);
 assert.equal(Buffer('8b010040', 'hex').compare(b), 0);
 assert.deepEqual(ds.decode(b), {b00l03:3, b03l01:1, b04l18:24, b1Cl04:4});</code></pre><p>See <a href="http://pabigot.github.io/buffer-layout/module-Layout-BitStructure.html">BitStructure</a>.</p>
+<h3>64-bit values as Numbers</h3><p>The C definition:</p>
+<pre class="prettyprint source"><code>uint64_t v = 0x0102030405060708ULL;</code></pre><p>The buffer-layout way:</p>
+<pre class="prettyprint source"><code>var ds = lo.nu64be(),
+    b = Buffer('0102030405060708', 'hex'),
+    v = 72623859790382856,
+    nv = v - 6;
+assert.equal(v, nv);
+assert.equal(ds.decode(b), nv);</code></pre><p>Note that because the exact value is not less than 2^53 it cannot be
+represented as a JavaScript Number, and is instead approximated by a
+nearby representable integer that is equivalent within Numbers.</p>
+<p>See <a href="http://pabigot.github.io/buffer-layout/module-Layout-NearUInt64BE.html">NearUInt64</a>.</p>
 <h3>A NUL-terminated C string</h3><p>The C definition:</p>
 <pre class="prettyprint source"><code>const char str[] = &quot;hi!&quot;;</code></pre><p>The buffer-layout way:</p>
 <pre class="prettyprint source"><code>var ds = lo.cstr(),
@@ -176,7 +189,7 @@ var span = st.getSpan(b);
 assert.equal(span, 20);
 assert.equal(Buffer('036b31007631006b32007632006b330065746300', 'hex').compare(b.slice(0, span)), 0);
 assert.deepEqual(st.decode(b), { n:3, a:arr});</code></pre><p>See <a href="http://pabigot.github.io/buffer-layout/module-Layout-OffsetLayout.html">OffsetLayout</a>.</p>
-<h3>Tagged values, or variable-length unions</h3><p>Storing arbitrary date using a leading byte to identify the content then
+<h3>Tagged values, or variable-length unions</h3><p>Storing arbitrary data using a leading byte to identify the content then
 a value that takes up only as much room as is necessary.</p>
 <p>The example also shows how to extend the variant recognition API to
 support abitrary constant without consuming space for them in the
@@ -230,8 +243,9 @@ assert.equal(un.getSpan(b), 1);
 assert.equal(Buffer('46ffffffffffff', 'hex').compare(b), 0);
 assert.strictEqual(un.decode(b).b, false);</code></pre><p><strong>NOTE</strong> This code tickles a long-standing <a href="https://github.com/nodejs/node/pull/3994">bug in
 Buffer.writeInt{L,B}E</a>. <code>buffer-layout</code>
-patches <code>Buffer</code> to fix the bug if it detects that the running Node has
-has the error.</p></article>
+provides a <a href="http://pabigot.github.io/buffer-layout/module-patchIssue3992.html">module that patches
+<code>Buffer</code></a>
+to fix the bug if it detects that the running Node has the error.</p></article>
     </section>
 
 
@@ -242,13 +256,13 @@ has the error.</p></article>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li><li><a href="module-patchIssue3992.html">patchIssue3992</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Mon Nov 23 2015 17:43:02 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sun Nov 29 2015 09:08:55 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>
