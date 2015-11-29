@@ -13,6 +13,8 @@ Layout support is provided for these types of data:
 
 * Signed and unsigned integral values from 1 to 6 bytes in length, in
   little-endian or big-endian format;
+* Signed and unsigned 64-bit integral values decoded as integral
+  Numbers;
 * Float and double values (also little-endian or big-endian);
 * Sequences of instances of an arbitrary layout;
 * Structures with named fields containing arbitrary layouts;
@@ -163,6 +165,27 @@ The buffer-layout way:
     assert.deepEqual(ds.decode(b), {b00l03:3, b03l01:1, b04l18:24, b1Cl04:4});
 
 See [BitStructure](http://pabigot.github.io/buffer-layout/module-Layout-BitStructure.html).
+
+### 64-bit values as Numbers
+
+The C definition:
+
+    uint64_t v = 0x0102030405060708ULL;
+
+The buffer-layout way:
+
+    var ds = lo.nu64be(),
+        b = Buffer('0102030405060708', 'hex'),
+        v = 72623859790382856,
+        nv = v - 6;
+    assert.equal(v, nv);
+    assert.equal(ds.decode(b), nv);
+
+Note that because the exact value is not less than 2^53 it cannot be
+represented as a JavaScript Number, and is instead approximated by a
+nearby representable integer that is equivalent within Numbers.
+
+See [NearUInt64](http://pabigot.github.io/buffer-layout/module-Layout-NearUInt64BE.html).
 
 ### A NUL-terminated C string
 

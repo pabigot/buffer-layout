@@ -2,7 +2,19 @@ var assert = require("assert"),
     _ = require("lodash"),
     lo = require("../lib/Layout");
 
+/* Some versions of Node have an undocumented in-place reverse.
+ * That's not what we want. */
+function reversedBuffer (b)
+{
+    var ba = Array.prototype.slice.call(b);
+    return new Buffer(ba.reverse());
+}
+
 suite("Layout", function () {
+    test("#reversedBuffer", function () {
+        var b = Buffer('0102030405', 'hex');
+        assert.equal(Buffer('0504030201', 'hex').compare(reversedBuffer(b)), 0);
+    });
     suite("Buffer", function () {
         test("issue 3992", function () {
             var buf = new Buffer(4);
@@ -222,6 +234,128 @@ suite("Layout", function () {
         test("invalid ctor", function () {
             assert.throws(function () { new lo.IntBE(8, 'u64'); }, TypeError);
         });
+    });
+    test("RoundedUInt64", function () {
+        var be = lo.nu64be('be'),
+            le = lo.nu64('le');
+        assert.equal(be.span, 8);
+        assert.equal(le.span, 8);
+        assert.equal(be.property, 'be');
+        assert.equal(le.property, 'le');
+
+        var b = Buffer('0000003b2a2a873b', 'hex'),
+            rb = reversedBuffer(b),
+            v = 254110500667,
+            ev = v,
+            eb = new Buffer(be.span);
+        assert.equal(be.decode(b), ev);
+        assert.equal(le.decode(rb), ev);
+        be.encode(v, eb);
+        assert.equal(b.compare(eb), 0);
+        le.encode(v, eb);
+        assert.equal(rb.compare(eb), 0);
+
+        b = Buffer('001d9515553fdcbb', 'hex');
+        rb = reversedBuffer(b);
+        v = 8326693181709499;
+        ev = v;
+        assert.equal(ev, v);
+        assert.equal(be.decode(b), ev);
+        assert.equal(le.decode(rb), ev);
+        be.encode(v, eb);
+        assert.equal(b.compare(eb), 0);
+        assert.equal(be.decode(eb), ev);
+        le.encode(v, eb);
+        assert.equal(rb.compare(eb), 0);
+        assert.equal(le.decode(eb), ev);
+
+        /* The logic changes for the remaining cases since the exact
+         * value cannot be represented in a Number: the encoded buffer
+         * will not bitwise-match the original buffer. */
+        b = Buffer('003b2a2aaa7fdcbb', 'hex');
+        rb = reversedBuffer(b);
+        v = 16653386363428027;
+        ev = v + 1;
+        assert.equal(ev, v);
+        assert.equal(be.decode(b), ev);
+        assert.equal(le.decode(rb), ev);
+        be.encode(v, eb);
+        assert.equal(be.decode(eb), ev);
+        le.encode(v, eb);
+        assert.equal(le.decode(eb), ev);
+
+        b = Buffer('eca8aaa9ffffdcbb', 'hex');
+        rb = reversedBuffer(b);
+        v = 17053067636159536315;
+        ev = v + 837;
+        assert.equal(ev, v);
+        assert.equal(be.decode(b), ev);
+        assert.equal(le.decode(rb), ev);
+        be.encode(v, eb);
+        assert.equal(be.decode(eb), ev);
+        le.encode(v, eb);
+        assert.equal(le.decode(eb), ev);
+    });
+    test("RoundedInt64", function () {
+        var be = lo.ns64be('be'),
+            le = lo.ns64('le');
+        assert.equal(be.span, 8);
+        assert.equal(le.span, 8);
+        assert.equal(be.property, 'be');
+        assert.equal(le.property, 'le');
+
+        var b = Buffer('ffffffff89abcdf0', 'hex'),
+            rb = reversedBuffer(b),
+            v = -1985229328,
+            ev = v,
+            eb = new Buffer(be.span);
+        assert.equal(be.decode(b), ev);
+        assert.equal(le.decode(rb), ev);
+        be.encode(v, eb);
+        assert.equal(b.compare(eb), 0);
+        le.encode(v, eb);
+        assert.equal(rb.compare(eb), 0);
+
+        b = Buffer('ffffc4d5d555a345', 'hex');
+        rb = reversedBuffer(b);
+        v = -65052290473147;
+        ev = v;
+        assert.equal(ev, v);
+        assert.equal(be.decode(b), ev);
+        assert.equal(le.decode(rb), ev);
+        be.encode(v, eb);
+        assert.equal(b.compare(eb), 0);
+        assert.equal(be.decode(eb), ev);
+        le.encode(v, eb);
+        assert.equal(rb.compare(eb), 0);
+        assert.equal(le.decode(eb), ev);
+
+        /* The logic changes for the remaining cases since the exact
+         * value cannot be represented in a Number: the encoded buffer
+         * will not bitwise-match the original buffer. */
+        b = Buffer('ff13575556002345', 'hex');
+        rb = reversedBuffer(b);
+        v = -66613545453739195;
+        ev = v + 3;
+        assert.equal(ev, v);
+        assert.equal(be.decode(b), ev);
+        assert.equal(le.decode(rb), ev);
+        be.encode(v, eb);
+        assert.equal(be.decode(eb), ev);
+        le.encode(v, eb);
+        assert.equal(le.decode(eb), ev);
+
+        b = Buffer('e26aeaaac0002345', 'hex');
+        rb = reversedBuffer(b);
+        v = -2131633454519934139;
+        ev = v - 69;
+        assert.equal(ev, v);
+        assert.equal(be.decode(b), ev);
+        assert.equal(le.decode(rb), ev);
+        be.encode(v, eb);
+        assert.equal(be.decode(eb), ev);
+        le.encode(v, eb);
+        assert.equal(le.decode(eb), ev);
     });
     test("Float", function () {
         var be = lo.f32be('eff'),
