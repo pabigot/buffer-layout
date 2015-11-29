@@ -87,6 +87,17 @@ suite("Examples", function () {
         assert.equal(Buffer('8b010040', 'hex').compare(b), 0);
         assert.deepEqual(ds.decode(b), {b00l03:3, b03l01:1, b04l18:24, b1Cl04:4});
     });
+    test("64-bit values", function () {
+        /*
+    uint64_t v = 0x0102030405060708ULL;
+         */
+        var ds = lo.nu64be(),
+            b = Buffer('0102030405060708', 'hex'),
+            v = 72623859790382856,
+            nv = v - 6;
+        assert.equal(v, nv);
+        assert.equal(ds.decode(b), nv);
+    });
     test("C string", function () {
         /*
     const char str[] = "hi!";

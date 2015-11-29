@@ -1,6 +1,6 @@
 {
     "name": "buffer-layout",
-    "version": "0.7.1",
+    "version": "0.8.0",
     "description": "Translation between JavaScript values and Buffers",
     "keywords": [
         "Buffer",
@@ -33,7 +33,7 @@
         "coverage": "istanbul cover _mocha -- -u tdd",
         "coveralls": "istanbul cover _mocha --report lcovonly -- -u tdd && cat ./coverage/lcov.info | coveralls",
         "jslint": "jslint lib/Layout.js || true",
-        "lint": "jshint lib/Layout.js test/*.js || true",
+        "lint": "jshint lib/*.js test/*.js || true",
         "lint.strict": "jshint lib/Layout.js",
         "mkdoc": "jsdoc -c jsdoc/conf.json",
         "test": "mocha -u tdd"

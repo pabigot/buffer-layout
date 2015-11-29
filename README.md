@@ -13,6 +13,8 @@ Layout support is provided for these types of data:
 
 * Signed and unsigned integral values from 1 to 6 bytes in length, in
   little-endian or big-endian format;
+* Signed and unsigned 64-bit integral values decoded as integral
+  Numbers;
 * Float and double values (also little-endian or big-endian);
 * Sequences of instances of an arbitrary layout;
 * Structures with named fields containing arbitrary layouts;
@@ -164,6 +166,27 @@ The buffer-layout way:
 
 See [BitStructure](http://pabigot.github.io/buffer-layout/module-Layout-BitStructure.html).
 
+### 64-bit values as Numbers
+
+The C definition:
+
+    uint64_t v = 0x0102030405060708ULL;
+
+The buffer-layout way:
+
+    var ds = lo.nu64be(),
+        b = Buffer('0102030405060708', 'hex'),
+        v = 72623859790382856,
+        nv = v - 6;
+    assert.equal(v, nv);
+    assert.equal(ds.decode(b), nv);
+
+Note that because the exact value is not less than 2^53 it cannot be
+represented as a JavaScript Number, and is instead approximated by a
+nearby representable integer that is equivalent within Numbers.
+
+See [NearUInt64](http://pabigot.github.io/buffer-layout/module-Layout-NearUInt64BE.html).
+
 ### A NUL-terminated C string
 
 The C definition:
@@ -276,5 +299,6 @@ decoding each of the alternatives:
 
 **NOTE** This code tickles a long-standing [bug in
 Buffer.writeInt{L,B}E](https://github.com/nodejs/node/pull/3994). `buffer-layout`
-patches `Buffer` to fix the bug if it detects that the running Node has
-has the error.
+provides a [module that patches
+`Buffer`](http://pabigot.github.io/buffer-layout/module-patchIssue3992.html)
+to fix the bug if it detects that the running Node has the error.
