@@ -16,7 +16,8 @@ Layout support is provided for these types of data:
 * Signed and unsigned 64-bit integral values decoded as integral
   Numbers;
 * Float and double values (also little-endian or big-endian);
-* Sequences of instances of an arbitrary layout;
+* Sequences of instances of an arbitrary layout, with constant or
+  data-dependent length;
 * Structures with named fields containing arbitrary layouts;
 * Unions of variant layouts where the type of data is recorded in a
   prefix value, another layout element, or provided externally;
@@ -238,6 +239,31 @@ The buffer-layout way:
     assert.deepEqual(st.decode(b), {n: 3, a: arr});
 
 See [OffsetLayout](http://pabigot.github.io/buffer-layout/module-Layout-OffsetLayout.html).
+
+### A C flexible array member with implicit length
+
+When data is obtained over a packetized interface the length of the
+packet can provide implicit limits on the last field.
+
+The C definition:
+
+    struct ds {
+      uint8_t prop;
+      uint16_t data[];
+    };
+
+The buffer-layout way:
+
+    var st = lo.struct([lo.u8('prop'),
+                        lo.seq(lo.u16(),
+                               lo.greedy(lo.u16().span),
+                               'data')],
+                       'ds');
+    var b = Buffer('21010002030405', 'hex');
+    assert.deepEqual(st.decode(b), {prop: 33, data: [0x0001, 0x0302, 0x0504]});
+    b.fill(0xFF);
+    assert.equal(st.encode({prop: 9, data: [5,6]}, b), 1 + 2 * 2);
+    assert.equal(Buffer('0905000600FFFF', 'hex').compare(b), 0);
 
 ### Tagged values, or variable-length unions
 

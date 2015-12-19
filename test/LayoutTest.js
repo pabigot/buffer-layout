@@ -502,6 +502,18 @@ suite('Layout', function() {
       assert.equal(seq.span, 0);
       assert.deepEqual(seq.decode(b), []);
     });
+    test('greedy', function() {
+      var seq = lo.seq(lo.u16(), lo.greedy(2), 'a');
+      var b = Buffer('ABCDE');
+      var db = new Buffer(6);
+      assert.equal(seq.getSpan(b), 4);
+      assert.deepEqual(seq.decode(b), [0x4241, 0x4443]);
+      db.fill('-'.charAt(0));
+      assert.equal(seq.encode(seq.decode(b), db, 1), 4);
+      assert.equal(Buffer('-ABCD-').compare(db), 0);
+      assert.equal(seq.getSpan(b, 1), 4);
+      assert.deepEqual(seq.decode(b, 1), [0x4342, 0x4544]);
+    });
   });
   suite('Structure', function() {
     test('invalid ctor', function() {
@@ -683,6 +695,35 @@ suite('Layout', function() {
       assert(el instanceof lo.Layout);
       assert.equal(el.property, 'prop');
       assert.throws(function() { el.isCount(); }, Error);
+    });
+  });
+  suite('GreedyCount', function() {
+    test('ctor', function() {
+      var el = new lo.greedy();
+      assert(el instanceof lo.GreedyCount);
+      assert(el instanceof lo.ExternalLayout);
+      assert.equal(el.elementSpan, 1);
+      assert.strictEqual(el.property, undefined);
+
+      var nel = new lo.greedy(5, 'name');
+      assert(nel instanceof lo.GreedyCount);
+      assert(nel instanceof lo.ExternalLayout);
+      assert.equal(nel.elementSpan, 5);
+      assert.equal(nel.property, 'name');
+
+      assert.throws(function() { lo.greedy('hi'); }, TypeError);
+      assert.throws(function() { lo.greedy(0); }, TypeError);
+    });
+    test('#decode', function() {
+      var el = new lo.greedy();
+      var b = new Buffer(10);
+      assert.equal(el.decode(b), b.length);
+      assert.equal(el.decode(b,3), b.length - 3);
+
+      var nel = new lo.greedy(3);
+      assert.equal(nel.decode(b), 3);
+      assert.equal(nel.decode(b, 1), 3);
+      assert.equal(nel.decode(b, 2), 2);
     });
   });
   suite('OffsetLayout', function() {
@@ -1320,6 +1361,15 @@ suite('Layout', function() {
       assert.throws(function() {
         st.encode({b: new Buffer(b.length)}, b, 1);
       }, RangeError);
+    });
+    test('greedy', function() {
+      var blo = lo.blob(lo.greedy(), 'b');
+      var b = Buffer('ABCDx');
+      assert.equal(Buffer('ABCDx').compare(blo.decode(b)), 0);
+      assert.equal(Buffer('Dx').compare(blo.decode(b, 3)), 0);
+      b.fill(0);
+      assert.equal(blo.encode(Buffer('0203', 'hex'), b, 2), 2);
+      assert.equal(Buffer('0000020300', 'hex').compare(b), 0);
     });
   });
   suite('issue#8', function() {

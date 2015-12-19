@@ -135,6 +135,24 @@ const char str[] = "hi!";
                  .compare(b.slice(0, span)), 0);
     assert.deepEqual(st.decode(b), {n: 3, a: arr});
   });
+  test('flexible array in packet', function() {
+    /*
+struct ds {
+  uint8_t prop;
+  uint16_t data[];
+};
+     */
+    var st = lo.struct([lo.u8('prop'),
+                        lo.seq(lo.u16(),
+                               lo.greedy(lo.u16().span),
+                               'data')],
+                       'ds');
+    var b = Buffer('21010002030405', 'hex');
+    assert.deepEqual(st.decode(b), {prop: 33, data: [0x0001, 0x0302, 0x0504]});
+    b.fill(0xFF);
+    assert.equal(st.encode({prop: 9, data: [5,6]}, b), 1 + 2 * 2);
+    assert.equal(Buffer('0905000600FFFF', 'hex').compare(b), 0);
+  });
   test('variable-length union', function() {
     var un = lo.union(lo.u8('t'));
     var u8 = un.addVariant('B'.charCodeAt(0), lo.u8(), 'u8');
