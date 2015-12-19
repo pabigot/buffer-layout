@@ -675,10 +675,21 @@ suite('Layout', function() {
       assert.throws(function() { d.encode({s: 'too long'}, b); }, Error);
     });
   });
+  suite('ExternalLayout', function() {
+    test('ctor', function() {
+      var el = new lo.ExternalLayout(-1, 'prop');
+      assert(el instanceof lo.ExternalLayout);
+      assert(el instanceof lo.Layout);
+      assert.equal(el.property, 'prop');
+      assert.throws(function() { el.isCount(); }, Error);
+    });
+  });
   suite('OffsetLayout', function() {
     test('ctor', function() {
       var u8 = lo.u8();
       var l0 = new lo.OffsetLayout(u8);
+      assert(l0 instanceof lo.OffsetLayout);
+      assert(l0 instanceof lo.ExternalLayout);
       var nl = new lo.OffsetLayout(u8, -3, 'nl');
       var dl = new lo.OffsetLayout(lo.u8('ol'), 5);
       var al = new lo.OffsetLayout(u8, 21);
