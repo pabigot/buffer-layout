@@ -1,13 +1,13 @@
-var assert = require('assert'),
-    lo = require('../lib/Layout');
+var assert = require('assert');
+var lo = require('../lib/Layout');
 
 suite('Examples', function() {
   test('4-elt array of int16_t le', function() {
     /*
 int16_t arr[4] = { 1, -1, 3, -3 };
      */
-    var ds = lo.seq(lo.s16(), 4),
-        b = new Buffer(8);
+    var ds = lo.seq(lo.s16(), 4);
+    var b = new Buffer(8);
     ds.encode([1, -1, 3, -3], b);
     assert.equal(Buffer('0100ffff0300fdff', 'hex').compare(b), 0);
     assert.deepEqual(ds.decode(b), [1, -1, 3, -3]);
@@ -21,8 +21,8 @@ struct ds {
      */
     var ds = lo.struct([lo.u8('v'),
                         lo.seq(lo.u8(), 3), // alignment padding
-                        lo.u32('u32')]),
-        b = new Buffer(8);
+                        lo.u32('u32')]);
+    var b = new Buffer(8);
     b.fill(0xbd);
     ds.encode({v: 1, u32: 0x12345678}, b);
     assert.equal(Buffer('01bdbdbd78563412', 'hex').compare(b), 0);
@@ -36,8 +36,8 @@ struct ds {
 } __attribute__((__packed__)) st;
      */
     var ds = lo.struct([lo.u8('v'),
-                        lo.u32('u32')]),
-        b = new Buffer(5);
+                        lo.u32('u32')]);
+    var b = new Buffer(5);
     b.fill(0xbd);
     ds.encode({v: 1, u32: 0x12345678}, b);
     assert.equal(Buffer('0178563412', 'hex').compare(b), 0);
@@ -55,15 +55,18 @@ struct {
   } u;
 } __attribute__((__packed__)) un;
      */
-    var t = lo.u8('t'),
-        un = lo.union(t, lo.seq(lo.u8(), 4, 'u8')),
-        u32 = un.addVariant('w'.charCodeAt(0), lo.u32(), 'u32'),
-        s16 = un.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16'),
-        f32 = un.addVariant('f'.charCodeAt(0), lo.f32(), 'f32'),
-        b = new Buffer(un.span);
-    assert.deepEqual(un.decode(Buffer('7778563412', 'hex')), {u32: 0x12345678});
-    assert.deepEqual(un.decode(Buffer('660000bd41', 'hex')), {f32: 23.625});
-    assert.deepEqual(un.decode(Buffer('a5a5a5a5a5', 'hex')), {t: 0xa5, u8: [0xa5, 0xa5, 0xa5, 0xa5]});
+    var t = lo.u8('t');
+    var un = lo.union(t, lo.seq(lo.u8(), 4, 'u8'));
+    var u32 = un.addVariant('w'.charCodeAt(0), lo.u32(), 'u32');
+    var s16 = un.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16');
+    var f32 = un.addVariant('f'.charCodeAt(0), lo.f32(), 'f32');
+    var b = new Buffer(un.span);
+    assert.deepEqual(un.decode(Buffer('7778563412', 'hex')),
+                     {u32: 0x12345678});
+    assert.deepEqual(un.decode(Buffer('660000bd41', 'hex')),
+                     {f32: 23.625});
+    assert.deepEqual(un.decode(Buffer('a5a5a5a5a5', 'hex')),
+                     {t: 0xa5, u8: [0xa5, 0xa5, 0xa5, 0xa5]});
     s16.encode({s16: [123, -123]}, b);
     assert.equal(Buffer('687b0085ff', 'hex').compare(b), 0);
   });
@@ -76,8 +79,8 @@ struct ds {
   unsigned int b1Cl04: 4;
 } st;
      */
-    var ds = lo.bits(lo.u32()),
-        b = new Buffer(4);
+    var ds = lo.bits(lo.u32());
+    var b = new Buffer(4);
     ds.addField(3, 'b00l03');
     ds.addField(1, 'b03l01');
     ds.addField(24, 'b04l18');
@@ -85,16 +88,17 @@ struct ds {
     b.fill(0xff);
     ds.encode({b00l03: 3, b04l18: 24, b1Cl04: 4}, b);
     assert.equal(Buffer('8b010040', 'hex').compare(b), 0);
-    assert.deepEqual(ds.decode(b), {b00l03: 3, b03l01: 1, b04l18: 24, b1Cl04: 4});
+    assert.deepEqual(ds.decode(b),
+                     {b00l03: 3, b03l01: 1, b04l18: 24, b1Cl04: 4});
   });
   test('64-bit values', function() {
     /*
 uint64_t v = 0x0102030405060708ULL;
      */
-    var ds = lo.nu64be(),
-        b = Buffer('0102030405060708', 'hex'),
-        v = 72623859790382856,
-        nv = v - 6;
+    var ds = lo.nu64be();
+    var b = Buffer('0102030405060708', 'hex');
+    var v = 72623859790382856;
+    var nv = v - 6;
     assert.equal(v, nv);
     assert.equal(ds.decode(b), nv);
   });
@@ -102,8 +106,8 @@ uint64_t v = 0x0102030405060708ULL;
     /*
 const char str[] = "hi!";
      */
-    var ds = lo.cstr(),
-        b = new Buffer(8);
+    var ds = lo.cstr();
+    var b = new Buffer(8);
     ds.encode('hi!', b);
     var slen = ds.getSpan(b);
     assert.equal(slen, 4);
@@ -111,33 +115,34 @@ const char str[] = "hi!";
     assert.equal(ds.decode(b), 'hi!');
   });
   test('Fixed-len blob at offset', function() {
-    var ds = lo.blob(4),
-        b = Buffer('0102030405060708', 'hex');
+    var ds = lo.blob(4);
+    var b = Buffer('0102030405060708', 'hex');
     assert.equal(Buffer('03040506', 'hex').compare(ds.decode(b, 2)), 0);
   });
   test('variable-length array of pairs of C strings', function() {
-    var pr = lo.seq(lo.cstr(), 2),
-        n = lo.u8('n'),
-        vla = lo.seq(pr, lo.offset(n, -1), 'a'),
-        st = lo.struct([n, vla], 'st'),
-        b = new Buffer(32),
-        arr = [['k1', 'v1'], ['k2', 'v2'], ['k3', 'etc']];
+    var pr = lo.seq(lo.cstr(), 2);
+    var n = lo.u8('n');
+    var vla = lo.seq(pr, lo.offset(n, -1), 'a');
+    var st = lo.struct([n, vla], 'st');
+    var b = new Buffer(32);
+    var arr = [['k1', 'v1'], ['k2', 'v2'], ['k3', 'etc']];
     b.fill(0);
     st.encode({a: arr}, b);
     var span = st.getSpan(b);
     assert.equal(span, 20);
-    assert.equal(Buffer('036b31007631006b32007632006b330065746300', 'hex').compare(b.slice(0, span)), 0);
+    assert.equal(Buffer('036b31007631006b32007632006b330065746300', 'hex')
+                 .compare(b.slice(0, span)), 0);
     assert.deepEqual(st.decode(b), {n: 3, a: arr});
   });
   test('variable-length union', function() {
-    var un = lo.union(lo.u8('t')),
-        u8 = un.addVariant('B'.charCodeAt(0), lo.u8(), 'u8'),
-        s16 = un.addVariant('h'.charCodeAt(0), lo.s16(), 's16'),
-        s48 = un.addVariant('Q'.charCodeAt(0), lo.s48(), 's48'),
-        cstr = un.addVariant('s'.charCodeAt(0), lo.cstr(), 'str'),
-        tr = un.addVariant('T'.charCodeAt(0), lo.const(true), 'b'),
-        fa = un.addVariant('F'.charCodeAt(0), lo.const(false), 'b'),
-        b = new Buffer(1 + 6);
+    var un = lo.union(lo.u8('t'));
+    var u8 = un.addVariant('B'.charCodeAt(0), lo.u8(), 'u8');
+    var s16 = un.addVariant('h'.charCodeAt(0), lo.s16(), 's16');
+    var s48 = un.addVariant('Q'.charCodeAt(0), lo.s48(), 's48');
+    var cstr = un.addVariant('s'.charCodeAt(0), lo.cstr(), 'str');
+    var tr = un.addVariant('T'.charCodeAt(0), lo.const(true), 'b');
+    var fa = un.addVariant('F'.charCodeAt(0), lo.const(false), 'b');
+    var b = new Buffer(1 + 6);
     un.configGetSourceVariant(function(src) {
       if (src.hasOwnProperty('b')) {
         return src.b ? tr : fa;
