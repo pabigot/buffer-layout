@@ -8,4 +8,5 @@ node_js:
   - "0.12"
 after_success:
   - npm run lint.strict
+  - npm run jscs
   - npm run coveralls

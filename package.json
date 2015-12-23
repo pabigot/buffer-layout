@@ -1,45 +1,51 @@
 {
-    "name": "buffer-layout",
-    "version": "0.8.0",
-    "description": "Translation between JavaScript values and Buffers",
-    "keywords": [
-        "Buffer",
-        "struct",
-        "endian",
-        "pack data"
-    ],
-    "homepage": "https://github.com/pabigot/buffer-layout",
-    "bugs": "https://github.com/pabigot/buffer-layout/issues",
-    "repository" : {
-        "type": "git",
-        "url": "https://github.com/pabigot/buffer-layout.git"
-    },
-    "license": "MIT",
-    "author": "Peter A. Bigot <pab@pabigot.com>",
-    "main": "./lib/Layout.js",
-    "devDependencies": {
-        "coveralls": "~2.11.4",
-        "istanbul": "~0.4.0",
-        "jsdoc": "~3.3.3",
-        "jshint": "^2.8.0",
-        "jslint": "~0.9.3",
-        "lodash": "~3.9.3",
-        "mocha": "~2.2.5"
-    },
-    "engines": {
-        "node": ">=0.12"
-    },
-    "scripts": {
-        "coverage": "istanbul cover _mocha -- -u tdd",
-        "coveralls": "istanbul cover _mocha --report lcovonly -- -u tdd && cat ./coverage/lcov.info | coveralls",
-        "jslint": "jslint lib/Layout.js || true",
-        "lint": "jshint lib/*.js test/*.js || true",
-        "lint.strict": "jshint lib/Layout.js",
-        "mkdoc": "jsdoc -c jsdoc/conf.json",
-        "test": "mocha -u tdd"
-    },
-    "jshintConfig": {
-        "node": true,
-        "laxbreak": true
-    }
+  "name": "buffer-layout",
+  "version": "0.9.0",
+  "description": "Translation between JavaScript values and Buffers",
+  "keywords": [
+    "Buffer",
+    "struct",
+    "endian",
+    "pack data"
+  ],
+  "homepage": "https://github.com/pabigot/buffer-layout",
+  "bugs": "https://github.com/pabigot/buffer-layout/issues",
+  "repository" : {
+    "type": "git",
+    "url": "https://github.com/pabigot/buffer-layout.git"
+  },
+  "license": "MIT",
+  "author": "Peter A. Bigot <pab@pabigot.com>",
+  "main": "./lib/Layout.js",
+  "devDependencies": {
+    "coveralls": "~2.11.4",
+    "istanbul": "~0.4.0",
+    "jscs": "~2.7.0",
+    "jsdoc": "~3.3.3",
+    "jshint": "^2.8.0",
+    "jslint": "~0.9.3",
+    "lodash": "~3.9.3",
+    "mocha": "~2.2.5"
+  },
+  "engines": {
+    "node": ">=0.12"
+  },
+  "scripts": {
+    "coverage": "istanbul cover _mocha -- -u tdd",
+    "coveralls": "istanbul cover _mocha --report lcovonly -- -u tdd && cat ./coverage/lcov.info | coveralls",
+    "jscs": "jscs lib/ test/",
+    "jslint": "jslint lib/Layout.js || true",
+    "lint": "jshint lib/*.js test/*.js || true",
+    "lint.strict": "jshint lib/Layout.js",
+    "mkdoc": "jsdoc -c jsdoc/conf.json",
+    "test": "mocha -u tdd"
+  },
+  "jshintConfig": {
+    "node": true,
+    "laxbreak": true
+  },
+  "jscsConfig": {
+    "preset": "google",
+    "requireOperatorBeforeLineBreak": false
+  }
 }
