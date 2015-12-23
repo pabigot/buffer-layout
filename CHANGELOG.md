@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 * **API** Support inferring [Sequence][doc:Sequence.count] and
-  [Blob][doc:Blob.length] from available data.
+  [Blob][doc:Blob.length] spans from available data.
 * **API** Define return value for [Layout.encode][doc:Layout.encode] so
   we know how much was written.
 * **API** Change name of [Sequence][doc:Sequence] property
@@ -51,8 +51,8 @@
 ## [0.4.0] - 2015-11-19
 
 * [Support][issue#9] [data blobs][doc:Blob].
-* Add tests for support of [anonymous containers][issue#8] *feature
-  ultimately rejected*.
+* Add tests for support of [anonymous containers][issue#8] *(feature
+  ultimately rejected)*.
 * [Allow][issue#7] [external discriminators][doc:UnionDiscriminator] for
   unions.
 * [Respect union property names][issue#6].
