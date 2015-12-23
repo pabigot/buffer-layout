@@ -63,79 +63,85 @@ IN THE SOFTWARE.
  * @license MIT
  */
 
+/* jscs:disable requireCurlyBraces */ // silence whining about code from Node.js
+
 /* Test whether Buffer.writeIntLE() gets the right answer for
  * problematic negative integers */
-var issue_3992_is_resolved = (function () {
-    var buf = new Buffer(2);
-    buf.writeIntLE(-0x100, 0, 2);
-    // The value would be 0xFE if the bug is present
-    return (0xFF === buf[1]);
+var issue3992IsResolved = (function() {
+  var buf = new Buffer(2);
+  buf.writeIntLE(-0x100, 0, 2);
+  // The value would be 0xFE if the bug is present
+  return (0xFF === buf[1]);
 })();
 
 /* NB: Backfill code modified from node lib/buffer.js as of
  * 8bc80386879538de63cd6f2aef288f59324eb004 (2015-11-20) */
 /* istanbul ignore next */
 function checkInt(buffer, value, offset, ext, max, min) {
-    if (!(buffer instanceof Buffer))
-        throw new TypeError('"buffer" argument must be a Buffer instance');
-    if (value > max || value &lt; min)
-        throw new TypeError('"value" argument is out of bounds');
-    if (offset + ext > buffer.length)
-        throw new RangeError('Index out of range');
+  if (!(buffer instanceof Buffer))
+      throw new TypeError('"buffer" argument must be a Buffer instance');
+  if (value > max || value &lt; min)
+      throw new TypeError('"value" argument is out of bounds');
+  if (offset + ext > buffer.length)
+      throw new RangeError('Index out of range');
 }
 
 /* The grotesquery here is because jshint whines about strict mode
  * violations if the function doesn't appear to be a method, and about
  * defining functions within a block if the test is in an if
  * statement. */
-Buffer.prototype.writeIntLE = issue_3992_is_resolved ? Buffer.prototype.writeIntLE : function(value, offset, byteLength, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-        checkInt(this,
-                 value,
-                 offset,
-                 byteLength,
-                 Math.pow(2, 8 * byteLength - 1) - 1,
-                 -Math.pow(2, 8 * byteLength - 1));
-    }
+Buffer.prototype.writeIntLE = issue3992IsResolved
+  ? Buffer.prototype.writeIntLE
+  : function(value, offset, byteLength, noAssert) {
+  value = +value;
+  offset = offset >>> 0;
+  if (!noAssert) {
+    checkInt(this,
+             value,
+             offset,
+             byteLength,
+             Math.pow(2, 8 * byteLength - 1) - 1,
+             -Math.pow(2, 8 * byteLength - 1));
+  }
 
-    var i = 0;
-    var mul = 1;
-    var sub = 0;
-    this[offset] = value;
-    while (++i &lt; byteLength &amp;&amp; (mul *= 0x100)) {
-        if (value &lt; 0 &amp;&amp; sub === 0 &amp;&amp; this[offset + i - 1] !== 0)
-            sub = 1;
-        this[offset + i] = ((value / mul) >> 0) - sub;
-    }
+  var i = 0;
+  var mul = 1;
+  var sub = 0;
+  this[offset] = value;
+  while (++i &lt; byteLength &amp;&amp; (mul *= 0x100)) {
+    if (value &lt; 0 &amp;&amp; sub === 0 &amp;&amp; this[offset + i - 1] !== 0)
+        sub = 1;
+    this[offset + i] = ((value / mul) >> 0) - sub;
+  }
 
-    return offset + byteLength;
+  return offset + byteLength;
 };
 
-Buffer.prototype.writeIntBE = issue_3992_is_resolved ? Buffer.prototype.writeIntBE : function(value, offset, byteLength, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-        checkInt(this,
-                 value,
-                 offset,
-                 byteLength,
-                 Math.pow(2, 8 * byteLength - 1) - 1,
-                 -Math.pow(2, 8 * byteLength - 1));
-    }
+Buffer.prototype.writeIntBE = issue3992IsResolved
+  ? Buffer.prototype.writeIntBE
+  : function(value, offset, byteLength, noAssert) {
+  value = +value;
+  offset = offset >>> 0;
+  if (!noAssert) {
+    checkInt(this,
+             value,
+             offset,
+             byteLength,
+             Math.pow(2, 8 * byteLength - 1) - 1,
+             -Math.pow(2, 8 * byteLength - 1));
+  }
 
-    var i = byteLength - 1;
-    var mul = 1;
-    var sub = 0;
-    this[offset + i] = value;
-    while (--i >= 0 &amp;&amp; (mul *= 0x100)) {
-        if (value &lt; 0 &amp;&amp; sub === 0 &amp;&amp; this[offset + i + 1] !== 0)
-            sub = 1;
-        this[offset + i] = ((value / mul) >> 0) - sub;
-    }
+  var i = byteLength - 1;
+  var mul = 1;
+  var sub = 0;
+  this[offset + i] = value;
+  while (--i >= 0 &amp;&amp; (mul *= 0x100)) {
+    if (value &lt; 0 &amp;&amp; sub === 0 &amp;&amp; this[offset + i + 1] !== 0)
+        sub = 1;
+    this[offset + i] = ((value / mul) >> 0) - sub;
+  }
 
-    return offset + byteLength;
+  return offset + byteLength;
 };
 </code></pre>
         </article>
@@ -147,13 +153,13 @@ Buffer.prototype.writeIntBE = issue_3992_is_resolved ? Buffer.prototype.writeInt
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li><li><a href="module-patchIssue3992.html">patchIssue3992</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li><li><a href="module-patchIssue3992.html">patchIssue3992</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sun Nov 29 2015 09:08:55 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Tue Dec 22 2015 19:27:59 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>
