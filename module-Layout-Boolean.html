@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: BitField</title>
+    <title>JSDoc: Class: Boolean</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: BitField</h1>
+    <h1 class="page-title">Class: Boolean</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2>
-            <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>BitField</h2>
+            <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>Boolean</h2>
         
     
 </header>
@@ -41,18 +41,17 @@
 
     
 
-    <h4 class="name" id="BitField"><span class="type-signature"></span>new BitField<span class="signature">(container, bits, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Boolean"><span class="type-signature"></span>new Boolean<span class="signature">(container, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Represent a sequence of bits within a <a href="module-Layout-BitStructure.html">BitStructure</a>.</p>
-<p>All bit field values are represented as unsigned integers.</p>
+    <p>Represent a single bit within a <a href="module-Layout-BitStructure.html">BitStructure</a> as a JavaScript boolean.</p>
 <p><strong>NOTE</strong> User code should not invoke this construtor directly.  Use
-the container <a href="module-Layout-BitStructure.html#addField">addField</a> helper method.</p>
-<p><strong>NOTE</strong> BitField instances are not instances of <a href="module-Layout-Layout.html">Layout</a> since <a href="module-Layout-Layout.html#span">span</a> measures 8-bit units.</p>
+the container <a href="module-Layout-BitStructure.html#addBoolean">addBoolean</a> helper
+method.</p>
 </div>
 
 
@@ -115,37 +114,6 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
             
 
             <td class="description last"><p>initializer for <a href="module-Layout-BitField.html#container">container</a>.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>bits</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>initializer for <a href="module-Layout-BitField.html#bits">bits</a>.</p></td>
         </tr>
 
     
@@ -219,7 +187,7 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1893">line 1893</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1988">line 1988</a>
     </li></ul></dd>
     
 
@@ -247,6 +215,17 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
 
     
     </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="module-Layout-BitField.html">module:Layout~BitField</a></li>
+    </ul>
+
 
     
 
@@ -284,6 +263,11 @@ the container <a href="module-Layout-BitStructure.html#addField">addField</a> he
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-BitField.html#bits">module:Layout~BitField#bits</a>
+    </li></ul></dd>
     
 
     
@@ -347,6 +331,11 @@ bit field belongs.</p>
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-BitField.html#container">module:Layout~BitField#container</a>
+    </li></ul></dd>
     
 
     
@@ -415,6 +404,11 @@ decoded Object.</p>
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-BitField.html#property">module:Layout~BitField#property</a>
+    </li></ul></dd>
+    
 
     
 
@@ -479,6 +473,11 @@ offset zero, regardless of bit ordering used.</p>
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-BitField.html#start">module:Layout~BitField#start</a>
+    </li></ul></dd>
+    
 
     
 
@@ -541,6 +540,11 @@ that fit within the field.</p>
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-BitField.html#valueMask">module:Layout~BitField#valueMask</a>
+    </li></ul></dd>
     
 
     
@@ -605,6 +609,11 @@ within the containing packed unsigned integer.</p>
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-BitField.html#wordMask">module:Layout~BitField#wordMask</a>
+    </li></ul></dd>
+    
 
     
 
@@ -654,15 +663,14 @@ within the containing packed unsigned integer.</p>
 
     
 
-    <h4 class="name" id="decode"><span class="type-signature"></span>decode<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="decode"><span class="type-signature"></span>decode<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Store a value into the corresponding subsequence of the containing
-bit field.</p>
+    <p>Override <a href="module-Layout-BitField.html#decode">decode</a> for <a href="module-Layout-Boolean.html">Boolean</a>.</p>
 </div>
 
 
@@ -686,6 +694,11 @@ bit field.</p>
     
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="module-Layout-BitField.html#decode">module:Layout~BitField#decode</a>
+    </li></ul></dd>
+    
 
     
 
@@ -706,7 +719,7 @@ bit field.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1950">line 1950</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1996">line 1996</a>
     </li></ul></dd>
     
 
@@ -729,6 +742,24 @@ bit field.</p>
 
 
 
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -767,6 +798,11 @@ bit field.</p>
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-BitField.html#encode">module:Layout~BitField#encode</a>
+    </li></ul></dd>
     
 
     
