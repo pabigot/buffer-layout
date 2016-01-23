@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+* **API** Change some exceptions (especially integer value spans) to
+  throw `RangeError` instead of `TypeError`, resolving
+  [issue #12][issue#12].
+* **API** [Add][issue#14] [boolean-valued bit fields][doc:Boolean].
+* Increase coverage of primary module to 100%.
+* Update dev dependency modules.
+* Fix always-false pre-convert type check.
 
 ## [0.9.0] - 2015-12-22
 
@@ -90,6 +97,7 @@
 [doc:BitStructure]: http://pabigot.github.io/buffer-layout/module-Layout-BitStructure.html
 [doc:Blob]: http://pabigot.github.io/buffer-layout/module-Layout-Blob.html
 [doc:Blob.length]: http://pabigot.github.io/buffer-layout/module-Layout-Blob.html#length
+[doc:Boolean]: http://pabigot.github.io/buffer-layout/module-Layout-Boolean.html
 [doc:Constant]: http://pabigot.github.io/buffer-layout/module-Layout-Constant.html
 [doc:CString]: http://pabigot.github.io/buffer-layout/module-Layout-CString.html
 [doc:Layout.encode]: http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#encode
@@ -117,6 +125,7 @@
 [issue#11]: https://github.com/pabigot/buffer-layout/issues/11
 [issue#12]: https://github.com/pabigot/buffer-layout/issues/12
 [issue#13]: https://github.com/pabigot/buffer-layout/issues/13
+[issue#14]: https://github.com/pabigot/buffer-layout/issues/14
 [ci:travis]: https://travis-ci.org/pabigot/buffer-layout
 [ci:coveralls]: https://coveralls.io/github/pabigot/buffer-layout
 [node:issue#3992]: https://github.com/nodejs/node/issues/3992
