@@ -1,6 +1,6 @@
 {
   "name": "buffer-layout",
-  "version": "0.10.0-dev",
+  "version": "0.10.0",
   "description": "Translation between JavaScript values and Buffers",
   "keywords": [
     "Buffer",
