@@ -144,13 +144,13 @@ The buffer-layout way:
 
 See [Union](http://pabigot.github.io/buffer-layout/module-Layout-Union.html).
 
-#### Packed bit fields on a little-endian machine
+### Packed bit fields on a little-endian machine
 
 The C definition:
 
     struct ds {
       unsigned int b00l03: 3;
-      unsigned int b03l01: 1;
+      unsigned int flg03: 1;
       unsigned int b04l18: 24;
       unsigned int b1Cl04: 4;
     } st;
@@ -160,14 +160,14 @@ The buffer-layout way:
     var ds = lo.bits(lo.u32());
     var b = new Buffer(4);
     ds.addField(3, 'b00l03');
-    ds.addField(1, 'b03l01');
+    ds.addBoolean('flg03');
     ds.addField(24, 'b04l18');
     ds.addField(4, 'b1Cl04');
     b.fill(0xff);
     assert.equal(ds.encode({b00l03: 3, b04l18: 24, b1Cl04: 4}, b), 4);
     assert.equal(Buffer('8b010040', 'hex').compare(b), 0);
     assert.deepEqual(ds.decode(b),
-                     {b00l03: 3, b03l01: 1, b04l18: 24, b1Cl04: 4});
+                     {b00l03: 3, flg03: true, b04l18: 24, b1Cl04: 4});
 
 See [BitStructure](http://pabigot.github.io/buffer-layout/module-Layout-BitStructure.html).
 

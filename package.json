@@ -1,6 +1,6 @@
 {
   "name": "buffer-layout",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Translation between JavaScript values and Buffers",
   "keywords": [
     "Buffer",
@@ -18,14 +18,14 @@
   "author": "Peter A. Bigot <pab@pabigot.com>",
   "main": "./lib/Layout.js",
   "devDependencies": {
-    "coveralls": "~2.11.4",
-    "istanbul": "~0.4.0",
-    "jscs": "~2.7.0",
-    "jsdoc": "~3.3.3",
-    "jshint": "^2.8.0",
-    "jslint": "~0.9.3",
-    "lodash": "~3.9.3",
-    "mocha": "~2.2.5"
+    "coveralls": "~2.11.6",
+    "istanbul": "~0.4.2",
+    "jscs": "~2.8.0",
+    "jsdoc": "~3.4.0",
+    "jshint": "^2.9.1",
+    "jslint": "~0.9.6",
+    "lodash": "~4.0.0",
+    "mocha": "~2.3.4"
   },
   "engines": {
     "node": ">=0.12"
@@ -34,10 +34,10 @@
     "coverage": "istanbul cover _mocha -- -u tdd",
     "coveralls": "istanbul cover _mocha --report lcovonly -- -u tdd && cat ./coverage/lcov.info | coveralls",
     "jscs": "jscs lib/ test/",
+    "jsdoc": "jsdoc -c jsdoc/conf.json",
     "jslint": "jslint lib/Layout.js || true",
     "lint": "jshint lib/*.js test/*.js || true",
     "lint.strict": "jshint lib/Layout.js",
-    "mkdoc": "jsdoc -c jsdoc/conf.json",
     "test": "mocha -u tdd"
   },
   "jshintConfig": {
