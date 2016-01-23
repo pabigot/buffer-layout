@@ -83,6 +83,13 @@ suite('Layout', function() {
       assert.equal(Buffer('3412', 'hex').compare(b), 0);
       assert.equal(d.decode(b), 0x1234);
     });
+    test('u24', function() {
+      var d = lo.u24('t');
+      var b = new Buffer(3);
+      assert.equal(d.span, 3);
+      assert.equal(0x563412, d.decode(Buffer('123456', 'hex')));
+      assert.throws(function() { d.encode(0x1234567, b); });
+    });
     test('u48', function() {
       var d = lo.u48('t');
       var b = new Buffer(6);
@@ -96,6 +103,14 @@ suite('Layout', function() {
       assert.equal(d.encode(0x123456789abc, b), 6);
       assert.equal(Buffer('bc9a78563412', 'hex').compare(b), 0);
       assert.equal(d.decode(b), 0x123456789abc);
+    });
+    test('offset', function() {
+      var b = new Buffer(4);
+      b.fill(0xa5);
+      var d = lo.u16('t');
+      d.encode(0x3412, b, 1);
+      assert.equal(Buffer('A51234A5', 'hex').compare(b), 0);
+      assert.equal(0xA534, d.decode(b, 2));
     });
     test('invalid ctor', function() {
       assert.throws(function() { new lo.UInt(8); }, TypeError);
@@ -115,6 +130,30 @@ suite('Layout', function() {
       assert.equal(Buffer('1234', 'hex').compare(b), 0);
       assert.equal(d.decode(b), 0x1234);
     });
+    test('u24be', function() {
+      var d = lo.u24be('t');
+      var b = new Buffer(3);
+      assert.equal(d.span, 3);
+      assert.equal(0x123456, d.decode(Buffer('123456', 'hex')));
+      assert.throws(function() { d.encode(0x1234567, b); });
+      assert.throws(function() { d.encode(-1, b); });
+    });
+    test('u32be', function() {
+      var d = lo.u32be('t');
+      var b = new Buffer(4);
+      assert.equal(d.span, 4);
+      assert.equal(0x12345678, d.decode(Buffer('12345678', 'hex')));
+      assert.throws(function() { d.encode(0x123456789, b); });
+      assert.throws(function() { d.encode(-1, b); });
+    });
+    test('u40be', function() {
+      var d = lo.u40be('t');
+      var b = new Buffer(5);
+      assert.equal(d.span, 5);
+      assert.equal(0x123456789a, d.decode(Buffer('123456789a', 'hex')));
+      assert.throws(function() { d.encode(0x123456789ab, b); });
+      assert.throws(function() { d.encode(-1, b); });
+    });
     test('u48be', function() {
       var d = lo.u48be('t');
       var b = new Buffer(6);
@@ -127,6 +166,14 @@ suite('Layout', function() {
       assert.equal(d.encode(0x123456789abc, b), 6);
       assert.equal(Buffer('123456789abc', 'hex').compare(b), 0);
       assert.equal(d.decode(b), 0x123456789abc);
+    });
+    test('offset', function() {
+      var b = new Buffer(4);
+      b.fill(0xa5);
+      var d = lo.u16be('t');
+      d.encode(0x1234, b, 1);
+      assert.equal(Buffer('A51234A5', 'hex').compare(b), 0);
+      assert.equal(0x34A5, d.decode(b, 2));
     });
     test('invalid ctor', function() {
       assert.throws(function() { new lo.UIntBE(8); }, TypeError);
@@ -168,6 +215,26 @@ suite('Layout', function() {
       assert.equal(lo.u16().decode(b), 0xcfc7);
       assert.equal(lo.u16be().decode(b), 0xc7cf);
     });
+    test('s24', function() {
+      var d = lo.s24('t');
+      var b = new Buffer(3);
+      assert.equal(d.span, 3);
+      assert.equal(0x563412, d.decode(Buffer('123456', 'hex')));
+      assert.equal(-1, d.decode(Buffer('FFFFFF', 'hex')));
+      assert.equal(-0x800000, d.decode(Buffer('000080', 'hex')));
+      assert.throws(function() { d.encode(0x800000, b); });
+      assert.throws(function() { d.encode(-0x800001, b); });
+    });
+    test('s40', function() {
+      var d = lo.s40('t');
+      var b = new Buffer(5);
+      assert.equal(d.span, 5);
+      assert.equal(0x123456789a, d.decode(Buffer('9a78563412', 'hex')));
+      assert.equal(-1, d.decode(Buffer('FFFFFFFFFF', 'hex')));
+      assert.equal(-0x8000000000, d.decode(Buffer('0000000080', 'hex')));
+      assert.throws(function() { d.encode(0x8000000000, b); });
+      assert.throws(function() { d.encode(-0x8000000001, b); });
+    });
     test('s48', function() {
       var d = lo.s48('t');
       var b = new Buffer(6);
@@ -192,7 +259,7 @@ suite('Layout', function() {
     });
   });
   suite('IntBE', function() {
-    test('s16', function() {
+    test('s16be', function() {
       var d = lo.s16be('t');
       var b = new Buffer(2);
       assert(d instanceof lo.IntBE);
@@ -211,7 +278,37 @@ suite('Layout', function() {
       assert.equal(lo.u16be().decode(b), 0xcfc7);
       assert.equal(lo.u16().decode(b), 0xc7cf);
     });
-    test('s48', function() {
+    test('s24be', function() {
+      var d = lo.s24be('t');
+      var b = new Buffer(3);
+      assert.equal(d.span, 3);
+      assert.equal(0x123456, d.decode(Buffer('123456', 'hex')));
+      assert.equal(-1, d.decode(Buffer('FFFFFF', 'hex')));
+      assert.equal(-0x800000, d.decode(Buffer('800000', 'hex')));
+      assert.throws(function() { d.encode(0x800000, b); });
+      assert.throws(function() { d.encode(-0x800001, b); });
+    });
+    test('s32be', function() {
+      var d = lo.s32be('t');
+      var b = new Buffer(4);
+      assert.equal(d.span, 4);
+      assert.equal(0x12345678, d.decode(Buffer('12345678', 'hex')));
+      assert.equal(-1, d.decode(Buffer('FFFFFFFF', 'hex')));
+      assert.equal(-0x80000000, d.decode(Buffer('80000000', 'hex')));
+      assert.throws(function() { d.encode(0x80000000, b); });
+      assert.throws(function() { d.encode(-0x80000001, b); });
+    });
+    test('s40be', function() {
+      var d = lo.s40be('t');
+      var b = new Buffer(5);
+      assert.equal(d.span, 5);
+      assert.equal(0x123456789a, d.decode(Buffer('123456789a', 'hex')));
+      assert.equal(-1, d.decode(Buffer('FFFFFFFFFF', 'hex')));
+      assert.equal(-0x8000000000, d.decode(Buffer('8000000000', 'hex')));
+      assert.throws(function() { d.encode(0x8000000000, b); });
+      assert.throws(function() { d.encode(-0x8000000001, b); });
+    });
+    test('s48be', function() {
       var d = lo.s48be('t');
       var b = new Buffer(6);
       assert(d instanceof lo.IntBE);
@@ -294,6 +391,15 @@ suite('Layout', function() {
     assert.equal(be.decode(eb), ev);
     assert.equal(le.encode(v, eb), 8);
     assert.equal(le.decode(eb), ev);
+
+    b = new Buffer(10);
+    b.fill(0xa5);
+    le.encode(1, b, 1);
+    assert.equal(Buffer('a50100000000000000a5', 'hex').compare(b), 0);
+    assert.equal(1, le.decode(b, 1));
+    be.encode(1, b, 1);
+    assert.equal(Buffer('a50000000000000001a5', 'hex').compare(b), 0);
+    assert.equal(1, be.decode(b, 1));
   });
   test('RoundedInt64', function() {
     var be = lo.ns64be('be');
@@ -355,6 +461,15 @@ suite('Layout', function() {
     assert.equal(be.decode(eb), ev);
     assert.equal(le.encode(v, eb), 8);
     assert.equal(le.decode(eb), ev);
+
+    b = new Buffer(10);
+    b.fill(0xa5);
+    le.encode(1, b, 1);
+    assert.equal(Buffer('a50100000000000000a5', 'hex').compare(b), 0);
+    assert.equal(1, le.decode(b, 1));
+    be.encode(1, b, 1);
+    assert.equal(Buffer('a50000000000000001a5', 'hex').compare(b), 0);
+    assert.equal(1, be.decode(b, 1));
   });
   test('Float', function() {
     var be = lo.f32be('eff');
@@ -382,6 +497,15 @@ suite('Layout', function() {
     assert.equal(Buffer('47f12010', 'hex').compare(b), 0);
     assert.equal(be.decode(b), f);
     assert.equal(le.decode(b), fe);
+
+    b = new Buffer(6);
+    b.fill(0xa5);
+    le.encode(f, b, 1);
+    assert.equal(Buffer('a51020f147a5', 'hex').compare(b), 0);
+    assert.equal(f, le.decode(b, 1));
+    be.encode(f, b, 1);
+    assert.equal(Buffer('a547f12010a5', 'hex').compare(b), 0);
+    assert.equal(f, be.decode(b, 1));
   });
   test('Double', function() {
     var be = lo.f64be('dee');
@@ -408,6 +532,15 @@ suite('Layout', function() {
     assert.equal(Buffer('43b12210f4c10f30', 'hex').compare(b), 0);
     assert.equal(be.decode(b), f);
     assert.equal(le.decode(b), fe);
+
+    b = new Buffer(10);
+    b.fill(0xa5);
+    le.encode(f, b, 1);
+    assert.equal(Buffer('a5300fc1f41022b143a5', 'hex').compare(b), 0);
+    assert.equal(f, le.decode(b, 1));
+    be.encode(f, b, 1);
+    assert.equal(Buffer('a543b12210f4c10f30a5', 'hex').compare(b), 0);
+    assert.equal(f, be.decode(b, 1));
   });
   suite('Sequence', function() {
     test('invalid ctor', function() {
@@ -607,6 +740,17 @@ suite('Layout', function() {
       assert.equal(st.span, 0);
       assert.deepEqual(st.decode(b), {});
     });
+    test('offset-variant', function() {
+      var st = lo.struct([lo.cstr('s')], 'st');
+      assert(0 > st.span);
+      var b = new Buffer(5);
+      b.fill(0xa5);
+      var obj = {s: 'ab'};
+      st.encode(obj, b, 1);
+      assert.equal(Buffer('a5616200a5', 'hex').compare(b), 0);
+      assert.equal(3, st.getSpan(b, 1));
+      assert.deepEqual(st.decode(b, 1), obj);
+    });
   });
   suite('replicate', function() {
     test('uint', function() {
@@ -784,6 +928,8 @@ suite('Layout', function() {
     test('invalid ctor', function() {
       assert.throws(function() { new lo.UnionLayoutDiscriminator('hi'); },
                     TypeError);
+      assert.throws(function() { lo.unionLayoutDiscriminator('hi'); },
+                    TypeError);
       assert.throws(function() { new lo.UnionLayoutDiscriminator(lo.f32()); },
                     TypeError);
       assert.throws(function() {
@@ -954,6 +1100,7 @@ suite('Layout', function() {
       assert.strictEqual(clo.fields, vlo.fields);
       assert.deepEqual(obj.content, {payload: [0,1,2,3,4,5,6,7]});
       assert.equal(obj.tag, 8);
+      assert.equal(9, un.getSpan(b));
     });
     test('issue#7.internal.named2', function() {
       var dlo = lo.u8('vid');
@@ -1100,6 +1247,29 @@ suite('Layout', function() {
 
       b[0] = 5;
       assert.throws(function() { un.getSpan(b); }, Error);
+
+      b.fill(0xa5);
+      assert.equal(un.encode(obj, b, 1), 1 + 3 + 1);
+      assert.equal(v3.getSpan(b, 1), 5);
+      assert.equal(un.getSpan(b, 1), 5);
+      assert.equal(Buffer('a50368692100a5', 'hex')
+                   .compare(b.slice(0, 5 + 2)), 0);
+      assert.deepEqual(un.decode(b, 1), obj);
+    });
+    test('variable-external', function() {
+      var dlo = lo.u8('v');
+      var ud = lo.unionLayoutDiscriminator(lo.offset(dlo, -1));
+      var un = lo.union(ud, null, 'u');
+      assert(0 > un.span);
+      assert(!un.usesPrefixDiscriminator);
+      var st = lo.struct([dlo, un], 'st');
+      var v1 = un.addVariant(1, lo.cstr(), 's');
+      var obj = {v: v1.variant, u: {s: 'hi'}};
+      var b = new Buffer(6);
+      b.fill(0xa5);
+      st.encode(obj, b, 1);
+      assert.equal(Buffer('a501686900a5', 'hex').compare(b), 0);
+      assert.deepEqual(st.decode(b, 1), obj);
     });
   });
   test('fromArray', function() {
@@ -1168,6 +1338,12 @@ suite('Layout', function() {
       assert.equal(bs._packedGetValue(), 0xFFFF);
       assert.throws(function() { bf6.encode('hi', b); }, Error);
       assert.throws(function() { bf6.encode(1 << 6, b); }, Error);
+
+      b = new Buffer(2 + bs.span);
+      b.fill(0xa5);
+      bs.encode(obj, b, 1);
+      assert.equal(Buffer('a5ffffa5', 'hex').compare(b), 0);
+      assert.deepEqual(bs.decode(b, 1), obj);
     });
     test('basic LSB', function() {
       var pbl = lo.u32();
@@ -1336,6 +1512,7 @@ suite('Layout', function() {
       assert.equal(bv.length, bl.span);
       assert.equal(Buffer('010203', 'hex').compare(bv), 0);
       bv = bl.decode(b, 2);
+      assert.equal(bl.getSpan(b), bl.span);
       assert.equal(Buffer('030405', 'hex').compare(bv), 0);
       assert.equal(bl.encode(Buffer('112233', 'hex'), b, 1), 3);
       assert.equal(Buffer('0111223305', 'hex').compare(b), 0);
