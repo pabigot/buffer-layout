@@ -1489,6 +1489,22 @@ suite('Layout', function() {
       assert.equal(msb.encode(mb, b), 3);
       assert.equal(Buffer('a569a5', 'hex').compare(b), 0);
     });
+    test('boolean', function() {
+      var bs = lo.bits(lo.u8());
+      bs.addField(1, 'v');
+      bs.addBoolean('b');
+      var b = new Buffer(bs.span);
+      b[0] = 0x3;
+      var obj = bs.decode(b);
+      assert.strictEqual(1, obj.v);
+      assert.notStrictEqual(1, obj.b);
+      assert.strictEqual(true, obj.b);
+      assert.notStrictEqual(true, obj.v);
+      bs.encode({v:1,b:1}, b);
+      assert.equal(b[0], 3);
+      bs.encode({v:0,b:0}, b);
+      assert.equal(b[0], 0);
+    });
   });
   suite('Blob', function() {
     test('invalid ctor', function() {
