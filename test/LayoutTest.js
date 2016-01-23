@@ -113,7 +113,7 @@ suite('Layout', function() {
       assert.equal(0xA534, d.decode(b, 2));
     });
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.UInt(8); }, TypeError);
+      assert.throws(function() { new lo.UInt(8); }, RangeError);
     });
   });
   suite('UIntBE', function() {
@@ -176,7 +176,7 @@ suite('Layout', function() {
       assert.equal(0x34A5, d.decode(b, 2));
     });
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.UIntBE(8); }, TypeError);
+      assert.throws(function() { new lo.UIntBE(8); }, RangeError);
     });
   });
   suite('Int', function() {
@@ -255,7 +255,7 @@ suite('Layout', function() {
       assert.equal(lo.u48be().decode(b), 0x8720f279b78f);
     });
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.Int(8); }, TypeError);
+      assert.throws(function() { new lo.Int(8); }, RangeError);
     });
   });
   suite('IntBE', function() {
@@ -328,7 +328,7 @@ suite('Layout', function() {
       assert.equal(lo.u48().decode(b), 0x8720f279b78f);
     });
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.IntBE(8, 'u64'); }, TypeError);
+      assert.throws(function() { new lo.IntBE(8, 'u64'); }, RangeError);
     });
   });
   test('RoundedUInt64', function() {
