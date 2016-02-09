@@ -1500,9 +1500,9 @@ suite('Layout', function() {
       assert.notStrictEqual(1, obj.b);
       assert.strictEqual(true, obj.b);
       assert.notStrictEqual(true, obj.v);
-      bs.encode({v:1,b:1}, b);
+      bs.encode({v: 1, b: 1}, b);
       assert.equal(b[0], 3);
-      bs.encode({v:0,b:0}, b);
+      bs.encode({v: 0, b: 0}, b);
       assert.equal(b[0], 0);
     });
   });
