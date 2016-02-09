@@ -46,6 +46,16 @@
   },
   "jscsConfig": {
     "preset": "google",
-    "requireOperatorBeforeLineBreak": false
+    "requireOperatorBeforeLineBreak": false,
+    "maximumLineLength": {
+      "value": 120,
+      "allExcept": ["comments", "regex"]
+    },
+    "requireCamelCaseOrUpperCaseIdentifiers": {
+      "allowedSuffixes": [
+        "_dCel",
+        "_ppt"
+      ]
+    }
   }
 }
