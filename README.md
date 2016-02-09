@@ -144,6 +144,50 @@ The buffer-layout way:
 
 See [Union](http://pabigot.github.io/buffer-layout/module-Layout-Union.html).
 
+### Decoding into class instances
+
+Using the same 5-byte packet structure but with JavaScript classes
+representing the union and the variants:
+
+    function Union () { }
+    Union._layout = lo.union(lo.u8('t'), lo.seq(lo.u8(), 4, 'u8'), undefined, Union.prototype);
+    Union.decode = Union._layout.decode.bind(Union._layout);
+
+    function Vu32 (v) { this.u32 = v; }
+    Vu32.prototype = Object.create(Union.prototype);
+    Vu32.prototype.constructor = Vu32;
+    Vu32._layout = Union._layout.addVariant('w'.charCodeAt(0), lo.u32(), 'u32', Vu32.prototype);
+    Vu32.prototype.encode = function (b, offset) { return Vu32._layout.encode(this, b, offset); }
+
+    function Vs16 (v) { this.s16 = v; }
+    Vs16.prototype = Object.create(Union.prototype);
+    Vs16.prototype.constructor = Vs16;
+    Vs16._layout = Union._layout.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16', Vs16.prototype);
+    Vs16.prototype.encode = function (b, offset) { return Vs16._layout.encode(this, b, offset); }
+
+    function Vf32 (v) { this.f32 = v; }
+    Vf32.prototype = Object.create(Union.prototype);
+    Vf32.prototype.constructor = Vf32;
+    Vf32._layout = Union._layout.addVariant('f'.charCodeAt(0), lo.f32(), 'f32', Vf32.prototype);
+    Vf32.prototype.encode = function (b, offset) { return Vf32._layout.encode(this, b, offset); }
+
+    var v = Union.decode(Buffer('7778563412', 'hex'));
+    assert(v instanceof Vu32);
+    assert(v instanceof Union);
+    assert.equal(v.u32, 0x12345678);
+
+    v = Union.decode(Buffer('a5a5a5a5a5', 'hex'));
+    assert(v instanceof Union);
+    assert.equal(v.t, 0xa5);
+    assert.deepEqual(v.u8, [0xa5, 0xa5, 0xa5, 0xa5]);
+
+    var b = new Buffer(Union._layout.span);
+    v = new Vf32(23.625);
+    v.encode(b);
+    assert.equal(Buffer('660000bd41', 'hex').compare(b), 0);
+
+See [Layout.objectPrototype](http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#objectPrototype).
+
 ### Packed bit fields on a little-endian machine
 
 The C definition:

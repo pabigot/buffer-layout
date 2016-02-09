@@ -1708,4 +1708,130 @@ suite('Layout', function() {
       assert.equal(b.length, 0);
     });
   });
+  suite('objectConstructor', function() {
+    test('invalid ctor', function() {
+      assert.throws(function() { return lo.struct([lo.u8()], 's', 0); });
+    });
+    test('struct', function() {
+      function Sample(temp_dCel, humidity_ppt) {
+        this.temp_dCel = temp_dCel;
+        this.humidity_ppt = humidity_ppt;
+      }
+      Sample._layout = lo.struct([lo.s32('temp_dCel'),
+                                  lo.u32('humidity_ppt')],
+                                 'sample',
+                                 Sample.prototype);
+      Sample.prototype.encode = function(b, offset) {
+        return Sample._layout.encode(this, b, offset);
+      };
+      Sample.decode = function(b, offset) {
+        return Sample._layout.decode(b, offset);
+      };
+
+      var p = new Sample(223, 672);
+      assert(p instanceof Sample);
+      assert.equal(p.temp_dCel, 223);
+      assert.equal(p.humidity_ppt, 672);
+
+      var po = Object.create(Sample.prototype);
+      assert(po instanceof Sample);
+
+      var b = new Buffer(8);
+      p.encode(b);
+      assert.equal(Buffer('df000000a0020000', 'hex').compare(b), 0);
+
+      po = Sample._layout.decode(b);
+      assert(po instanceof Sample);
+      assert.deepEqual(po, p);
+
+      po = Sample.decode(b);
+      assert(po instanceof Sample);
+      assert.deepEqual(po, p);
+    });
+    test('bits', function() {
+      function Header() { };
+      Header.prototype.power = function() {
+        return ['off', 'lo', 'med', 'hi'][this.pwr];
+      };
+      Header._layout = lo.bits(lo.u8(), undefined, undefined, Header.prototype);
+      Header._layout.addField(2, 'ver');
+      Header._layout.addField(2, 'pwr');
+      Header.prototype.encode = function(b, offset) {
+        return Header._layout.encode(this, b, offset);
+      };
+      Header.decode = function(b, offset) {
+        return Header._layout.decode(b, offset);
+      };
+      var b = Buffer('07', 'hex');
+      var hdr = Header.decode(b);
+      assert(hdr instanceof Header);
+      assert.equal(hdr.ver, 3);
+      assert.equal(hdr.pwr, 1);
+      assert.equal(hdr.power(), 'lo');
+      var nb = new Buffer(1);
+      nb.fill(0);
+      assert.equal(1, hdr.encode(nb));
+      assert.equal(b.compare(nb), 0);
+    });
+    test('union', function() {
+      function Union() { };
+      Union.layout = lo.union(lo.u8('var'), lo.blob(8, 'unk'),
+                              undefined, Union.prototype);
+      function VFloat(v) {
+        this.f32 = v;
+      };
+      VFloat.prototype = Object.create(Union.prototype);
+      VFloat.prototype.constructor = VFloat;
+      VFloat.layout = Union.layout.addVariant(1, lo.f32(),
+                                              'f32', VFloat.prototype);
+      function VCStr(v) {
+        this.text = v;
+      };
+      VCStr.prototype = Object.create(Union.prototype);
+      VCStr.prototype.constructor = VCStr;
+      VCStr.layout = Union.layout.addVariant(2, lo.cstr(),
+                                             'text', VCStr.prototype);
+      function Struct(u32, u16, s16) {
+        this.u32 = u32;
+        this.u16 = u16;
+        this.s16 = s16;
+      };
+      function VStruct(v) {
+        this.struct = v;
+      }
+      VStruct.prototype = Object.create(Union.prototype);
+      VStruct.prototype.constructor = VStruct;
+      {
+        var str = lo.struct([lo.u32('u32'), lo.u16('u16'), lo.s16('s16')], undefined, Struct.prototype);
+        VStruct.layout = Union.layout.addVariant(3, str, 'struct', VStruct.prototype);
+      }
+      var b = new Buffer(Union.layout.span);
+      b.fill(0);
+      var u = Union.layout.decode(b);
+      assert(u instanceof Union);
+      assert.equal(u.var, 0);
+      b[0] = 1;
+      u = Union.layout.decode(b);
+      assert(u instanceof VFloat);
+      assert(u instanceof Union);
+      assert.equal(u.f32, 0.0);
+      b[0] = 2;
+      b[1] = 65;
+      b[2] = 66;
+      u = Union.layout.decode(b);
+      assert(u instanceof VCStr);
+      assert(u instanceof Union);
+      assert.equal(u.text, 'AB');
+      b = Buffer('030403020122218281', 'hex');
+      u = Union.layout.decode(b);
+      assert(u instanceof VStruct);
+      assert(u instanceof Union);
+      assert(u.struct instanceof Struct);
+      assert.deepEqual(u.struct, {'u32': 0x01020304, 'u16': 0x2122, 's16': -32382});
+
+      u.struct = new Struct(1,2,-3);
+      assert.equal(Union.layout.span, Union.layout.encode(u, b));
+      assert.equal(Buffer('03010000000200fdff', 'hex').compare(b), 0);
+    });
+  });
 });

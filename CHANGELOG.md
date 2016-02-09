@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+* **API** Provide prototypes to use for decoded objects, resolving
+  [issue #15][issue#15].
+
 ## [0.10.0] - 2016-01-23
 
 * **API** Change some exceptions (especially integer value spans) to
@@ -129,6 +132,7 @@
 [issue#12]: https://github.com/pabigot/buffer-layout/issues/12
 [issue#13]: https://github.com/pabigot/buffer-layout/issues/13
 [issue#14]: https://github.com/pabigot/buffer-layout/issues/14
+[issue#15]: https://github.com/pabigot/buffer-layout/issues/15
 [ci:travis]: https://travis-ci.org/pabigot/buffer-layout
 [ci:coveralls]: https://coveralls.io/github/pabigot/buffer-layout
 [node:issue#3992]: https://github.com/nodejs/node/issues/3992
