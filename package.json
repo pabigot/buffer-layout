@@ -1,6 +1,6 @@
 {
   "name": "buffer-layout",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Translation between JavaScript values and Buffers",
   "keywords": [
     "Buffer",
@@ -20,12 +20,12 @@
   "devDependencies": {
     "coveralls": "~2.11.6",
     "istanbul": "~0.4.2",
-    "jscs": "~2.8.0",
+    "jscs": "~2.9.0",
     "jsdoc": "~3.4.0",
     "jshint": "^2.9.1",
     "jslint": "~0.9.6",
     "lodash": "~4.0.0",
-    "mocha": "~2.3.4"
+    "mocha": "~2.4.0"
   },
   "engines": {
     "node": ">=0.12"
@@ -46,6 +46,16 @@
   },
   "jscsConfig": {
     "preset": "google",
-    "requireOperatorBeforeLineBreak": false
+    "requireOperatorBeforeLineBreak": false,
+    "maximumLineLength": {
+      "value": 120,
+      "allExcept": ["comments", "regex"]
+    },
+    "requireCamelCaseOrUpperCaseIdentifiers": {
+      "allowedSuffixes": [
+        "_dCel",
+        "_ppt"
+      ]
+    }
   }
 }

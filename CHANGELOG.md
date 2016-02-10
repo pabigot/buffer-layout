@@ -1,6 +1,9 @@
 # Change Log
 
-## [Unreleased]
+## [0.11.0] - 2016-02-10
+
+* **API** Provide prototypes to use for decoded objects, resolving
+  [issue #15][issue#15].
 
 ## [0.10.0] - 2016-01-23
 
@@ -85,7 +88,7 @@
 
 * Initial release.
 
-[Unreleased]: https://github.com/pabigot/buffer-layout/compare/v0.10.0...next
+[0.11.0]: https://github.com/pabigot/buffer-layout/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/pabigot/buffer-layout/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/pabigot/buffer-layout/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/pabigot/buffer-layout/compare/v0.7.0...v0.8.0
@@ -129,6 +132,7 @@
 [issue#12]: https://github.com/pabigot/buffer-layout/issues/12
 [issue#13]: https://github.com/pabigot/buffer-layout/issues/13
 [issue#14]: https://github.com/pabigot/buffer-layout/issues/14
+[issue#15]: https://github.com/pabigot/buffer-layout/issues/15
 [ci:travis]: https://travis-ci.org/pabigot/buffer-layout
 [ci:coveralls]: https://coveralls.io/github/pabigot/buffer-layout
 [node:issue#3992]: https://github.com/nodejs/node/issues/3992
