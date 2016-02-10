@@ -41,7 +41,7 @@
 
     
 
-    <h4 class="name" id="Union"><span class="type-signature"></span>new Union<span class="signature">(discr, defaultLayout, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Union"><span class="type-signature"></span>new Union<span class="signature">(discr, defaultLayout, property<span class="signature-attributes">opt</span>, objectPrototype<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -212,6 +212,39 @@ a <a href="module-Layout-Layout.html#property">property</a> the <a href="module-
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>objectPrototype</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Initializer for <a href="module-Layout-Layout.html#objectPrototype">objectPrototype</a>.</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -249,7 +282,7 @@ a <a href="module-Layout-Layout.html#property">property</a> the <a href="module-
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1331">line 1331</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1385">line 1385</a>
     </li></ul></dd>
     
 
@@ -352,7 +385,7 @@ name.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1398">line 1398</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1450">line 1450</a>
     </li></ul></dd>
     
 
@@ -418,7 +451,84 @@ constructor argument.  <a href="module-Layout-Union.html#usesPrefixDiscriminator
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1382">line 1382</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1434">line 1434</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="objectPrototype"><span class="type-signature"></span>objectPrototype<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Prototype used when the layout is represented as an Object.</p>
+<p>Used only for layouts that <a href="module-Layout-Layout.html#decode">decode</a> to Object
+instances, which means:</p>
+<ul>
+<li><a href="module-Layout-Structure.html">Structure</a></li>
+<li><a href="module-Layout-Union.html">Union</a></li>
+<li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li>
+<li><a href="module-Layout-BitStructure.html">BitStructure</a></li>
+</ul>
+<p>If left undefined the JavaScript representation of these layouts
+will be Object instances.</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-Layout.html#objectPrototype">module:Layout~Layout#objectPrototype</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line251">line 251</a>
     </li></ul></dd>
     
 
@@ -490,7 +600,7 @@ decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line229">line 229</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line238">line 238</a>
     </li></ul></dd>
     
 
@@ -559,7 +669,7 @@ manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1411">line 1411</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1463">line 1463</a>
     </li></ul></dd>
     
 
@@ -631,7 +741,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line219">line 219</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line228">line 228</a>
     </li></ul></dd>
     
 
@@ -696,7 +806,7 @@ else.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1389">line 1389</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1441">line 1441</a>
     </li></ul></dd>
     
 
@@ -723,7 +833,7 @@ else.</p>
 
     
 
-    <h4 class="name" id="addVariant"><span class="type-signature"></span>addVariant<span class="signature">(variant, layout, property)</span><span class="type-signature"> &rarr; {<a href="module-Layout-VariantLayout.html">module:Layout~VariantLayout</a>}</span></h4>
+    <h4 class="name" id="addVariant"><span class="type-signature"></span>addVariant<span class="signature">(variant, layout, property, objectPrototype<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="module-Layout-VariantLayout.html">module:Layout~VariantLayout</a>}</span></h4>
 
     
 
@@ -755,6 +865,8 @@ created variant is returned.</p>
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -780,6 +892,14 @@ created variant is returned.</p>
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -802,6 +922,14 @@ created variant is returned.</p>
             
             </td>
 
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -826,10 +954,51 @@ created variant is returned.</p>
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
             <td class="description last"><p>initializer for <a href="module-Layout-Layout.html#property">property</a>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>objectPrototype</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Initializer for <a href="module-Layout-Layout.html#objectPrototype">objectPrototype</a>.</p></td>
         </tr>
 
     
@@ -870,7 +1039,7 @@ created variant is returned.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1558">line 1558</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1614">line 1614</a>
     </li></ul></dd>
     
 
@@ -1024,7 +1193,7 @@ Union instance, providing local access to <a href="module-Layout-Union.html#regi
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1444">line 1444</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1496">line 1496</a>
     </li></ul></dd>
     
 
@@ -1114,7 +1283,7 @@ discriminator.  Otherwise the <a href="module-Layout-Union.html#defaultLayout">d
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1500">line 1500</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1552">line 1552</a>
     </li></ul></dd>
     
 
@@ -1245,7 +1414,7 @@ discriminator.  Otherwise the <a href="module-Layout-Union.html#defaultLayout">d
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1481">line 1481</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1533">line 1533</a>
     </li></ul></dd>
     
 
@@ -1399,7 +1568,7 @@ method.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1527">line 1527</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1580">line 1580</a>
     </li></ul></dd>
     
 
@@ -1547,7 +1716,7 @@ layouts.  Any unused values are ignored.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line325">line 325</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line347">line 347</a>
     </li></ul></dd>
     
 
@@ -1701,7 +1870,7 @@ be overridden using <a href="module-Layout-Union.html#configGetSourceVariant">co
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1429">line 1429</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1481">line 1481</a>
     </li></ul></dd>
     
 
@@ -1815,7 +1984,7 @@ available in <code>src</code>.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1453">line 1453</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1505">line 1505</a>
     </li></ul></dd>
     
 
@@ -1976,7 +2145,7 @@ union.  Used only when <code>vb</code> is an instance of {Buffer}.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1575">line 1575</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1632">line 1632</a>
     </li></ul></dd>
     
 
@@ -2133,7 +2302,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line299">line 299</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line321">line 321</a>
     </li></ul></dd>
     
 
@@ -2206,7 +2375,7 @@ set to <code>property</code>.</li>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Jan 23 2016 10:47:09 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 10 2016 14:02:36 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

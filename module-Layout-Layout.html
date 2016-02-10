@@ -41,7 +41,7 @@
 
     
 
-    <h4 class="name" id="Layout"><span class="type-signature"></span>new Layout<span class="signature">(span, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Layout"><span class="type-signature"></span>new Layout<span class="signature">(span, property<span class="signature-attributes">opt</span>, objectPrototype<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -115,7 +115,7 @@ relationships between layouts are not inadvertently corrupted.</p>
 
             
 
-            <td class="description last"><p>Default for <a href="module-Layout-Layout.html#span">span</a>.  The
+            <td class="description last"><p>Initializer for <a href="module-Layout-Layout.html#span">span</a>.  The
 parameter must be an integer; a negative value signifies that the
 span is <a href="module-Layout-Layout.html#getSpan">value-specific</a>.</p></td>
         </tr>
@@ -150,7 +150,40 @@ span is <a href="module-Layout-Layout.html#getSpan">value-specific</a>.</p></td>
 
             
 
-            <td class="description last"><p>Default for <a href="module-Layout-Layout.html#property">property</a>.</p></td>
+            <td class="description last"><p>Initializer for <a href="module-Layout-Layout.html#property">property</a>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>objectPrototype</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Initializer for <a href="module-Layout-Layout.html#objectPrototype">objectPrototype</a>.</p></td>
         </tr>
 
     
@@ -191,7 +224,7 @@ span is <a href="module-Layout-Layout.html#getSpan">value-specific</a>.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line204">line 204</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line207">line 207</a>
     </li></ul></dd>
     
 
@@ -232,6 +265,78 @@ span is <a href="module-Layout-Layout.html#getSpan">value-specific</a>.</p></td>
 
     
         <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="objectPrototype"><span class="type-signature"></span>objectPrototype<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Prototype used when the layout is represented as an Object.</p>
+<p>Used only for layouts that <a href="module-Layout-Layout.html#decode">decode</a> to Object
+instances, which means:</p>
+<ul>
+<li><a href="module-Layout-Structure.html">Structure</a></li>
+<li><a href="module-Layout-Union.html">Union</a></li>
+<li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li>
+<li><a href="module-Layout-BitStructure.html">BitStructure</a></li>
+</ul>
+<p>If left undefined the JavaScript representation of these layouts
+will be Object instances.</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line251">line 251</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
 
         
             
@@ -284,7 +389,7 @@ decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line229">line 229</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line238">line 238</a>
     </li></ul></dd>
     
 
@@ -351,7 +456,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line219">line 219</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line228">line 228</a>
     </li></ul></dd>
     
 
@@ -522,7 +627,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line240">line 240</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line262">line 262</a>
     </li></ul></dd>
     
 
@@ -766,7 +871,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line260">line 260</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line282">line 282</a>
     </li></ul></dd>
     
 
@@ -935,7 +1040,7 @@ layouts.  Any unused values are ignored.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line325">line 325</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line347">line 347</a>
     </li></ul></dd>
     
 
@@ -1131,7 +1236,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line278">line 278</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line300">line 300</a>
     </li></ul></dd>
     
 
@@ -1321,7 +1426,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line299">line 299</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line321">line 321</a>
     </li></ul></dd>
     
 
@@ -1394,7 +1499,7 @@ set to <code>property</code>.</li>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Jan 23 2016 10:47:09 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 10 2016 14:02:36 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

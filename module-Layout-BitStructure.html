@@ -41,7 +41,7 @@
 
     
 
-    <h4 class="name" id="BitStructure"><span class="type-signature"></span>new BitStructure<span class="signature">(word, msb, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="BitStructure"><span class="type-signature"></span>new BitStructure<span class="signature">(word, msb, property<span class="signature-attributes">opt</span>, objectPrototype<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -188,6 +188,39 @@ starts at the least significant bit of the containing word.</p></td>
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>objectPrototype</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Initializer for <a href="module-Layout-Layout.html#objectPrototype">objectPrototype</a>.</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -225,7 +258,7 @@ starts at the least significant bit of the containing word.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1762">line 1762</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1822">line 1822</a>
     </li></ul></dd>
     
 
@@ -327,7 +360,7 @@ not manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1792">line 1792</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1852">line 1852</a>
     </li></ul></dd>
     
 
@@ -394,7 +427,84 @@ bit of the corresponding section of the packed value.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1784">line 1784</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1844">line 1844</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="objectPrototype"><span class="type-signature"></span>objectPrototype<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Prototype used when the layout is represented as an Object.</p>
+<p>Used only for layouts that <a href="module-Layout-Layout.html#decode">decode</a> to Object
+instances, which means:</p>
+<ul>
+<li><a href="module-Layout-Structure.html">Structure</a></li>
+<li><a href="module-Layout-Union.html">Union</a></li>
+<li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li>
+<li><a href="module-Layout-BitStructure.html">BitStructure</a></li>
+</ul>
+<p>If left undefined the JavaScript representation of these layouts
+will be Object instances.</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-Layout.html#objectPrototype">module:Layout~Layout#objectPrototype</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line251">line 251</a>
     </li></ul></dd>
     
 
@@ -466,7 +576,7 @@ decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line229">line 229</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line238">line 238</a>
     </li></ul></dd>
     
 
@@ -538,7 +648,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line219">line 219</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line228">line 228</a>
     </li></ul></dd>
     
 
@@ -601,7 +711,7 @@ on <a href="module-Layout-BitStructure.html#msb">msb</a>.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1775">line 1775</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1835">line 1835</a>
     </li></ul></dd>
     
 
@@ -729,7 +839,7 @@ fields with <code>boolean</code> value representation.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1867">line 1867</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1927">line 1927</a>
     </li></ul></dd>
     
 
@@ -902,7 +1012,7 @@ resulting bitfield is returned.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1855">line 1855</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1915">line 1915</a>
     </li></ul></dd>
     
 
@@ -1007,7 +1117,7 @@ resulting bitfield is returned.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1811">line 1811</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1871">line 1871</a>
     </li></ul></dd>
     
 
@@ -1096,7 +1206,7 @@ value is left unmodified.  Unused bits are also left unmodified.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1830">line 1830</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1890">line 1890</a>
     </li></ul></dd>
     
 
@@ -1244,7 +1354,7 @@ layouts.  Any unused values are ignored.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line325">line 325</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line347">line 347</a>
     </li></ul></dd>
     
 
@@ -1445,7 +1555,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line278">line 278</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line300">line 300</a>
     </li></ul></dd>
     
 
@@ -1640,7 +1750,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line299">line 299</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line321">line 321</a>
     </li></ul></dd>
     
 
@@ -1713,7 +1823,7 @@ set to <code>property</code>.</li>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Jan 23 2016 10:47:09 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 10 2016 14:02:36 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>
