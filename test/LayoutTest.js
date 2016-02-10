@@ -1717,16 +1717,10 @@ suite('Layout', function() {
         this.temp_dCel = temp_dCel;
         this.humidity_ppt = humidity_ppt;
       }
-      Sample._layout = lo.struct([lo.s32('temp_dCel'),
-                                  lo.u32('humidity_ppt')],
-                                 'sample',
-                                 Sample.prototype);
-      Sample.prototype.encode = function(b, offset) {
-        return Sample._layout.encode(this, b, offset);
-      };
-      Sample.decode = function(b, offset) {
-        return Sample._layout.decode(b, offset);
-      };
+      lo.setClassLayout(Sample,lo.struct([lo.s32('temp_dCel'),
+                                          lo.u32('humidity_ppt')],
+                                         'sample',
+                                         Sample.prototype));
 
       var p = new Sample(223, 672);
       assert(p instanceof Sample);
@@ -1753,15 +1747,9 @@ suite('Layout', function() {
       Header.prototype.power = function() {
         return ['off', 'lo', 'med', 'hi'][this.pwr];
       };
-      Header._layout = lo.bits(lo.u8(), undefined, undefined, Header.prototype);
+      lo.setClassLayout(Header, lo.bits(lo.u8(), undefined, undefined, Header.prototype));
       Header._layout.addField(2, 'ver');
       Header._layout.addField(2, 'pwr');
-      Header.prototype.encode = function(b, offset) {
-        return Header._layout.encode(this, b, offset);
-      };
-      Header.decode = function(b, offset) {
-        return Header._layout.decode(b, offset);
-      };
       var b = Buffer('07', 'hex');
       var hdr = Header.decode(b);
       assert(hdr instanceof Header);
@@ -1782,15 +1770,17 @@ suite('Layout', function() {
       };
       VFloat.prototype = Object.create(Union.prototype);
       VFloat.prototype.constructor = VFloat;
-      VFloat.layout = Union.layout.addVariant(1, lo.f32(),
-                                              'f32', VFloat.prototype);
+      lo.setClassLayout(VFloat,
+                        Union.layout.addVariant(1, lo.f32(),
+                                                'f32', VFloat.prototype));
       function VCStr(v) {
         this.text = v;
       };
       VCStr.prototype = Object.create(Union.prototype);
       VCStr.prototype.constructor = VCStr;
-      VCStr.layout = Union.layout.addVariant(2, lo.cstr(),
-                                             'text', VCStr.prototype);
+      lo.setClassLayout(VCStr,
+                        Union.layout.addVariant(2, lo.cstr(),
+                                                'text', VCStr.prototype));
       function Struct(u32, u16, s16) {
         this.u32 = u32;
         this.u16 = u16;
@@ -1803,7 +1793,7 @@ suite('Layout', function() {
       VStruct.prototype.constructor = VStruct;
       {
         var str = lo.struct([lo.u32('u32'), lo.u16('u16'), lo.s16('s16')], undefined, Struct.prototype);
-        VStruct.layout = Union.layout.addVariant(3, str, 'struct', VStruct.prototype);
+        lo.setClassLayout(VStruct, Union.layout.addVariant(3, str, 'struct', VStruct.prototype));
       }
       var b = new Buffer(Union.layout.span);
       b.fill(0);

@@ -72,26 +72,30 @@ struct {
   });
   test('decode into instances', function() {
     function Union() { }
-    Union._layout = lo.union(lo.u8('t'), lo.seq(lo.u8(), 4, 'u8'), undefined, Union.prototype);
-    Union.decode = Union._layout.decode.bind(Union._layout);
+    lo.setClassLayout(Union,
+                      lo.union(lo.u8('t'), lo.seq(lo.u8(), 4, 'u8'),
+                               undefined, Union.prototype));
 
     function Vu32(v) { this.u32 = v; }
     Vu32.prototype = Object.create(Union.prototype);
     Vu32.prototype.constructor = Vu32;
-    Vu32._layout = Union._layout.addVariant('w'.charCodeAt(0), lo.u32(), 'u32', Vu32.prototype);
-    Vu32.prototype.encode = function(b, offset) { return Vu32._layout.encode(this, b, offset); };
+    lo.setClassLayout(Vu32,
+                      Union._layout.addVariant('w'.charCodeAt(0), lo.u32(),
+                                               'u32', Vu32.prototype));
 
     function Vs16(v) { this.s16 = v; }
     Vs16.prototype = Object.create(Union.prototype);
     Vs16.prototype.constructor = Vs16;
-    Vs16._layout = Union._layout.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16', Vs16.prototype);
-    Vs16.prototype.encode = function(b, offset) { return Vs16._layout.encode(this, b, offset); };
+    lo.setClassLayout(Vs16,
+                      Union._layout.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2),
+                                               's16', Vs16.prototype));
 
     function Vf32(v) { this.f32 = v; }
     Vf32.prototype = Object.create(Union.prototype);
     Vf32.prototype.constructor = Vf32;
-    Vf32._layout = Union._layout.addVariant('f'.charCodeAt(0), lo.f32(), 'f32', Vf32.prototype);
-    Vf32.prototype.encode = function(b, offset) { return Vf32._layout.encode(this, b, offset); };
+    lo.setClassLayout(Vf32,
+                      Union._layout.addVariant('f'.charCodeAt(0), lo.f32(),
+                                               'f32', Vf32.prototype));
 
     var v = Union.decode(Buffer('7778563412', 'hex'));
     assert(v instanceof Vu32);
