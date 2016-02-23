@@ -1,4 +1,5 @@
 var assert = require('assert');
+var util = require('util');
 var _ = require('lodash');
 var lo = require('../lib/Layout');
 
@@ -1768,16 +1769,14 @@ suite('Layout', function() {
       function VFloat(v) {
         this.f32 = v;
       };
-      VFloat.prototype = Object.create(Union.prototype);
-      VFloat.prototype.constructor = VFloat;
+      util.inherits(VFloat, Union);
       lo.setClassLayout(VFloat,
                         Union.layout.addVariant(1, lo.f32(),
                                                 'f32', VFloat.prototype));
       function VCStr(v) {
         this.text = v;
       };
-      VCStr.prototype = Object.create(Union.prototype);
-      VCStr.prototype.constructor = VCStr;
+      util.inherits(VCStr, Union);
       lo.setClassLayout(VCStr,
                         Union.layout.addVariant(2, lo.cstr(),
                                                 'text', VCStr.prototype));
@@ -1789,8 +1788,7 @@ suite('Layout', function() {
       function VStruct(v) {
         this.struct = v;
       }
-      VStruct.prototype = Object.create(Union.prototype);
-      VStruct.prototype.constructor = VStruct;
+      util.inherits(VStruct, Union);
       {
         var str = lo.struct([lo.u32('u32'), lo.u16('u16'), lo.s16('s16')], undefined, Struct.prototype);
         lo.setClassLayout(VStruct, Union.layout.addVariant(3, str, 'struct', VStruct.prototype));

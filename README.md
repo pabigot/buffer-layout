@@ -36,8 +36,9 @@ and later.  Install with `npm install buffer-layout`.
 All examples are from the `test/examples.js` unit test and assume the
 following context:
 
-    var assert = require("assert"),
-        lo = require("buffer-layout");
+    var assert = require('assert');
+    var util = require('util');
+    var lo = require('buffer-layout');
 
 The examples give only a taste of what can be done.  Structures, unions,
 and sequences can nest; [union
@@ -155,22 +156,19 @@ representing the union and the variants:
                                undefined, Union.prototype));
 
     function Vu32(v) { this.u32 = v; }
-    Vu32.prototype = Object.create(Union.prototype);
-    Vu32.prototype.constructor = Vu32;
+    util.inherits(Vu32, Union);
     lo.setClassLayout(Vu32,
                       Union._layout.addVariant('w'.charCodeAt(0), lo.u32(),
                                                'u32', Vu32.prototype));
 
     function Vs16(v) { this.s16 = v; }
-    Vs16.prototype = Object.create(Union.prototype);
-    Vs16.prototype.constructor = Vs16;
+    util.inherits(Vs16, Union);
     lo.setClassLayout(Vs16,
                       Union._layout.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2),
                                                's16', Vs16.prototype));
 
     function Vf32(v) { this.f32 = v; }
-    Vf32.prototype = Object.create(Union.prototype);
-    Vf32.prototype.constructor = Vf32;
+    util.inherits(Vf32, Union);
     lo.setClassLayout(Vf32,
                       Union._layout.addVariant('f'.charCodeAt(0), lo.f32(),
                                                'f32', Vf32.prototype));
