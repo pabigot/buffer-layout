@@ -1723,6 +1723,9 @@ suite('Layout', function() {
                                          'sample',
                                          Sample.prototype));
 
+      assert(!Sample.prototype.propertyIsEnumerable('encode'));
+      assert(!Sample.propertyIsEnumerable('decode'));
+
       var p = new Sample(223, 672);
       assert(p instanceof Sample);
       assert.equal(p.temp_dCel, 223);

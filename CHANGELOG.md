@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+* **API** Make the `encode` and `decode` functions from
+  [setClassLayout][doc:setClassLayout] un-enumerable.
+
 ## [0.11.0] - 2016-02-10
 
 * **API** Provide prototypes to use for decoded objects, resolving
@@ -118,6 +121,7 @@
 [doc:Union]: http://pabigot.github.io/buffer-layout/module-Layout-Union.html
 [doc:Union.getSourceVariant]: http://pabigot.github.io/buffer-layout/module-Layout-Union.html#getSourceVariant
 [doc:UnionDiscriminator]: http://pabigot.github.io/buffer-layout/module-Layout-UnionDiscriminator.html
+[doc:setClassLayout]: http://pabigot.github.io/buffer-layout/module-Layout.html#.setClassLayout
 [doc:Sequence]: http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html
 [doc:Sequence.count]: http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html#count
 [doc:Structure]: http://pabigot.github.io/buffer-layout/module-Layout-Structure.html
