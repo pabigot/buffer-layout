@@ -1726,6 +1726,21 @@ suite('Layout', function() {
       assert(!Sample.prototype.propertyIsEnumerable('encode'));
       assert(!Sample.propertyIsEnumerable('decode'));
 
+      /* Verify that synthesized encode/decode may be extended. */
+      var called;
+      var synthesizedEncode = Sample.prototype.encode;
+      assert('function' === typeof synthesizedEncode);
+      Sample.prototype.encode = function(src, b, offset) {
+        called = true;
+        return synthesizedEncode.bind(this)(src, b, offset);
+      };
+      var synthesizedDecode = Sample.decode;
+      assert('function' === typeof synthesizedDecode);
+      Sample.decode = function(b, offset) {
+        called = true;
+        return synthesizedDecode(b, offset);
+      };
+
       var p = new Sample(223, 672);
       assert(p instanceof Sample);
       assert.equal(p.temp_dCel, 223);
@@ -1735,14 +1750,18 @@ suite('Layout', function() {
       assert(po instanceof Sample);
 
       var b = new Buffer(8);
+      assert(!called);
       p.encode(b);
+      assert(called);
       assert.equal(Buffer('df000000a0020000', 'hex').compare(b), 0);
 
       po = Sample._layout.decode(b);
       assert(po instanceof Sample);
       assert.deepEqual(po, p);
 
+      called = false;
       po = Sample.decode(b);
+      assert(called);
       assert(po instanceof Sample);
       assert.deepEqual(po, p);
     });
