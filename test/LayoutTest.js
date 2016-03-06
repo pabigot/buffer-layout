@@ -752,6 +752,23 @@ suite('Layout', function() {
       assert.equal(3, st.getSpan(b, 1));
       assert.deepEqual(st.decode(b, 1), obj);
     });
+    test('empty encode fixed span', function() {
+      var slo = lo.struct([lo.u8('a'), lo.u8('b')]);
+      assert.equal(slo.span, 2);
+      var b = new Buffer(10);
+      assert.equal(slo.encode({}, b), slo.span);
+      assert.equal(slo.encode({}, b, 1), slo.span);
+    });
+    test('empty encode variable span', function() {
+      var slo = lo.struct([lo.u8('a'), lo.cstr('s')]);
+      assert.equal(slo.span, -1);
+      var b = new Buffer(10);
+      assert.equal(slo.encode({}, b), 1);
+      assert.equal(slo.encode({}, b, 5), 1);
+      assert.equal(slo.encode({a: 5}, b), 1);
+      assert.equal(slo.encode({a: 5, s: 'hi'}, b), 4);
+      assert.equal(slo.encode({a: 5, s: 'hi'}, b, 5), 4);
+    });
   });
   suite('replicate', function() {
     test('uint', function() {
