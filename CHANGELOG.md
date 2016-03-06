@@ -2,8 +2,8 @@
 
 ## [Unreleased]
 
-* **API** Make the `encode` and `decode` functions from
-  [setClassLayout][doc:setClassLayout] un-enumerable.
+* **API** Replace `setClassLayout` with [bindConstructorLayout][doc:bindConstructorLayout].
+* **API** Replace `objectPrototype` with [makeDestinationObject][doc:makeDestinationObject].
 
 ## [0.11.0] - 2016-02-10
 
@@ -105,6 +105,7 @@
 [0.4.0]: https://github.com/pabigot/buffer-layout/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/pabigot/buffer-layout/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/pabigot/buffer-layout/compare/v0.1.0...v0.2.0
+[doc:bindConstructorLayout]: http://pabigot.github.io/buffer-layout/module-Layout.html#.bindConstructorLayout
 [doc:BitField]: http://pabigot.github.io/buffer-layout/module-Layout-BitField.html
 [doc:BitStructure]: http://pabigot.github.io/buffer-layout/module-Layout-BitStructure.html
 [doc:Blob]: http://pabigot.github.io/buffer-layout/module-Layout-Blob.html
@@ -115,13 +116,13 @@
 [doc:Layout.encode]: http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#encode
 [doc:Layout.getSpan]: http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#getSpan
 [doc:Layout.span]: http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#span
+[doc:makeDestinationObject]: http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#makeDestinationObject
 [doc:NearInt64]: http://pabigot.github.io/buffer-layout/module-Layout-NearInt64.html
 [doc:OffsetLayout]: http://pabigot.github.io/buffer-layout/module-Layout-OffsetLayout.html
 [doc:patchIssue3992]: http://pabigot.github.io/buffer-layout/module-patchIssue3992.html
 [doc:Union]: http://pabigot.github.io/buffer-layout/module-Layout-Union.html
 [doc:Union.getSourceVariant]: http://pabigot.github.io/buffer-layout/module-Layout-Union.html#getSourceVariant
 [doc:UnionDiscriminator]: http://pabigot.github.io/buffer-layout/module-Layout-UnionDiscriminator.html
-[doc:setClassLayout]: http://pabigot.github.io/buffer-layout/module-Layout.html#.setClassLayout
 [doc:Sequence]: http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html
 [doc:Sequence.count]: http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html#count
 [doc:Structure]: http://pabigot.github.io/buffer-layout/module-Layout-Structure.html

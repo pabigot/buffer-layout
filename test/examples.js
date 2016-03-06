@@ -73,27 +73,23 @@ struct {
   });
   test('decode into instances', function() {
     function Union() { }
-    lo.setClassLayout(Union,
-                      lo.union(lo.u8('t'), lo.seq(lo.u8(), 4, 'u8'),
-                               undefined, Union.prototype));
+    lo.bindConstructorLayout(Union,
+                             lo.union(lo.u8('t'), lo.seq(lo.u8(), 4, 'u8')));
 
     function Vu32(v) { this.u32 = v; }
     util.inherits(Vu32, Union);
-    lo.setClassLayout(Vu32,
-                      Union._layout.addVariant('w'.charCodeAt(0), lo.u32(),
-                                               'u32', Vu32.prototype));
+    lo.bindConstructorLayout(Vu32,
+                             Union.layout_.addVariant('w'.charCodeAt(0), lo.u32(), 'u32'));
 
     function Vs16(v) { this.s16 = v; }
     util.inherits(Vs16, Union);
-    lo.setClassLayout(Vs16,
-                      Union._layout.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2),
-                                               's16', Vs16.prototype));
+    lo.bindConstructorLayout(Vs16,
+                             Union.layout_.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16'));
 
     function Vf32(v) { this.f32 = v; }
     util.inherits(Vf32, Union);
-    lo.setClassLayout(Vf32,
-                      Union._layout.addVariant('f'.charCodeAt(0), lo.f32(),
-                                               'f32', Vf32.prototype));
+    lo.bindConstructorLayout(Vf32,
+                             Union.layout_.addVariant('f'.charCodeAt(0), lo.f32(), 'f32'));
 
     var v = Union.decode(Buffer('7778563412', 'hex'));
     assert(v instanceof Vu32);
@@ -105,7 +101,7 @@ struct {
     assert.equal(v.t, 0xa5);
     assert.deepEqual(v.u8, [0xa5, 0xa5, 0xa5, 0xa5]);
 
-    var b = new Buffer(Union._layout.span);
+    var b = new Buffer(Union.layout_.span);
     v = new Vf32(23.625);
     v.encode(b);
     assert.equal(Buffer('660000bd41', 'hex').compare(b), 0);
