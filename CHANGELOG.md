@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.12.0] - 2016-0308
+
+* **API** Replace `setClassLayout` with [bindConstructorLayout][doc:bindConstructorLayout].
+* **API** Replace `objectPrototype` with [makeDestinationObject][doc:makeDestinationObject].
+
 ## [0.11.0] - 2016-02-10
 
 * **API** Provide prototypes to use for decoded objects, resolving
@@ -88,6 +93,7 @@
 
 * Initial release.
 
+[0.12.0]: https://github.com/pabigot/buffer-layout/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/pabigot/buffer-layout/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/pabigot/buffer-layout/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/pabigot/buffer-layout/compare/v0.8.0...v0.9.0
@@ -99,6 +105,7 @@
 [0.4.0]: https://github.com/pabigot/buffer-layout/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/pabigot/buffer-layout/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/pabigot/buffer-layout/compare/v0.1.0...v0.2.0
+[doc:bindConstructorLayout]: http://pabigot.github.io/buffer-layout/module-Layout.html#.bindConstructorLayout
 [doc:BitField]: http://pabigot.github.io/buffer-layout/module-Layout-BitField.html
 [doc:BitStructure]: http://pabigot.github.io/buffer-layout/module-Layout-BitStructure.html
 [doc:Blob]: http://pabigot.github.io/buffer-layout/module-Layout-Blob.html
@@ -109,6 +116,7 @@
 [doc:Layout.encode]: http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#encode
 [doc:Layout.getSpan]: http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#getSpan
 [doc:Layout.span]: http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#span
+[doc:makeDestinationObject]: http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#makeDestinationObject
 [doc:NearInt64]: http://pabigot.github.io/buffer-layout/module-Layout-NearInt64.html
 [doc:OffsetLayout]: http://pabigot.github.io/buffer-layout/module-Layout-OffsetLayout.html
 [doc:patchIssue3992]: http://pabigot.github.io/buffer-layout/module-patchIssue3992.html
