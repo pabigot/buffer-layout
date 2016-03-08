@@ -220,7 +220,7 @@ integer or an instance of <a href="module-Layout-ExternalLayout.html">module:Lay
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line993">line 993</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1040">line 1040</a>
     </li></ul></dd>
     
 
@@ -321,7 +321,7 @@ integer or an instance of <a href="module-Layout-ExternalLayout.html">module:Lay
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1018">line 1018</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1065">line 1065</a>
     </li></ul></dd>
     
 
@@ -383,84 +383,7 @@ integer or an instance of <a href="module-Layout-ExternalLayout.html">module:Lay
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1011">line 1011</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="objectPrototype"><span class="type-signature"></span>objectPrototype<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    <p>Prototype used when the layout is represented as an Object.</p>
-<p>Used only for layouts that <a href="module-Layout-Layout.html#decode">decode</a> to Object
-instances, which means:</p>
-<ul>
-<li><a href="module-Layout-Structure.html">Structure</a></li>
-<li><a href="module-Layout-Union.html">Union</a></li>
-<li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li>
-<li><a href="module-Layout-BitStructure.html">BitStructure</a></li>
-</ul>
-<p>If left undefined the JavaScript representation of these layouts
-will be Object instances.</p>
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="module-Layout-Layout.html#objectPrototype">module:Layout~Layout#objectPrototype</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line251">line 251</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1058">line 1058</a>
     </li></ul></dd>
     
 
@@ -532,7 +455,7 @@ decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line238">line 238</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line230">line 230</a>
     </li></ul></dd>
     
 
@@ -604,7 +527,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line228">line 228</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line220">line 220</a>
     </li></ul></dd>
     
 
@@ -631,14 +554,14 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
 
     
 
-    <h4 class="name" id="decode"><span class="type-signature"></span>decode<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="decode"><span class="type-signature"></span>decode<span class="signature">(b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number|Array|Object}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Implement <a href="module-Layout-Layout.html#decode">decode</a> for <a href="module-Layout-Sequence.html">Sequence</a>.</p>
+    <p>Decode from a Buffer into an JavaScript value.</p>
 </div>
 
 
@@ -647,6 +570,99 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Buffer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the buffer from which encoded data is read.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>offset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the offset at which the encoded data
+starts.  If absent a zero offset is inferred.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -687,7 +703,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1050">line 1050</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line262">line 262</a>
     </li></ul></dd>
     
 
@@ -710,6 +726,36 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>the value of the decoded data.</li>
+</ul>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -780,7 +826,7 @@ encoded as the count after <code>src</code> is encoded.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1077">line 1077</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1121">line 1121</a>
     </li></ul></dd>
     
 
@@ -928,7 +974,7 @@ layouts.  Any unused values are ignored.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line347">line 347</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line358">line 358</a>
     </li></ul></dd>
     
 
@@ -980,14 +1026,14 @@ layouts.  Any unused values are ignored.</p></td>
 
     
 
-    <h4 class="name" id="getSpan"><span class="type-signature"></span>getSpan<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getSpan"><span class="type-signature"></span>getSpan<span class="signature">(b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Implement <a href="module-Layout-Layout.html#getSpan">getSpan</a> for <a href="module-Layout-Sequence.html">Sequence</a>.</p>
+    <p>Calculate the span of a specific instance of a layout.</p>
 </div>
 
 
@@ -996,6 +1042,99 @@ layouts.  Any unused values are ignored.</p></td>
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Buffer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the buffer that contains an encoded instance.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>offset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the offset at which the encoded instance
+starts.  If absent a zero offset is inferred.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -1036,7 +1175,165 @@ layouts.  Any unused values are ignored.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1025">line 1025</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line308">line 308</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <ul>
+<li>if the length of the value cannot be
+determined.</li>
+</ul>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">RangeError</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>the number of bytes covered by the layout
+instance.  If this method is not overridden in a subclass the
+definition-time constant <a href="module-Layout-Layout.html#span">span</a> will be
+returned.</li>
+</ul>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="makeDestinationObject"><span class="type-signature"></span>makeDestinationObject<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Function to create an Object into which decoded properties will
+be written.</p>
+<p>Used only for layouts that <a href="module-Layout-Layout.html#decode">decode</a> to Object
+instances, which means:</p>
+<ul>
+<li><a href="module-Layout-Structure.html">Structure</a></li>
+<li><a href="module-Layout-Union.html">Union</a></li>
+<li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li>
+<li><a href="module-Layout-BitStructure.html">BitStructure</a></li>
+</ul>
+<p>If left undefined the JavaScript representation of these layouts
+will be Object instances.</p>
+<p>See <a href="module-Layout.html#.bindConstructorLayout">bindConstructorLayout()</a>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-Layout.html#makeDestinationObject">module:Layout~Layout#makeDestinationObject</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line247">line 247</a>
     </li></ul></dd>
     
 
@@ -1119,14 +1416,18 @@ immutable.</p>
 
             <td class="type">
             
+                
+<span class="param-type">String</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>the value for <a href="module-Layout-Layout.html#property">property</a> in
-the replica.</p></td>
+            <td class="description last"><p>the value for <a href="module-Layout-Layout.html#property">property</a> in the replica.</p></td>
         </tr>
 
     
@@ -1172,7 +1473,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line321">line 321</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line331">line 331</a>
     </li></ul></dd>
     
 
@@ -1245,7 +1546,7 @@ set to <code>property</code>.</li>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 10 2016 14:02:36 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Mar 08 2016 07:26:24 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

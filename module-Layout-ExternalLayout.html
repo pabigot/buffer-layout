@@ -41,7 +41,7 @@
 
     
 
-    <h4 class="name" id="ExternalLayout"><span class="type-signature"></span>new ExternalLayout<span class="signature">(span, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ExternalLayout"><span class="type-signature">(abstract) </span>new ExternalLayout<span class="signature">(span, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -191,7 +191,7 @@ The parameter can range from 1 through 6.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line398">line 398</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line447">line 447</a>
     </li></ul></dd>
     
 
@@ -243,83 +243,6 @@ The parameter can range from 1 through 6.</p></td>
 
     
         <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id="objectPrototype"><span class="type-signature"></span>objectPrototype<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    <p>Prototype used when the layout is represented as an Object.</p>
-<p>Used only for layouts that <a href="module-Layout-Layout.html#decode">decode</a> to Object
-instances, which means:</p>
-<ul>
-<li><a href="module-Layout-Structure.html">Structure</a></li>
-<li><a href="module-Layout-Union.html">Union</a></li>
-<li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li>
-<li><a href="module-Layout-BitStructure.html">BitStructure</a></li>
-</ul>
-<p>If left undefined the JavaScript representation of these layouts
-will be Object instances.</p>
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="module-Layout-Layout.html#objectPrototype">module:Layout~Layout#objectPrototype</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line251">line 251</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
 
         
             
@@ -377,7 +300,7 @@ decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line238">line 238</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line230">line 230</a>
     </li></ul></dd>
     
 
@@ -449,7 +372,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line228">line 228</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line220">line 220</a>
     </li></ul></dd>
     
 
@@ -476,7 +399,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
 
     
 
-    <h4 class="name" id="decode"><span class="type-signature"></span>decode<span class="signature">(b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number|Array|Object}</span></h4>
+    <h4 class="name" id="decode"><span class="type-signature">(abstract) </span>decode<span class="signature">(b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number|Array|Object}</span></h4>
 
     
 
@@ -686,7 +609,7 @@ starts.  If absent a zero offset is inferred.</p></td>
 
     
 
-    <h4 class="name" id="encode"><span class="type-signature"></span>encode<span class="signature">(src, b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    <h4 class="name" id="encode"><span class="type-signature">(abstract) </span>encode<span class="signature">(src, b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number}</span></h4>
 
     
 
@@ -874,7 +797,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line282">line 282</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line288">line 288</a>
     </li></ul></dd>
     
 
@@ -904,7 +827,9 @@ starts.  If absent a zero offset is inferred.</p></td>
     <ul>
 <li>the number of bytes encoded, including the
 space skipped for internal padding, but excluding data such as
-<a href="module-Layout-Sequence.html#count">lengths</a> when stored <a href="module-Layout-ExternalLayout.html">externally</a>.</li>
+<a href="module-Layout-Sequence.html#count">lengths</a> when stored <a href="module-Layout-ExternalLayout.html">externally</a>.  This is the adjustment to <code>offset</code>
+producing the offset where data for the next layout would be
+written.</li>
 </ul>
 </div>
 
@@ -1048,7 +973,7 @@ layouts.  Any unused values are ignored.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line347">line 347</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line358">line 358</a>
     </li></ul></dd>
     
 
@@ -1249,7 +1174,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line300">line 300</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line308">line 308</a>
     </li></ul></dd>
     
 
@@ -1339,7 +1264,7 @@ returned.</li>
 
     
 
-    <h4 class="name" id="isCount"><span class="type-signature"></span>isCount<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="isCount"><span class="type-signature">(abstract) </span>isCount<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -1393,7 +1318,106 @@ or as <a href="module-Layout-UnionLayoutDiscriminator.html#layout">external unio
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line410">line 410</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line462">line 462</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="makeDestinationObject"><span class="type-signature"></span>makeDestinationObject<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Function to create an Object into which decoded properties will
+be written.</p>
+<p>Used only for layouts that <a href="module-Layout-Layout.html#decode">decode</a> to Object
+instances, which means:</p>
+<ul>
+<li><a href="module-Layout-Structure.html">Structure</a></li>
+<li><a href="module-Layout-Union.html">Union</a></li>
+<li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li>
+<li><a href="module-Layout-BitStructure.html">BitStructure</a></li>
+</ul>
+<p>If left undefined the JavaScript representation of these layouts
+will be Object instances.</p>
+<p>See <a href="module-Layout.html#.bindConstructorLayout">bindConstructorLayout()</a>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="module-Layout-Layout.html#makeDestinationObject">module:Layout~Layout#makeDestinationObject</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line247">line 247</a>
     </li></ul></dd>
     
 
@@ -1476,14 +1500,18 @@ immutable.</p>
 
             <td class="type">
             
+                
+<span class="param-type">String</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>the value for <a href="module-Layout-Layout.html#property">property</a> in
-the replica.</p></td>
+            <td class="description last"><p>the value for <a href="module-Layout-Layout.html#property">property</a> in the replica.</p></td>
         </tr>
 
     
@@ -1529,7 +1557,7 @@ the replica.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line321">line 321</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line331">line 331</a>
     </li></ul></dd>
     
 
@@ -1602,7 +1630,7 @@ set to <code>property</code>.</li>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 10 2016 14:02:36 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Mar 08 2016 07:26:24 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

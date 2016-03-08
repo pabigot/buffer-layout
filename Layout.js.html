@@ -49,7 +49,8 @@
  * THE SOFTWARE.
  */
 
-/** Support for translating between Buffer instances and JavaScript
+/**
+ * Support for translating between Buffer instances and JavaScript
  * native types.
  *
  * {@link module:Layout~Layout|Layout} is the basis of a class
@@ -163,6 +164,7 @@
 'use strict';
 
 var assert = require('assert');
+var util = require('util');
 
 require('./patchIssue3992');
 
@@ -211,15 +213,12 @@ if (!Object.assign) {
 }
 /* jscs:enable */
 
-/** Base class for layout objects.
+/**
+ * Base class for layout objects.
  *
  * **NOTE** This is an abstract base class; you can create instances
  * if it amuses you, but they won't support the {@link
  * Layout#encode|encode} or {@link Layout#decode|decode} functions.
- *
- * **NOTE** All instances of concrete extensions of this class are
- * frozen prior to being returned from the constructor so that state
- * relationships between layouts are not inadvertently corrupted.
  *
  * @param {Number} span - Initializer for {@link Layout#span|span}.  The
  * parameter must be an integer; a negative value signifies that the
@@ -228,19 +227,12 @@ if (!Object.assign) {
  * @param {string} [property] - Initializer for {@link
  * Layout#property|property}.
  *
- * @param {string} [objectPrototype] - Initializer for {@link
- * Layout#objectPrototype|objectPrototype}.
- *
- * @constructor */
-function Layout(span, property, objectPrototype) {
+ * @constructor
+ * @abstract
+ */
+function Layout(span, property) {
   if (!Number.isInteger(span)) {
     throw new TypeError('span must be an integer');
-  }
-  if (undefined === objectPrototype) {
-    objectPrototype = Object.prototype;
-  }
-  if ('object' !== typeof objectPrototype) {
-    throw new TypeError('Layout object prototype must be object');
   }
 
   /** The span of the layout in bytes.
@@ -265,7 +257,8 @@ function Layout(span, property, objectPrototype) {
    * decoded Object. */
   this.property = property;
 
-  /** Prototype used when the layout is represented as an Object.
+  /** Function to create an Object into which decoded properties will
+   * be written.
    *
    * Used only for layouts that {@link Layout#decode|decode} to Object
    * instances, which means:
@@ -275,23 +268,31 @@ function Layout(span, property, objectPrototype) {
    * * {@link BitStructure|BitStructure}
    *
    * If left undefined the JavaScript representation of these layouts
-   * will be Object instances. */
-  this.objectPrototype = objectPrototype;
+   * will be Object instances.
+   *
+   * See {@link module:Layout.bindConstructorLayout|bindConstructorLayout()}.
+   */
+  this.makeDestinationObject = function() { return {}; };
 }
 
-/** Decode from a Buffer into an JavaScript value.
+/**
+ * Decode from a Buffer into an JavaScript value.
  *
  * @param {Buffer} b - the buffer from which encoded data is read.
  *
  * @param {Number} [offset] - the offset at which the encoded data
  * starts.  If absent a zero offset is inferred.
  *
- * @returns {(Number|Array|Object)} - the value of the decoded data. */
-Layout.prototype.decode = function() {
+ * @returns {(Number|Array|Object)} - the value of the decoded data.
+ *
+ * @abstract
+ */
+Layout.prototype.decode = function(b, offset) {
   throw new Error('Layout is abstract');
 };
 
-/** Encode a JavaScript value into a Buffer.
+/**
+ * Encode a JavaScript value into a Buffer.
  *
  * @param {(Number|Array|Object)} src - the value to be encoded into
  * the buffer.  The type accepted depends on the (sub-)type of {@link
@@ -306,12 +307,18 @@ Layout.prototype.decode = function() {
  * @returns {Number} - the number of bytes encoded, including the
  * space skipped for internal padding, but excluding data such as
  * {@link Sequence#count|lengths} when stored {@link
- * ExternalLayout|externally}. */
-Layout.prototype.encode = function() {
+ * ExternalLayout|externally}.  This is the adjustment to `offset`
+ * producing the offset where data for the next layout would be
+ * written.
+ *
+ * @abstract
+ */
+Layout.prototype.encode = function(src, b, offset) {
   throw new Error('Layout is abstract');
 };
 
-/** Calculate the span of a specific instance of a layout.
+/**
+ * Calculate the span of a specific instance of a layout.
  *
  * @param {Buffer} b - the buffer that contains an encoded instance.
  *
@@ -324,7 +331,8 @@ Layout.prototype.encode = function() {
  * returned.
  *
  * @throws {RangeError} - if the length of the value cannot be
- * determined. */
+ * determined.
+ */
 Layout.prototype.getSpan = function(b, offset) {
   if (0 > this.span) {
     throw new RangeError('indeterminate span');
@@ -332,7 +340,8 @@ Layout.prototype.getSpan = function(b, offset) {
   return this.span;
 };
 
-/** Replicate the layout using a new property.
+/**
+ * Replicate the layout using a new property.
  *
  * This function must be used to get a structurally-equivalent layout
  * with a different name since all {@link Layout|Layout} instances are
@@ -341,20 +350,21 @@ Layout.prototype.getSpan = function(b, offset) {
  * **NOTE** This is a shallow copy.  All fields except {@link
  * Layout#property|property} are strictly equal to the origin layout.
  *
- * @param property - the value for {@link Layout#property|property} in
- * the replica.
+ * @param {String} property - the value for {@link
+ * Layout#property|property} in the replica.
  *
  * @returns {Layout} - the copy with {@link Layout#property|property}
- * set to `property`. */
+ * set to `property`.
+ */
 Layout.prototype.replicate = function(property) {
   var rv = Object.create(this.constructor.prototype);
   Object.assign(rv, this);
   rv.property = property;
-  Object.freeze(rv);
   return rv;
 };
 
-/** Create an object from layout properties and an array of values.
+/**
+ * Create an object from layout properties and an array of values.
  *
  * **NOTE** This function returns `undefined` if invoked on a layout
  * that does not return its value as an Object.  Objects are returned
@@ -371,38 +381,76 @@ Layout.prototype.replicate = function(property) {
  * assigned; arguments are not assigned to properties of contained
  * layouts.  Any unused values are ignored.
  *
- * @return {(Object|undefined)} */
-Layout.prototype.fromArray = function() {
+ * @return {(Object|undefined)}
+ */
+Layout.prototype.fromArray = function(values) {
   return undefined;
 };
 
-/** Store state in the class allowing it to encode/decode with a given
- * layout.
+/**
+ * Augment a constructor so that instances can be encoded/decoded
+ * using a given layout.
  *
- * Calling this function modifies `clazz` in three ways:
+ * Calling this function couples `ctor` with `layout` in several ways:
  *
- * * `clazz._layout` becomes a static member equal to `layout`;
- * * `clazz.decode(b, offset)` becomes a static member function equal
- *   to {@link Layout#decode|layout.decode};
- * * `clazz.prototype.encode(b, offset)` becomes an instance member
- *   function that invokes {@link Layout#encode|layout.encode}
- *   with `src` set to the instance through which it is called.
+ * * `ctor.layout_` becomes a static member property equal to `layout`;
+ * * `layout.boundConstructor_` becomes a static member property equal
+ *    to `ctor`;
+ * * The {@link Layout#makeDestinationObject|makeDestinationObject()}
+ *   property of `layout` is set to a function that returns a `new
+ *   ctor()`;
+ * * `ctor.decode(b, offset)` becomes a static member function that
+ *   delegates to {@link Layout#decode|layout.decode}.  The
+ *   synthesized function may be captured and extended.
+ * * `ctor.prototype.encode(b, offset)` provides an instance member
+ *   function that delegates to {@link Layout#encode|layout.encode}
+ *   with `src` set to `this`.  The synthesized function may be
+ *   captured and extended, but when the extension is invoked `this`
+ *   must be explicitly bound to the instance.
  *
- * @param {class} clazz - the constructor for a JavaScript class.
+ * @param {constructor} ctor - the constructor for a JavaScript class.
  *
  * @param {Layout} layout - the {@link Layout|Layout} instance used to
- * encode instances of `clazz`. */
-exports.setClassLayout = function(clazz, layout) {
-  clazz._layout = layout;
-  clazz.prototype.encode = function(b, offset) {
-    return layout.encode(this, b, offset);
-  };
-  clazz.decode = function(b, offset) {
-    return layout.decode(b, offset);
-  };
+ * encode instances of `ctor`.
+ */
+exports.bindConstructorLayout = function(ctor, layout) {
+  if ('function' !== typeof ctor) {
+    throw new TypeError('ctor must be constructor');
+  }
+  if (ctor.hasOwnProperty('layout_')) {
+    throw new Error('ctor is already bound to a layout');
+  }
+  if (!(layout &amp;&amp; (layout instanceof Layout))) {
+    throw new TypeError('layout must be a Layout');
+  }
+  if (layout.hasOwnProperty('boundConstructor_')) {
+    throw new Error('layout is already bound to a constructor');
+  }
+  ctor.layout_ = layout;
+  layout.boundConstructor_ = ctor;
+  // jscs:disable requireCapitalizedConstructors
+  layout.makeDestinationObject = function() { return new ctor(); };
+  // jscs:enable requireCapitalizedConstructors
+  Object.defineProperty(ctor.prototype, 'encode', {
+    configurable: false,
+    enumerable: false,
+    value: function(b, offset) {
+      return layout.encode(this, b, offset);
+    },
+    writable: true
+  });
+  Object.defineProperty(ctor, 'decode', {
+    configurable: false,
+    enumerable: false,
+    value: function(b, offset) {
+      return layout.decode(b, offset);
+    },
+    writable: true
+  });
 };
 
-/** An object that behaves like a layout but does not consume space
+/**
+ * An object that behaves like a layout but does not consume space
  * within its containing layout.
  *
  * This is primarily used to obtain metadata about a member, such as a
@@ -421,27 +469,32 @@ exports.setClassLayout = function(clazz, layout) {
  * Layout#property|property}.
  *
  * @constructor
+ * @abstract
  * @augments {Layout}
  */
 function ExternalLayout(span, property) {
   Layout.call(this, span, property);
 }
-ExternalLayout.prototype = Object.create(Layout.prototype);
-ExternalLayout.prototype.constructor = ExternalLayout;
-/** Return `true` iff the external layout decodes to an unsigned
+util.inherits(ExternalLayout, Layout);
+/**
+ * Return `true` iff the external layout decodes to an unsigned
  * integer layout.
  *
  * In that case it can be used as the source of {@link
  * Sequence#count|Sequence counts}, {@link Blob#length|Blob lengths},
  * or as {@link UnionLayoutDiscriminator#layout|external union
- * discriminators}. */
+ * discriminators}.
+ *
+ * @abstract
+ */
 ExternalLayout.prototype.isCount = function() {
   throw new Error('ExternalLayout is abstract');
 };
 
-/** An {@link ExternalLayout|ExternalLayout} that determines its
- * {@link Layout#decode|value} based on offset into and length of the
- * buffer on which it is invoked.
+/**
+ * An {@link ExternalLayout|ExternalLayout} that determines its {@link
+ * Layout#decode|value} based on offset into and length of the buffer
+ * on which it is invoked.
  *
  * *Factory*: {@link module:Layout.greedy|greedy}
  *
@@ -452,7 +505,8 @@ ExternalLayout.prototype.isCount = function() {
  * Layout#property|property}.
  *
  * @constructor
- * @augments {ExternalLayout} */
+ * @augments {ExternalLayout}
+ */
 function GreedyCount(elementSpan, property) {
   if (undefined === elementSpan) {
     elementSpan = 1;
@@ -466,17 +520,11 @@ function GreedyCount(elementSpan, property) {
    * must be a positive integer.  If not provided, the value will be
    * 1. */
   this.elementSpan = elementSpan;
-
-  Object.freeze(this);
 }
-GreedyCount.prototype = Object.create(ExternalLayout.prototype);
-GreedyCount.prototype.constructor = GreedyCount;
-/** Implement {@link ExternalLayout#isCount|isCount} for {@link
- * GreedyCount|GreedyCount}. */
+util.inherits(GreedyCount, ExternalLayout);
 GreedyCount.prototype.isCount = function() {
   return true;
 };
-/** Implement {@link Layout#decode|decode} for {@link GreedyCount|GreedyCount}. */
 GreedyCount.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -484,12 +532,12 @@ GreedyCount.prototype.decode = function(b, offset) {
   var rem = b.length - offset;
   return Math.floor(rem / this.elementSpan);
 };
-/** Implement {@link Layout#encode|encode} for {@link GreedyCount|GreedyCount}. */
 GreedyCount.prototype.encode = function(src, b, offset) {
   return 0;
 };
 
-/** An {@link ExternalLayout|ExternalLayout} that supports accessing a
+/**
+ * An {@link ExternalLayout|ExternalLayout} that supports accessing a
  * {@link Layout|Layout} at a fixed offset from the start of another
  * Layout.  The offset may be before, within, or after the base
  * layout.
@@ -508,7 +556,8 @@ GreedyCount.prototype.encode = function(src, b, offset) {
  * unchanged.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function OffsetLayout(layout, offset, property) {
   if (!(layout instanceof Layout)) {
     throw new TypeError('layout must be a Layout');
@@ -532,25 +581,21 @@ function OffsetLayout(layout, offset, property) {
    * if at the point of use it goes outside the span of the Buffer
    * being accessed.  */
   this.offset = offset;
-
-  Object.freeze(this);
 }
-OffsetLayout.prototype = Object.create(ExternalLayout.prototype);
-OffsetLayout.prototype.constructor = OffsetLayout;
-/** Implement{@link ExternalLayout#isCount|isCount} for {@link
- * OffsetLayout|OffsetLayout}. */
+util.inherits(OffsetLayout, ExternalLayout);
+/** @inheritdoc */
 OffsetLayout.prototype.isCount = function() {
   return ((this.layout instanceof UInt)
           || (this.layout instanceof UIntBE));
 };
-/** Implement {@link Layout#decode|decode} for {@link OffsetLayout|OffsetLayout}. */
+/** @inheritdoc */
 OffsetLayout.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
   }
   return this.layout.decode(b, offset + this.offset);
 };
-/** Implement {@link Layout#encode|encode} for {@link OffsetLayout|OffsetLayout}. */
+/** @inheritdoc */
 OffsetLayout.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -558,7 +603,8 @@ OffsetLayout.prototype.encode = function(src, b, offset) {
   return this.layout.encode(src, b, offset + this.offset);
 };
 
-/** Represent an unsigned integer in little-endian format.
+/**
+ * Represent an unsigned integer in little-endian format.
  *
  * *Factory*: {@link module:Layout.u8|u8}, {@link
  *  module:Layout.u16|u16}, {@link module:Layout.u24|u24}, {@link
@@ -572,24 +618,23 @@ OffsetLayout.prototype.encode = function(src, b, offset) {
  * Layout#property|property}.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function UInt(span, property) {
   Layout.call(this, span, property);
   if (6 &lt; this.span) {
     throw new RangeError('span must not exceed 6 bytes');
   }
-  Object.freeze(this);
 }
-UInt.prototype = Object.create(Layout.prototype);
-UInt.prototype.constructor = UInt;
-/** Implement {@link Layout#decode|decode} for {@link UInt|UInt}. */
+util.inherits(UInt, Layout);
+/** @override */
 UInt.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
   }
   return b.readUIntLE(offset, this.span);
 };
-/** Implement {@link Layout#encode|encode} for {@link UInt|UInt}. */
+/** @override */
 UInt.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -598,7 +643,8 @@ UInt.prototype.encode = function(src, b, offset) {
   return this.span;
 };
 
-/** Represent an unsigned integer in big-endian format.
+/**
+ * Represent an unsigned integer in big-endian format.
  *
  * *Factory*: {@link module:Layout.u8be|u8be}, {@link
  * module:Layout.u16be|u16be}, {@link module:Layout.u24be|u24be},
@@ -612,24 +658,23 @@ UInt.prototype.encode = function(src, b, offset) {
  * Layout#property|property}.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function UIntBE(span, property) {
   Layout.call(this, span, property);
   if (6 &lt; this.span) {
     throw new RangeError('span must not exceed 6 bytes');
   }
-  Object.freeze(this);
 }
-UIntBE.prototype = Object.create(Layout.prototype);
-UIntBE.prototype.constructor = UIntBE;
-/** Implement {@link Layout#decode|decode} for {@link UIntBE|UIntBE}. */
+util.inherits(UIntBE, Layout);
+/** @override */
 UIntBE.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
   }
   return b.readUIntBE(offset, this.span);
 };
-/** Implement {@link Layout#encode|encode} for {@link UIntBE|UIntBE}. */
+/** @override */
 UIntBE.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -638,7 +683,8 @@ UIntBE.prototype.encode = function(src, b, offset) {
   return this.span;
 };
 
-/** Represent a signed integer in little-endian format.
+/**
+ * Represent a signed integer in little-endian format.
  *
  * *Factory*: {@link module:Layout.s8|s8}, {@link
  *  module:Layout.s16|s16}, {@link module:Layout.s24|s24}, {@link
@@ -652,24 +698,23 @@ UIntBE.prototype.encode = function(src, b, offset) {
  * Layout#property|property}.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function Int(span, property) {
   Layout.call(this, span, property);
   if (6 &lt; this.span) {
     throw new RangeError('span must not exceed 6 bytes');
   }
-  Object.freeze(this);
 }
-Int.prototype = Object.create(Layout.prototype);
-Int.prototype.constructor = Int;
-/** Implement {@link Layout#decode|decode} for {@link Int|Int}. */
+util.inherits(Int, Layout);
+/** @override */
 Int.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
   }
   return b.readIntLE(offset, this.span);
 };
-/** Implement {@link Layout#encode|encode} for {@link Int|Int}. */
+/** @override */
 Int.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -678,7 +723,8 @@ Int.prototype.encode = function(src, b, offset) {
   return this.span;
 };
 
-/** Represent a signed integer in big-endian format.
+/**
+ * Represent a signed integer in big-endian format.
  *
  * *Factory*: {@link module:Layout.s8be|s8be}, {@link
  * module:Layout.s16be|s16be}, {@link module:Layout.s24be|s24be},
@@ -692,24 +738,23 @@ Int.prototype.encode = function(src, b, offset) {
  * Layout#property|property}.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function IntBE(span, property) {
   Layout.call(this, span, property);
   if (6 &lt; this.span) {
     throw new RangeError('span must not exceed 6 bytes');
   }
-  Object.freeze(this);
 }
-IntBE.prototype = Object.create(Layout.prototype);
-IntBE.prototype.constructor = IntBE;
-/** Implement {@link Layout#decode|decode} for {@link IntBE|IntBE}. */
+util.inherits(IntBE, Layout);
+/** @override */
 IntBE.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
   }
   return b.readIntBE(offset, this.span);
 };
-/** Implement {@link Layout#encode|encode} for {@link IntBE|IntBE}. */
+/** @override */
 IntBE.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -734,7 +779,8 @@ function roundedInt64(hi32, lo32) {
   return hi32 * V2E32 + lo32;
 }
 
-/** Represent an unsigned 64-bit integer in little-endian format when
+/**
+ * Represent an unsigned 64-bit integer in little-endian format when
  * encoded and as a near integral JavaScript Number when decoded.
  *
  * *Factory*: {@link module:Layout.nu64|nu64}
@@ -743,14 +789,13 @@ function roundedInt64(hi32, lo32) {
  * the exact value of the encoded representation.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function NearUInt64(property) {
   Layout.call(this, 8, property);
-  Object.freeze(this);
 }
-NearUInt64.prototype = Object.create(Layout.prototype);
-NearUInt64.prototype.constructor = NearUInt64;
-/** Implement {@link Layout#decode|decode} for {@link NearUInt64|NearUInt64}. */
+util.inherits(NearUInt64, Layout);
+/** @override */
 NearUInt64.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -759,7 +804,7 @@ NearUInt64.prototype.decode = function(b, offset) {
   var hi32 = b.readUInt32LE(offset + 4);
   return roundedInt64(hi32, lo32);
 };
-/** Implement {@link Layout#encode|encode} for {@link NearUInt64|NearUInt64}. */
+/** @override */
 NearUInt64.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -770,7 +815,8 @@ NearUInt64.prototype.encode = function(src, b, offset) {
   return 8;
 };
 
-/** Represent an unsigned 64-bit integer in big-endian format when
+/**
+ * Represent an unsigned 64-bit integer in big-endian format when
  * encoded and as a near integral JavaScript Number when decoded.
  *
  * *Factory*: {@link module:Layout.nu64be|nu64be}
@@ -779,14 +825,13 @@ NearUInt64.prototype.encode = function(src, b, offset) {
  * the exact value of the encoded representation.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function NearUInt64BE(property) {
   Layout.call(this, 8, property);
-  Object.freeze(this);
 }
-NearUInt64BE.prototype = Object.create(Layout.prototype);
-NearUInt64BE.prototype.constructor = NearUInt64BE;
-/** Implement {@link Layout#decode|decode} for {@link NearUInt64BE|NearUInt64BE}. */
+util.inherits(NearUInt64BE, Layout);
+/** @override */
 NearUInt64BE.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -795,7 +840,7 @@ NearUInt64BE.prototype.decode = function(b, offset) {
   var lo32 = b.readUInt32BE(offset + 4);
   return roundedInt64(hi32, lo32);
 };
-/** Implement {@link Layout#encode|encode} for {@link NearUInt64BE|NearUInt64BE}. */
+/** @override */
 NearUInt64BE.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -806,7 +851,8 @@ NearUInt64BE.prototype.encode = function(src, b, offset) {
   return 8;
 };
 
-/** Represent a signed 64-bit integer in little-endian format when
+/**
+ * Represent a signed 64-bit integer in little-endian format when
  * encoded and as a near integral JavaScript Number when decoded.
  *
  * *Factory*: {@link module:Layout.ns64|ns64}
@@ -815,14 +861,13 @@ NearUInt64BE.prototype.encode = function(src, b, offset) {
  * the exact value of the encoded representation.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function NearInt64(property) {
   Layout.call(this, 8, property);
-  Object.freeze(this);
 }
-NearInt64.prototype = Object.create(Layout.prototype);
-NearInt64.prototype.constructor = NearInt64;
-/** Implement {@link Layout#decode|decode} for {@link NearInt64|NearInt64}. */
+util.inherits(NearInt64, Layout);
+/** @override */
 NearInt64.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -831,7 +876,7 @@ NearInt64.prototype.decode = function(b, offset) {
   var hi32 = b.readInt32LE(offset + 4);
   return roundedInt64(hi32, lo32);
 };
-/** Implement {@link Layout#encode|encode} for {@link NearInt64|NearInt64}. */
+/** @override */
 NearInt64.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -842,7 +887,8 @@ NearInt64.prototype.encode = function(src, b, offset) {
   return 8;
 };
 
-/** Represent a signed 64-bit integer in big-endian format when
+/**
+ * Represent a signed 64-bit integer in big-endian format when
  * encoded and as a near integral JavaScript Number when decoded.
  *
  * *Factory*: {@link module:Layout.ns64be|ns64be}
@@ -851,14 +897,13 @@ NearInt64.prototype.encode = function(src, b, offset) {
  * the exact value of the encoded representation.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function NearInt64BE(property) {
   Layout.call(this, 8, property);
-  Object.freeze(this);
 }
-NearInt64BE.prototype = Object.create(Layout.prototype);
-NearInt64BE.prototype.constructor = NearInt64BE;
-/** Implement {@link Layout#decode|decode} for {@link NearInt64BE|NearInt64BE}. */
+util.inherits(NearInt64BE, Layout);
+/** @override */
 NearInt64BE.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -867,7 +912,7 @@ NearInt64BE.prototype.decode = function(b, offset) {
   var lo32 = b.readUInt32BE(offset + 4);
   return roundedInt64(hi32, lo32);
 };
-/** Implement {@link Layout#encode|encode} for {@link NearInt64BE|NearInt64BE}. */
+/** @override */
 NearInt64BE.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -878,7 +923,8 @@ NearInt64BE.prototype.encode = function(src, b, offset) {
   return 8;
 };
 
-/** Represent a 32-bit floating point number in little-endian format.
+/**
+ * Represent a 32-bit floating point number in little-endian format.
  *
  * *Factory*: {@link module:Layout.f32|f32}
  *
@@ -886,21 +932,20 @@ NearInt64BE.prototype.encode = function(src, b, offset) {
  * Layout#property|property}.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function Float(property) {
   Layout.call(this, 4, property);
-  Object.freeze(this);
 }
-Float.prototype = Object.create(Layout.prototype);
-Float.prototype.constructor = Float;
-/** Implement {@link Layout#decode|decode} for {@link Float|Float}. */
+util.inherits(Float, Layout);
+/** @override */
 Float.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
   }
   return b.readFloatLE(offset);
 };
-/** Implement {@link Layout#encode|encode} for {@link Float|Float}. */
+/** @override */
 Float.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -909,7 +954,8 @@ Float.prototype.encode = function(src, b, offset) {
   return 4;
 };
 
-/** Represent a 32-bit floating point number in big-endian format.
+/**
+ * Represent a 32-bit floating point number in big-endian format.
  *
  * *Factory*: {@link module:Layout.f32be|f32be}
  *
@@ -917,21 +963,20 @@ Float.prototype.encode = function(src, b, offset) {
  * Layout#property|property}.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function FloatBE(property) {
   Layout.call(this, 4, property);
-  Object.freeze(this);
 }
-FloatBE.prototype = Object.create(Layout.prototype);
-FloatBE.prototype.constructor = FloatBE;
-/** Implement {@link Layout#decode|decode} for {@link FloatBE|FloatBE}. */
+util.inherits(FloatBE, Layout);
+/** @override */
 FloatBE.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
   }
   return b.readFloatBE(offset);
 };
-/** Implement {@link Layout#encode|encode} for {@link FloatBE|FloatBE}. */
+/** @override */
 FloatBE.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -940,7 +985,8 @@ FloatBE.prototype.encode = function(src, b, offset) {
   return 4;
 };
 
-/** Represent a 64-bit floating point number in little-endian format.
+/**
+ * Represent a 64-bit floating point number in little-endian format.
  *
  * *Factory*: {@link module:Layout.f64|f64}
  *
@@ -948,21 +994,20 @@ FloatBE.prototype.encode = function(src, b, offset) {
  * Layout#property|property}.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function Double(property) {
   Layout.call(this, 8, property);
-  Object.freeze(this);
 }
-Double.prototype = Object.create(Layout.prototype);
-Double.prototype.constructor = Double;
-/** Implement {@link Layout#decode|decode} for {@link Double|Double}. */
+util.inherits(Double, Layout);
+/** @override */
 Double.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
   }
   return b.readDoubleLE(offset);
 };
-/** Implement {@link Layout#encode|encode} for {@link Double|Double}. */
+/** @override */
 Double.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -971,7 +1016,8 @@ Double.prototype.encode = function(src, b, offset) {
   return 8;
 };
 
-/** Represent a 64-bit floating point number in big-endian format.
+/**
+ * Represent a 64-bit floating point number in big-endian format.
  *
  * *Factory*: {@link module:Layout.f64be|f64be}
  *
@@ -979,21 +1025,20 @@ Double.prototype.encode = function(src, b, offset) {
  * Layout#property|property}.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function DoubleBE(property) {
   Layout.call(this, 8, property);
-  Object.freeze(this);
 }
-DoubleBE.prototype = Object.create(Layout.prototype);
-DoubleBE.prototype.constructor = DoubleBE;
-/** Implement {@link Layout#decode|decode} for {@link DoubleBE|DoubleBE}. */
+util.inherits(DoubleBE, Layout);
+/** @override */
 DoubleBE.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
   }
   return b.readDoubleBE(offset);
 };
-/** Implement {@link Layout#encode|encode} for {@link DoubleBE|DoubleBE}. */
+/** @override */
 DoubleBE.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -1002,7 +1047,8 @@ DoubleBE.prototype.encode = function(src, b, offset) {
   return 8;
 };
 
-/** Represent a contiguous sequence of a specific layout as an Array.
+/**
+ * Represent a contiguous sequence of a specific layout as an Array.
  *
  * *Factory*: {@link module:Layout.seq|seq}
  *
@@ -1017,7 +1063,8 @@ DoubleBE.prototype.encode = function(src, b, offset) {
  * Layout#property|property}.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function Sequence(elementLayout, count, property) {
   if (!(elementLayout instanceof Layout)) {
     throw new TypeError('elementLayout must be a Layout');
@@ -1044,12 +1091,9 @@ function Sequence(elementLayout, count, property) {
    * {@link ExternalLayout|ExternalLayout} for which {@link
    * ExternalLayout#isCount|isCount()} is `true`. */
   this.count = count;
-
-  Object.freeze(this);
 }
-Sequence.prototype = Object.create(Layout.prototype);
-Sequence.prototype.constructor = Sequence;
-/** Implement {@link Layout#getSpan|getSpan} for {@link Sequence|Sequence}. */
+util.inherits(Sequence, Layout);
+/** @override */
 Sequence.prototype.getSpan = function(b, offset) {
   if (0 &lt;= this.span) {
     return this.span;
@@ -1074,7 +1118,7 @@ Sequence.prototype.getSpan = function(b, offset) {
   }
   return span;
 };
-/** Implement {@link Layout#decode|decode} for {@link Sequence|Sequence}. */
+/** @override */
 Sequence.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -1118,7 +1162,8 @@ Sequence.prototype.encode = function(src, b, offset) {
   return span;
 };
 
-/** Represent a contiguous sequence of arbitrary layout elements as an
+/**
+ * Represent a contiguous sequence of arbitrary layout elements as an
  * Object.
  *
  * *Factory*: {@link module:Layout.struct|struct}
@@ -1141,15 +1186,13 @@ Sequence.prototype.encode = function(src, b, offset) {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @param {string} [objectPrototype] - Initializer for {@link
- * Layout#objectPrototype|objectPrototype}.
- *
  * @throws {Error} - if `fields` contains an unnamed variable-length
  * layout.
  *
  * @constructor
- * @augments {Layout} */
-function Structure(fields, property, objectPrototype) {
+ * @augments {Layout}
+ */
+function Structure(fields, property) {
   function allLayouts(v, fd) {
     return v &amp;&amp; (fd instanceof Layout);
   }
@@ -1171,7 +1214,7 @@ function Structure(fields, property, objectPrototype) {
     span = fields.reduce(function(v, fd) { return v + fd.getSpan(); }, 0);
   } catch (e) {
   }
-  Layout.call(this, span, property, objectPrototype);
+  Layout.call(this, span, property);
 
   /** The sequence of {@link Layout|Layout} values that comprise the
    * structure.
@@ -1184,12 +1227,9 @@ function Structure(fields, property, objectPrototype) {
    *
    * @type {Layout[]} */
   this.fields = fields;
-
-  Object.freeze(this);
 }
-Structure.prototype = Object.create(Layout.prototype);
-Structure.prototype.constructor = Structure;
-/** Implement {@link Layout#getSpan|getSpan} for {@link Structure|Structure}. */
+util.inherits(Structure, Layout);
+/** @override */
 Structure.prototype.getSpan = function(b, offset) {
   if (0 &lt;= this.span) {
     return this.span;
@@ -1209,9 +1249,9 @@ Structure.prototype.getSpan = function(b, offset) {
   }
   return span;
 };
-/** Implement {@link Layout#decode|decode} for {@link Structure|Structure}. */
+/** @override */
 Structure.prototype.decode = function(b, offset) {
-  var dest = Object.create(this.objectPrototype);
+  var dest = this.makeDestinationObject();
   if (undefined === offset) {
     offset = 0;
   }
@@ -1232,17 +1272,17 @@ Structure.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
   }
-
+  var firstOffset = offset;
   var lastOffset = 0;
   var lastWrote = 0;
   this.fields.forEach(function(fd) {
     var span = fd.span;
+    lastWrote = (0 &lt; span) ? span : 0;
     if (undefined === fd.property) {
       /* By construction the field must be fixed-length (because
        * unnamed variable-length fields are disallowed when
        * encoding).  But check it anyway. */
       assert(0 &lt; span);
-      lastWrote = span;
     } else {
       var fv = src[fd.property];
       if (undefined !== fv) {
@@ -1257,12 +1297,15 @@ Structure.prototype.encode = function(src, b, offset) {
     lastOffset = offset;
     offset += span;
   });
-  return lastOffset + lastWrote;
+  /* Use (lastOffset + lastWrote) instead of offset because the last
+   * item may have had a dynamic length and we don't want to include
+   * the padding between it and the end of the space reserved for
+   * it. */
+  return (lastOffset + lastWrote) - firstOffset;
 };
-/** Implement {@link Layout#fromArray|fromArray} for {@link
- * Structure|Structure}. */
+/** @override */
 Structure.prototype.fromArray = function(values) {
-  var dest = Object.create(this.objectPrototype);
+  var dest = this.makeDestinationObject();
   this.fields.forEach(function(fd) {
     if ((undefined !== fd.property)
         &amp;&amp; (0 &lt; values.length)) {
@@ -1272,7 +1315,8 @@ Structure.prototype.fromArray = function(values) {
   return dest;
 };
 
-/** An object that can provide a {@link
+/**
+ * An object that can provide a {@link
  * Union#discriminator|discriminator} API for {@link * Union|Union}.
  *
  * **NOTE** This is an abstract base class; you can create instances
@@ -1283,7 +1327,9 @@ Structure.prototype.fromArray = function(values) {
  * @param {string} [property] - Default for {@link
  * UnionDiscriminator#property|property}.
  *
- * @constructor */
+ * @constructor
+ * @abstract
+ */
 function UnionDiscriminator(property) {
   /** The {@link Layout#property|property} to be used when the
    * discriminator is referenced in isolation (generally when {@link
@@ -1306,7 +1352,8 @@ UnionDiscriminator.prototype.encode = function() {
   throw new Error('UnionDiscriminator is abstract');
 };
 
-/** An object that can provide a {@link
+/**
+ * An object that can provide a {@link
  * UnionDiscriminator|discriminator API} for {@link Union|Union} using
  * an unsigned integral {@link Layout|Layout} instance located either
  * inside or outside the union.
@@ -1321,7 +1368,8 @@ UnionDiscriminator.prototype.encode = function() {
  * nor layout provide a property name.
  *
  * @constructor
- * @augments {UnionDiscriminator} */
+ * @augments {UnionDiscriminator}
+ */
 function UnionLayoutDiscriminator(layout, property) {
   if (!((layout instanceof ExternalLayout)
          &amp;&amp; layout.isCount())) {
@@ -1333,8 +1381,6 @@ function UnionLayoutDiscriminator(layout, property) {
   this.layout = layout;
 
   UnionDiscriminator.call(this, property || layout.property || 'variant');
-
-  Object.freeze(this);
 }
 UnionLayoutDiscriminator.prototype
   = Object.create(UnionDiscriminator.prototype);
@@ -1348,7 +1394,8 @@ UnionLayoutDiscriminator.prototype.encode = function(src, b, offset) {
   return this.layout.encode(src, b, offset);
 };
 
-/** Represent any number of span-compatible layouts.
+/**
+ * Represent any number of span-compatible layouts.
  *
  * *Factory*: {@link module:Layout.union|union}
  *
@@ -1405,12 +1452,10 @@ UnionLayoutDiscriminator.prototype.encode = function(src, b, offset) {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @param {string} [objectPrototype] - Initializer for {@link
- * Layout#objectPrototype|objectPrototype}.
- *
  * @constructor
- * @augments {Layout} */
-function Union(discr, defaultLayout, property, objectPrototype) {
+ * @augments {Layout}
+ */
+function Union(discr, defaultLayout, property) {
   var upv = ((discr instanceof UInt)
              || (discr instanceof UIntBE));
   if (upv) {
@@ -1449,7 +1494,7 @@ function Union(discr, defaultLayout, property, objectPrototype) {
       span += discr.layout.span;
     }
   }
-  Layout.call(this, span, property, objectPrototype);
+  Layout.call(this, span, property);
 
   /** The interface for the discriminator value in isolation.
    *
@@ -1524,12 +1569,9 @@ function Union(discr, defaultLayout, property, objectPrototype) {
   this.configGetSourceVariant = function(gsv) {
     boundGetSourceVariant = gsv.bind(this);
   };
-
-  Object.freeze(this);
 }
-Union.prototype = Object.create(Layout.prototype);
-Union.prototype.constructor = Union;
-/** Implement {@link Layout#getSpan|getSpan} for {@link Union|Uniont}. */
+util.inherits(Union, Layout);
+/** @override */
 Union.prototype.getSpan = function(b, offset) {
   if (0 &lt;= this.span) {
     return this.span;
@@ -1546,7 +1588,8 @@ Union.prototype.getSpan = function(b, offset) {
   }
   return vlo.getSpan(b, offset);
 };
-/** Method to infer a registered Union variant compatible with `src`.
+/**
+ * Method to infer a registered Union variant compatible with `src`.
  *
  * @param {Object} src - an object presumed to be compatible with the content of the Union.
  *
@@ -1557,7 +1600,8 @@ Union.prototype.getSpan = function(b, offset) {
  * returned.  Otherwise an error is thrown.
  *
  * @throws {Error} - if `src` cannot be associated with a default or
- * registered variant. */
+ * registered variant.
+ */
 Union.prototype.defaultGetSourceVariant = function(src) {
   if (src.hasOwnProperty(this.discriminator.property)
       &amp;&amp; src.hasOwnProperty(this.defaultLayout.property)) {
@@ -1591,7 +1635,7 @@ Union.prototype.decode = function(b, offset) {
     if (this.usesPrefixDiscriminator) {
       contentOffset = dlo.layout.span;
     }
-    dest = Object.create(this.objectPrototype);
+    dest = this.makeDestinationObject();
     dest[dlo.property] = discr;
     dest[clo.property] = this.defaultLayout.decode(b, offset + contentOffset);
   } else {
@@ -1635,17 +1679,14 @@ Union.prototype.encode = function(src, b, offset) {
  * @param {String} property - initializer for {@link
  * Layout#property|property}.
  *
- * @param {string} [objectPrototype] - Initializer for {@link
- * Layout#objectPrototype|objectPrototype}.
- *
  * @return {VariantLayout} */
-Union.prototype.addVariant = function(variant, layout, property,
-                                      objectPrototype) {
-  var rv = new VariantLayout(this, variant, layout, property, objectPrototype);
+Union.prototype.addVariant = function(variant, layout, property) {
+  var rv = new VariantLayout(this, variant, layout, property);
   this.registry[variant] = rv;
   return rv;
 };
-/** Get the layout associated with a registered variant.
+/**
+ * Get the layout associated with a registered variant.
  *
  * If `vb` does not produce a registered variant the function returns
  * `undefined`.
@@ -1656,7 +1697,8 @@ Union.prototype.addVariant = function(variant, layout, property,
  * @param {Number} offset - offset into `vb` for the start of the
  * union.  Used only when `vb` is an instance of {Buffer}.
  *
- * @return {({VariantLayout}|undefined)} */
+ * @return {({VariantLayout}|undefined)}
+ */
 Union.prototype.getVariant = function(vb, offset) {
   var variant = vb;
   if (vb instanceof Buffer) {
@@ -1668,7 +1710,8 @@ Union.prototype.getVariant = function(vb, offset) {
   return this.registry[variant];
 };
 
-/** Represent a specific variant within a containing union.
+/**
+ * Represent a specific variant within a containing union.
  *
  * **NOTE** The {@link Layout#span|span} of the variant may include
  * the span of the {@link Union#discriminator|discriminator} used to
@@ -1692,12 +1735,10 @@ Union.prototype.getVariant = function(vb, offset) {
  * layouts must include a property so they can be identified within
  * their containing @{link Union|Union}.
  *
- * @param {string} [objectPrototype] - Initializer for {@link
- * Layout#objectPrototype|objectPrototype}.
- *
  * @constructor
- * @augments {Layout} */
-function VariantLayout(union, variant, layout, property, objectPrototype) {
+ * @augments {Layout}
+ */
+function VariantLayout(union, variant, layout, property) {
   if (!(union instanceof Union)) {
     throw new TypeError('union must be a Union');
   }
@@ -1722,7 +1763,7 @@ function VariantLayout(union, variant, layout, property, objectPrototype) {
       span += union.discriminator.layout.span;
     }
   }
-  Layout.call(this, span, property, objectPrototype);
+  Layout.call(this, span, property);
 
   /** The {@link Union|Union} to which this variant belongs. */
   this.union = union;
@@ -1736,12 +1777,9 @@ function VariantLayout(union, variant, layout, property, objectPrototype) {
    * non-discriminator part of the {@link
    * VariantLayout#union|union}. */
   this.layout = layout;
-
-  Object.freeze(this);
 }
-VariantLayout.prototype = Object.create(Layout.prototype);
-VariantLayout.prototype.constructor = VariantLayout;
-/** Implement {@link Layout#getSpan|getSpan} for {@link VariantLayout|VariantLayout}. */
+util.inherits(VariantLayout, Layout);
+/** @override */
 VariantLayout.prototype.getSpan = function(b, offset) {
   if (0 &lt;= this.span) {
     /* Will be equal to the containing union span if that is not
@@ -1759,9 +1797,9 @@ VariantLayout.prototype.getSpan = function(b, offset) {
   return contentOffset + this.layout.getSpan(b, offset + contentOffset);
 };
 
-/** Implement {@link Layout#decode|decode} for {@link VariantLayout|VariantLayout}. */
+/** @override */
 VariantLayout.prototype.decode = function(b, offset) {
-  var dest = Object.create(this.objectPrototype);
+  var dest = this.makeDestinationObject();
   if (undefined === offset) {
     offset = 0;
   }
@@ -1775,7 +1813,7 @@ VariantLayout.prototype.decode = function(b, offset) {
   dest[this.property] = this.layout.decode(b, offset + contentOffset);
   return dest;
 };
-/** Implement {@link Layout#encode|encode} for {@link VariantLayout|VariantLayout}. */
+/** @override */
 VariantLayout.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -1816,7 +1854,8 @@ function fixBitwiseResult(v) {
   return v;
 }
 
-/** Contain a sequence of bit fields as an unsigned integer.
+/**
+ * Contain a sequence of bit fields as an unsigned integer.
  *
  * *Factory*: {@link module:Layout.bits|bits}
  *
@@ -1842,12 +1881,10 @@ function fixBitwiseResult(v) {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @param {string} [objectPrototype] - Initializer for {@link
- * Layout#objectPrototype|objectPrototype}.
- *
  * @constructor
- * @augments {Layout} */
-function BitStructure(word, msb, property, objectPrototype) {
+ * @augments {Layout}
+ */
+function BitStructure(word, msb, property) {
   if (!((word instanceof UInt)
          || (word instanceof UIntBE))) {
     throw new TypeError('word must be a UInt or UIntBE layout');
@@ -1855,7 +1892,7 @@ function BitStructure(word, msb, property, objectPrototype) {
   if (4 &lt; word.span) {
     throw new RangeError('word cannot exceed 32 bits');
   }
-  Layout.call(this, word.span, property, objectPrototype);
+  Layout.call(this, word.span, property);
 
   /** The layout used for the packed value.  {@link
    * BitField|BitField} instances are packed sequentially depending
@@ -1879,9 +1916,9 @@ function BitStructure(word, msb, property, objectPrototype) {
    * not manipulate the content of this property.*/
   this.fields = [];
 
-  /* Storage for the value.  This is not an instance property
-   * because the layout is frozen to preserve structural
-   * invariants, so we capture a variable instead. */
+  /* Storage for the value.  Capture a variable instead of using an
+   * instance property because we don't want anything to change the
+   * value without going through the mutator. */
   var value = 0;
   this._packedSetValue = function(v) {
     value = fixBitwiseResult(v);
@@ -1890,14 +1927,11 @@ function BitStructure(word, msb, property, objectPrototype) {
   this._packedGetValue = function() {
     return value;
   };
-
-  Object.freeze(this);
 }
-BitStructure.prototype = Object.create(Layout.prototype);
-BitStructure.prototype.constructor = BitStructure;
-/** Implement {@link Layout#decode|decode} for {@link BitStructure|BitStructure}. */
+util.inherits(BitStructure, Layout);
+/** @override */
 BitStructure.prototype.decode = function(b, offset) {
-  var dest = Object.create(this.objectPrototype);
+  var dest = this.makeDestinationObject();
   if (undefined === offset) {
     offset = 0;
   }
@@ -1958,7 +1992,8 @@ BitStructure.prototype.addBoolean = function(property) {
   return bf;
 };
 
-/** Represent a sequence of bits within a {@link
+/**
+ * Represent a sequence of bits within a {@link
  * BitStructure|BitStructure}.
  *
  * All bit field values are represented as unsigned integers.
@@ -1978,7 +2013,8 @@ BitStructure.prototype.addBoolean = function(property) {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor */
+ * @constructor
+ */
 function BitField(container, bits, property) {
   if (!(container instanceof BitStructure)) {
     throw new TypeError('container must be a BitStructure');
@@ -2032,7 +2068,6 @@ function BitField(container, bits, property) {
    * Layout#encode|encode} nor represented as a property in the
    * decoded Object. */
   this.property = property;
-  Object.freeze(this);
 }
 /** Store a value into the corresponding subsequence of the containing
  * bit field. */
@@ -2058,8 +2093,9 @@ BitField.prototype.encode = function(value) {
                                  | wordValue);
 };
 
-/** Represent a single bit within a {@link
- * BitStructure|BitStructure} as a JavaScript boolean.
+/**
+ * Represent a single bit within a {@link BitStructure|BitStructure}
+ * as a JavaScript boolean.
  *
  * **NOTE** User code should not invoke this constructor directly.
  * Use the container {@link BitStructure#addBoolean|addBoolean} helper
@@ -2077,8 +2113,7 @@ BitField.prototype.encode = function(value) {
 function Boolean(container, property) {
   BitField.call(this, container, 1, property);
 };
-Boolean.prototype = Object.create(BitField.prototype);
-Boolean.prototype.constructor = Boolean;
+util.inherits(Boolean, BitField);
 /** Override {@link BitField#decode|decode} for {@link Boolean|Boolean}.
  *
  * @returns {boolean} */
@@ -2088,7 +2123,8 @@ Boolean.prototype.decode = function(b, offset) {
 /* There is no override for Boolean.encode since the `src` parameter
  * is interpreted as truthy. */
 
-/** Contain a fixed-length block of arbitrary data, represented as a
+/**
+ * Contain a fixed-length block of arbitrary data, represented as a
  * Buffer.
  *
  * *Factory*: {@link module:Layout.blob|blob}
@@ -2100,7 +2136,8 @@ Boolean.prototype.decode = function(b, offset) {
  * Layout#property|property}.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function Blob(length, property) {
   if (!(((length instanceof ExternalLayout) &amp;&amp; length.isCount())
          || (Number.isInteger(length) &amp;&amp; (0 &lt;= length)))) {
@@ -2120,11 +2157,9 @@ function Blob(length, property) {
     span = length;
   }
   Layout.call(this, span, property);
-  Object.freeze(this);
 }
-Blob.prototype = Object.create(Layout.prototype);
-Blob.prototype.constructor = Blob;
-/** Implement {@link Layout#getSpan|getSpan} for {@link Blob|Blob}. */
+util.inherits(Blob, Layout);
+/** @override */
 Blob.prototype.getSpan = function(b, offset) {
   var span = this.span;
   if (0 > span) {
@@ -2132,7 +2167,7 @@ Blob.prototype.getSpan = function(b, offset) {
   }
   return span;
 };
-/** Implement {@link Layout#decode|decode} for {@link Blob|Blob}. */
+/** @override */
 Blob.prototype.decode = function(b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -2167,7 +2202,8 @@ Blob.prototype.encode = function(src, b, offset) {
   return span;
 };
 
-/** Contain a `NUL`-terminated UTF8 string.
+/**
+ * Contain a `NUL`-terminated UTF8 string.
  *
  * *Factory*: {@link module:Layout.cstr|cstr}
  *
@@ -2178,14 +2214,13 @@ Blob.prototype.encode = function(src, b, offset) {
  * Layout#property|property}.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function CString(property) {
   Layout.call(this, -1, property);
-  Object.freeze(this);
 }
-CString.prototype = Object.create(Layout.prototype);
-CString.prototype.constructor = CString;
-/** Implement {@link Layout#getSpan|getSpan} for {@link CString|CString}. */
+util.inherits(CString, Layout);
+/** @override */
 CString.prototype.getSpan = function(b, offset) {
   if (!(b instanceof Buffer)) {
     throw new TypeError('b must be a Buffer');
@@ -2200,7 +2235,7 @@ CString.prototype.getSpan = function(b, offset) {
   }
   return 1 + idx - offset;
 };
-/** Implement {@link Layout#decode|decode} for {@link CString|CString}. */
+/** @override */
 CString.prototype.decode = function(b, offset, dest) {
   if (undefined === offset) {
     offset = 0;
@@ -2208,7 +2243,7 @@ CString.prototype.decode = function(b, offset, dest) {
   var span = this.getSpan(b, offset);
   return b.slice(offset, offset + span - 1).toString('utf-8');
 };
-/** Implement {@link Layout#encode|encode} for {@link CString|CString}. */
+/** @override */
 CString.prototype.encode = function(src, b, offset) {
   if (undefined === offset) {
     offset = 0;
@@ -2229,24 +2264,26 @@ CString.prototype.encode = function(src, b, offset) {
   return span + 1;
 };
 
-/** Contain a constant value.
+/**
+ * Contain a constant value.
  *
  * This layout may be used in cases where a JavaScript value can be
  * inferred without an expression in the binary encoding.  An example
  * would be a {@link VariantLayout|variant layout} where the content
  * is implied by the union {@link Union#discriminator|discriminator}.
  *
- * @param value - initializer for {@link Constant#value|value}.  If
- * the value is an object (or array) and the application intends the
- * object to remain unchanged regardless of what is done to values
- * decoded by this layout, the value should be frozen prior passing it
- * to this constructor.
+ * @param {Object|Number|String} value - initializer for {@link
+ * Constant#value|value}.  If the value is an object (or array) and
+ * the application intends the object to remain unchanged regardless
+ * of what is done to values decoded by this layout, the value should
+ * be frozen prior passing it to this constructor.
  *
  * @param {String} [property] - initializer for {@link
  * Layout#property|property}.
  *
  * @constructor
- * @augments {Layout} */
+ * @augments {Layout}
+ */
 function Constant(value, property) {
   /** The value produced by this constant when the layout is {@link
    * Constant#decode|decoded}.
@@ -2259,15 +2296,13 @@ function Constant(value, property) {
    * the content of the value. */
   this.value = value;
   Layout.call(this, 0, property);
-  Object.freeze(this);
 }
-Constant.prototype = Object.create(Layout.prototype);
-Constant.prototype.constructor = Constant;
-/** Implement {@link Layout#decode|decode} for {@link Constant|Constant}. */
+util.inherits(Constant, Layout);
+/** @override */
 Constant.prototype.decode = function(b, offset, dest) {
   return this.value;
 };
-/** Implement {@link Layout#encode|encode} for {@link Constant|Constant}. */
+/** @override */
 Constant.prototype.encode = function(src, b, offset) {
   /* Constants take no space */
   return 0;
@@ -2485,13 +2520,13 @@ exports.f64be = function(property) {
 };
 
 /** Factory for {@link Structure|Structure} values. */
-exports.struct = function(fields, property, objectPrototype) {
-  return new Structure(fields, property, objectPrototype);
+exports.struct = function(fields, property) {
+  return new Structure(fields, property);
 };
 
 /** Factory for {@link BitStructure|BitStructure} values. */
-exports.bits = function(word, msb, property, objectPrototype) {
-  return new BitStructure(word, msb, property, objectPrototype);
+exports.bits = function(word, msb, property) {
+  return new BitStructure(word, msb, property);
 };
 
 /** Factory for {@link Sequence|Sequence} values. */
@@ -2500,8 +2535,8 @@ exports.seq = function(elementLayout, count, property) {
 };
 
 /** Factory for {@link Union|Union} values. */
-exports.union = function(discr, defaultLayout, property, objectPrototype) {
-  return new Union(discr, defaultLayout, property, objectPrototype);
+exports.union = function(discr, defaultLayout, property) {
+  return new Union(discr, defaultLayout, property);
 };
 
 /** Factory for {@link UnionLayoutDiscriminator|UnionLayoutDiscriminator} values. */
@@ -2539,7 +2574,7 @@ exports.const = function(value, property) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 10 2016 14:02:36 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Mar 08 2016 07:26:24 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>
