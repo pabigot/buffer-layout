@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.12.1] - 2016-0308
+
+* Disable coverage testing for [patchIssue3992][doc:patchIssue3992] to
+  avoid taking a penalty on node versions that have been updated.
+  
 ## [0.12.0] - 2016-0308
 
 * **API** Replace `setClassLayout` with [bindConstructorLayout][doc:bindConstructorLayout].
