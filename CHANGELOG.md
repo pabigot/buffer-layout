@@ -1,5 +1,7 @@
 # Change Log
 
+## [Unreleased]
+
 ## [0.12.1] - 2016-0308
 
 * Disable coverage testing for [patchIssue3992][doc:patchIssue3992] to
@@ -98,6 +100,7 @@
 
 * Initial release.
 
+[Unreleased]: https://github.com/pabigot/buffer-layout/compare/v0.12.1...next
 [0.12.0]: https://github.com/pabigot/buffer-layout/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/pabigot/buffer-layout/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/pabigot/buffer-layout/compare/v0.9.0...v0.10.0
