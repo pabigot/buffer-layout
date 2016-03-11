@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* **API** Add [offsetOf][doc:Structure.offsetOf] and [layoutFor][doc:Structure.layoutFor].
+
 ## [0.12.1] - 2016-0308
 
 * Disable coverage testing for [patchIssue3992][doc:patchIssue3992] to
@@ -134,6 +136,8 @@
 [doc:Sequence]: http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html
 [doc:Sequence.count]: http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html#count
 [doc:Structure]: http://pabigot.github.io/buffer-layout/module-Layout-Structure.html
+[doc:Structure.layoutFor]: http://pabigot.github.io/buffer-layout/module-Layout-Structure.html#layoutFor
+[doc:Structure.offsetOf]: http://pabigot.github.io/buffer-layout/module-Layout-Structure.html#offsetOf
 [issue#1]: https://github.com/pabigot/buffer-layout/issues/1
 [issue#2]: https://github.com/pabigot/buffer-layout/issues/2
 [issue#3]: https://github.com/pabigot/buffer-layout/issues/3

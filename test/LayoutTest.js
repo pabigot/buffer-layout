@@ -809,6 +809,30 @@ suite('Layout', function() {
       assert.equal(src.property, 'p');
       assert.strictEqual(dst.property, undefined);
     });
+    test('layoutFor', function() {
+      var u8 = lo.u8('u8');
+      var s32 = lo.s32('s32');
+      var cstr = lo.cstr('cstr');
+      var u16 = lo.u16('u16');
+      var d = lo.struct([u8, s32, cstr, u16], 's');
+      assert.strictEqual(d.layoutFor(), undefined);
+      assert.strictEqual(d.layoutFor('u8'), u8);
+      assert.strictEqual(d.layoutFor('cstr'), cstr);
+      assert.strictEqual(d.layoutFor('other'), undefined);
+    });
+    test('offsetOf', function() {
+      var u8 = lo.u8('u8');
+      var s32 = lo.s32('s32');
+      var cstr = lo.cstr('cstr');
+      var u16 = lo.u16('u16');
+      var d = lo.struct([u8, s32, cstr, u16], 's');
+      assert.strictEqual(d.offsetOf(), undefined);
+      assert.strictEqual(d.offsetOf('u8'), 0);
+      assert.strictEqual(d.offsetOf('s32'), 1);
+      assert.strictEqual(d.offsetOf('cstr'), 5);
+      assert(0 > d.offsetOf('u16'));
+      assert.strictEqual(d.offsetOf('other'), undefined);
+    });
   });
   suite('VariantLayout', function() {
     test('invalid ctor', function() {
