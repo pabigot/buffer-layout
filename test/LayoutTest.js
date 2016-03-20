@@ -1544,8 +1544,17 @@ suite('Layout', function() {
       assert.notStrictEqual(true, obj.v);
       bs.encode({v: 1, b: 1}, b);
       assert.equal(b[0], 3);
+      bs.encode({v: 1, b: true}, b);
+      assert.equal(b[0], 3);
       bs.encode({v: 0, b: 0}, b);
       assert.equal(b[0], 0);
+      bs.encode({v: 0, b: false}, b);
+      assert.equal(b[0], 0);
+      bs.encode({}, b);
+      assert.equal(b[0], 0);
+      assert.throws(function() { bs.encode({v: false}); }, TypeError);
+      assert.throws(function() { bs.encode({b: 1.2}); }, TypeError);
+      assert.throws(function() { bs.encode({v: 1.2}); }, TypeError);
     });
   });
   suite('Blob', function() {

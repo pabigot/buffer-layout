@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Fix incorrect encoding of [boolean-valued bit fields][doc:Boolean].
 * **API** Add [offsetOf][doc:Structure.offsetOf] and [layoutFor][doc:Structure.layoutFor].
 
 ## [0.12.1] - 2016-0308
