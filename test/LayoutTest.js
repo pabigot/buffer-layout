@@ -10,6 +10,20 @@ function reversedBuffer(b) {
   return new Buffer(ba.reverse());
 }
 
+/* Helper to check that a thrown exception is both the expected type
+ * and carries the expected message. */
+function checkError(exc, expect, regex) {
+  if (expect && !(exc instanceof expect)) {
+    console.log('checkError failed: exc ' + typeof exc + ' expect ' + expect);
+    return false;
+  }
+  if (regex && !exc.message.match(regex)) {
+    console.log('checkError failed: msg "' + exc.message + '" nomatch ' + regex);
+    return false;
+  }
+  return true;
+}
+
 suite('Layout', function() {
   test('#reversedBuffer', function() {
     var b = Buffer('0102030405', 'hex');
@@ -1552,9 +1566,12 @@ suite('Layout', function() {
       assert.equal(b[0], 0);
       bs.encode({}, b);
       assert.equal(b[0], 0);
-      assert.throws(function() { bs.encode({v: false}); }, TypeError);
-      assert.throws(function() { bs.encode({b: 1.2}); }, TypeError);
-      assert.throws(function() { bs.encode({v: 1.2}); }, TypeError);
+      assert.throws(function() { bs.encode({v: false}, b); },
+                    function(err) { return checkError(err, TypeError, /BitField.encode\[v\] value must be integer/); });
+      assert.throws(function() { bs.encode({v: 1.2}, b); },
+                    function(err) { return checkError(err, TypeError, /BitField.encode\[v\] value must be integer/); });
+      assert.throws(function() { bs.encode({b: 1.2}, b); },
+                    function(err) { return checkError(err, TypeError, /BitField.encode\[b\] value must be integer/); });
     });
   });
   suite('Blob', function() {
