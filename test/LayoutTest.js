@@ -1523,6 +1523,17 @@ suite('Layout', function() {
       assert.deepEqual(bs.decode(b), {a1: 0, b4: 9, c11: 0x4F1, d16: 0x8a51});
       assert.equal(Buffer('518af14c', 'hex').compare(b), 0);
     });
+    test('fieldFor', function() {
+      var d = new lo.BitStructure(lo.u32(), true);
+      var b = d.addBoolean('b');
+      var b4 = d.addField(4, 'b4');
+      var c11 = d.addField(11, 'c11');
+      var d16 = d.addField(16, 'd16');
+      assert.strictEqual(d.fieldFor(), undefined);
+      assert.strictEqual(d.fieldFor('b'), b);
+      assert.strictEqual(d.fieldFor('c11'), c11);
+      assert.strictEqual(d.fieldFor('other'), undefined);
+    });
     test('gap coding', function() {
       var lsb = new lo.BitStructure(lo.u24());
       var msb = new lo.BitStructure(lo.u24(), true);
