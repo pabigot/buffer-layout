@@ -834,6 +834,13 @@ suite('Layout', function() {
       assert.strictEqual(d.layoutFor('cstr'), cstr);
       assert.strictEqual(d.layoutFor('other'), undefined);
     });
+    test('nameWithProperty', function() {
+      var s32 = lo.s32('s32');
+      var u16 = lo.u16('u16');
+      var d = lo.struct([s32, lo.u16(), u16], 's');
+      assert.equal(lo.nameWithProperty('struct', d), 'struct[s]');
+      assert.equal(lo.nameWithProperty('pfx', d.fields[1]), 'pfx');
+    });
     test('offsetOf', function() {
       var u8 = lo.u8('u8');
       var s32 = lo.s32('s32');
