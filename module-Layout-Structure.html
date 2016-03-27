@@ -197,7 +197,7 @@ is not defined.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1167">line 1167</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1180">line 1180</a>
     </li></ul></dd>
     
 
@@ -344,7 +344,7 @@ will not be mutated.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1201">line 1201</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1214">line 1214</a>
     </li></ul></dd>
     
 
@@ -783,7 +783,7 @@ left unmodified.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1243">line 1243</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1256">line 1256</a>
     </li></ul></dd>
     
 
@@ -931,7 +931,7 @@ layouts.  Any unused values are ignored.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line358">line 358</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line371">line 371</a>
     </li></ul></dd>
     
 
@@ -1132,7 +1132,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line308">line 308</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line321">line 321</a>
     </li></ul></dd>
     
 
@@ -1208,6 +1208,162 @@ returned.</li>
     <dd>
         
 <span class="param-type">Number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="layoutFor"><span class="type-signature"></span>layoutFor<span class="signature">(property)</span><span class="type-signature"> &rarr; {<a href="module-Layout-Layout.html">module:Layout~Layout</a>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Get access to the layout of a given property.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>property</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the structure member of interest.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1310">line 1310</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>the layout associated with <code>property</code>, or
+undefined if there is no such property.</li>
+</ul>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="module-Layout-Layout.html">module:Layout~Layout</a></span>
 
 
     </dd>
@@ -1313,6 +1469,165 @@ will be Object instances.</p>
 
 
 
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="offsetOf"><span class="type-signature"></span>offsetOf<span class="signature">(property)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Get the offset of a structure member.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>property</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the structure member of interest.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1333">line 1333</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>the offset in bytes to the start of <code>property</code>
+within the structure, or undefined if <code>property</code> is not a field
+within the structure.  If the property is a member but follows a
+variable-length structure member a negative number will be
+returned.</li>
+</ul>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Number</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1430,7 +1745,7 @@ immutable.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line331">line 331</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line344">line 344</a>
     </li></ul></dd>
     
 
@@ -1503,7 +1818,7 @@ set to <code>property</code>.</li>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Mar 08 2016 07:26:24 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Mar 27 2016 12:07:53 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
