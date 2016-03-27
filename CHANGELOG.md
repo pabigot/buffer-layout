@@ -1,17 +1,17 @@
 # Change Log
 
-## [Unreleased]
+## [0.13.0] - 2016-03-27
 
-* **API** [fieldFor][doc:BitStructure.fieldFor].
+* **API** Add [fieldFor][doc:BitStructure.fieldFor].
 * Fix incorrect encoding of [boolean-valued bit fields][doc:Boolean].
 * **API** Add [offsetOf][doc:Structure.offsetOf] and [layoutFor][doc:Structure.layoutFor].
 
-## [0.12.1] - 2016-0308
+## [0.12.1] - 2016-03-08
 
 * Disable coverage testing for [patchIssue3992][doc:patchIssue3992] to
   avoid taking a penalty on node versions that have been updated.
   
-## [0.12.0] - 2016-0308
+## [0.12.0] - 2016-03-08
 
 * **API** Replace `setClassLayout` with [bindConstructorLayout][doc:bindConstructorLayout].
 * **API** Replace `objectPrototype` with [makeDestinationObject][doc:makeDestinationObject].
@@ -104,7 +104,7 @@
 
 * Initial release.
 
-[Unreleased]: https://github.com/pabigot/buffer-layout/compare/v0.12.1...next
+[0.13.0]: https://github.com/pabigot/buffer-layout/compare/v0.12.1...v0.13.0
 [0.12.0]: https://github.com/pabigot/buffer-layout/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/pabigot/buffer-layout/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/pabigot/buffer-layout/compare/v0.9.0...v0.10.0
