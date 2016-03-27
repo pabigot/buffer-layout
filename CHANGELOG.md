@@ -1,5 +1,7 @@
 # Change Log
 
+## [Unreleased]
+
 ## [0.13.0] - 2016-03-27
 
 * **API** Add [fieldFor][doc:BitStructure.fieldFor].
@@ -104,7 +106,7 @@
 
 * Initial release.
 
-[0.13.0]: https://github.com/pabigot/buffer-layout/compare/v0.12.1...v0.13.0
+[Unreleased]: https://github.com/pabigot/buffer-layout/compare/v0.13.0...next
 [0.12.0]: https://github.com/pabigot/buffer-layout/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/pabigot/buffer-layout/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/pabigot/buffer-layout/compare/v0.9.0...v0.10.0
