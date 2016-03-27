@@ -1,11 +1,17 @@
 # Change Log
 
-## [0.12.1] - 2016-0308
+## [0.13.0] - 2016-03-27
+
+* **API** Add [fieldFor][doc:BitStructure.fieldFor].
+* Fix incorrect encoding of [boolean-valued bit fields][doc:Boolean].
+* **API** Add [offsetOf][doc:Structure.offsetOf] and [layoutFor][doc:Structure.layoutFor].
+
+## [0.12.1] - 2016-03-08
 
 * Disable coverage testing for [patchIssue3992][doc:patchIssue3992] to
   avoid taking a penalty on node versions that have been updated.
   
-## [0.12.0] - 2016-0308
+## [0.12.0] - 2016-03-08
 
 * **API** Replace `setClassLayout` with [bindConstructorLayout][doc:bindConstructorLayout].
 * **API** Replace `objectPrototype` with [makeDestinationObject][doc:makeDestinationObject].
@@ -98,6 +104,7 @@
 
 * Initial release.
 
+[0.13.0]: https://github.com/pabigot/buffer-layout/compare/v0.12.1...v0.13.0
 [0.12.0]: https://github.com/pabigot/buffer-layout/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/pabigot/buffer-layout/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/pabigot/buffer-layout/compare/v0.9.0...v0.10.0
@@ -131,6 +138,8 @@
 [doc:Sequence]: http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html
 [doc:Sequence.count]: http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html#count
 [doc:Structure]: http://pabigot.github.io/buffer-layout/module-Layout-Structure.html
+[doc:Structure.layoutFor]: http://pabigot.github.io/buffer-layout/module-Layout-Structure.html#layoutFor
+[doc:Structure.offsetOf]: http://pabigot.github.io/buffer-layout/module-Layout-Structure.html#offsetOf
 [issue#1]: https://github.com/pabigot/buffer-layout/issues/1
 [issue#2]: https://github.com/pabigot/buffer-layout/issues/2
 [issue#3]: https://github.com/pabigot/buffer-layout/issues/3

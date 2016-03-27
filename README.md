@@ -79,6 +79,7 @@ The buffer-layout way:
     var ds = lo.struct([lo.u8('v'),
                         lo.seq(lo.u8(), 3), // alignment padding
                         lo.u32('u32')]);
+    assert.equal(ds.offsetOf('u32'), 4);
     var b = new Buffer(8);
     b.fill(0xbd);
     assert.equal(ds.encode({v: 1, u32: 0x12345678}, b), 1 + 3 + 4);
@@ -105,6 +106,7 @@ The buffer-layout way:
 
     var ds = lo.struct([lo.u8('v'),
                         lo.u32('u32')]);
+    assert.equal(ds.offsetOf('u32'), 1);
     var b = new Buffer(5);
     b.fill(0xbd);
     assert.equal(ds.encode({v: 1, u32: 0x12345678}, b), 1 + 4);

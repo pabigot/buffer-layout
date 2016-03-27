@@ -10,6 +10,20 @@ function reversedBuffer(b) {
   return new Buffer(ba.reverse());
 }
 
+/* Helper to check that a thrown exception is both the expected type
+ * and carries the expected message. */
+function checkError(exc, expect, regex) {
+  if (expect && !(exc instanceof expect)) {
+    console.log('checkError failed: exc ' + typeof exc + ' expect ' + expect);
+    return false;
+  }
+  if (regex && !exc.message.match(regex)) {
+    console.log('checkError failed: msg "' + exc.message + '" nomatch ' + regex);
+    return false;
+  }
+  return true;
+}
+
 suite('Layout', function() {
   test('#reversedBuffer', function() {
     var b = Buffer('0102030405', 'hex');
@@ -809,6 +823,37 @@ suite('Layout', function() {
       assert.equal(src.property, 'p');
       assert.strictEqual(dst.property, undefined);
     });
+    test('layoutFor', function() {
+      var u8 = lo.u8('u8');
+      var s32 = lo.s32('s32');
+      var cstr = lo.cstr('cstr');
+      var u16 = lo.u16('u16');
+      var d = lo.struct([u8, s32, cstr, u16], 's');
+      assert.strictEqual(d.layoutFor(), undefined);
+      assert.strictEqual(d.layoutFor('u8'), u8);
+      assert.strictEqual(d.layoutFor('cstr'), cstr);
+      assert.strictEqual(d.layoutFor('other'), undefined);
+    });
+    test('nameWithProperty', function() {
+      var s32 = lo.s32('s32');
+      var u16 = lo.u16('u16');
+      var d = lo.struct([s32, lo.u16(), u16], 's');
+      assert.equal(lo.nameWithProperty('struct', d), 'struct[s]');
+      assert.equal(lo.nameWithProperty('pfx', d.fields[1]), 'pfx');
+    });
+    test('offsetOf', function() {
+      var u8 = lo.u8('u8');
+      var s32 = lo.s32('s32');
+      var cstr = lo.cstr('cstr');
+      var u16 = lo.u16('u16');
+      var d = lo.struct([u8, s32, cstr, u16], 's');
+      assert.strictEqual(d.offsetOf(), undefined);
+      assert.strictEqual(d.offsetOf('u8'), 0);
+      assert.strictEqual(d.offsetOf('s32'), 1);
+      assert.strictEqual(d.offsetOf('cstr'), 5);
+      assert(0 > d.offsetOf('u16'));
+      assert.strictEqual(d.offsetOf('other'), undefined);
+    });
   });
   suite('VariantLayout', function() {
     test('invalid ctor', function() {
@@ -1485,6 +1530,17 @@ suite('Layout', function() {
       assert.deepEqual(bs.decode(b), {a1: 0, b4: 9, c11: 0x4F1, d16: 0x8a51});
       assert.equal(Buffer('518af14c', 'hex').compare(b), 0);
     });
+    test('fieldFor', function() {
+      var d = new lo.BitStructure(lo.u32(), true);
+      var b = d.addBoolean('b');
+      var b4 = d.addField(4, 'b4');
+      var c11 = d.addField(11, 'c11');
+      var d16 = d.addField(16, 'd16');
+      assert.strictEqual(d.fieldFor(), undefined);
+      assert.strictEqual(d.fieldFor('b'), b);
+      assert.strictEqual(d.fieldFor('c11'), c11);
+      assert.strictEqual(d.fieldFor('other'), undefined);
+    });
     test('gap coding', function() {
       var lsb = new lo.BitStructure(lo.u24());
       var msb = new lo.BitStructure(lo.u24(), true);
@@ -1520,8 +1576,20 @@ suite('Layout', function() {
       assert.notStrictEqual(true, obj.v);
       bs.encode({v: 1, b: 1}, b);
       assert.equal(b[0], 3);
+      bs.encode({v: 1, b: true}, b);
+      assert.equal(b[0], 3);
       bs.encode({v: 0, b: 0}, b);
       assert.equal(b[0], 0);
+      bs.encode({v: 0, b: false}, b);
+      assert.equal(b[0], 0);
+      bs.encode({}, b);
+      assert.equal(b[0], 0);
+      assert.throws(function() { bs.encode({v: false}, b); },
+                    function(err) { return checkError(err, TypeError, /BitField.encode\[v\] value must be integer/); });
+      assert.throws(function() { bs.encode({v: 1.2}, b); },
+                    function(err) { return checkError(err, TypeError, /BitField.encode\[v\] value must be integer/); });
+      assert.throws(function() { bs.encode({b: 1.2}, b); },
+                    function(err) { return checkError(err, TypeError, /BitField.encode\[b\] value must be integer/); });
     });
   });
   suite('Blob', function() {
@@ -1796,7 +1864,7 @@ suite('Layout', function() {
       assert.deepEqual(po, p);
     });
     test('bits', function() {
-      function Header() { };
+      function Header() { }
       Header.prototype.power = function() {
         return ['off', 'lo', 'med', 'hi'][this.pwr];
       };
@@ -1815,17 +1883,17 @@ suite('Layout', function() {
       assert.equal(b.compare(nb), 0);
     });
     test('union', function() {
-      function Union() { };
+      function Union() { }
       lo.bindConstructorLayout(Union, lo.union(lo.u8('var'), lo.blob(8, 'unk')));
       function VFloat(v) {
         this.f32 = v;
-      };
+      }
       util.inherits(VFloat, Union);
       lo.bindConstructorLayout(VFloat,
                                Union.layout_.addVariant(1, lo.f32(), 'f32'));
       function VCStr(v) {
         this.text = v;
-      };
+      }
       util.inherits(VCStr, Union);
       lo.bindConstructorLayout(VCStr,
                                Union.layout_.addVariant(2, lo.cstr(), 'text'));
@@ -1833,7 +1901,7 @@ suite('Layout', function() {
         this.u32 = u32;
         this.u16 = u16;
         this.s16 = s16;
-      };
+      }
       function VStruct(v) {
         this.struct = v;
       }
