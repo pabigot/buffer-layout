@@ -1864,7 +1864,7 @@ suite('Layout', function() {
       assert.deepEqual(po, p);
     });
     test('bits', function() {
-      function Header() { };
+      function Header() { }
       Header.prototype.power = function() {
         return ['off', 'lo', 'med', 'hi'][this.pwr];
       };
@@ -1883,17 +1883,17 @@ suite('Layout', function() {
       assert.equal(b.compare(nb), 0);
     });
     test('union', function() {
-      function Union() { };
+      function Union() { }
       lo.bindConstructorLayout(Union, lo.union(lo.u8('var'), lo.blob(8, 'unk')));
       function VFloat(v) {
         this.f32 = v;
-      };
+      }
       util.inherits(VFloat, Union);
       lo.bindConstructorLayout(VFloat,
                                Union.layout_.addVariant(1, lo.f32(), 'f32'));
       function VCStr(v) {
         this.text = v;
-      };
+      }
       util.inherits(VCStr, Union);
       lo.bindConstructorLayout(VCStr,
                                Union.layout_.addVariant(2, lo.cstr(), 'text'));
@@ -1901,7 +1901,7 @@ suite('Layout', function() {
         this.u32 = u32;
         this.u16 = u16;
         this.s16 = s16;
-      };
+      }
       function VStruct(v) {
         this.struct = v;
       }
