@@ -188,7 +188,7 @@ struct ds {
     var b = Buffer('21010002030405', 'hex');
     assert.deepEqual(st.decode(b), {prop: 33, data: [0x0001, 0x0302, 0x0504]});
     b.fill(0xFF);
-    assert.equal(st.encode({prop: 9, data: [5,6]}, b), 1 + 2 * 2);
+    assert.equal(st.encode({prop: 9, data: [5, 6]}, b), 1 + 2 * 2);
     assert.equal(Buffer('0905000600FFFF', 'hex').compare(b), 0);
   });
   test('variable-length union', function() {
