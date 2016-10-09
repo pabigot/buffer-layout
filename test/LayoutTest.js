@@ -485,6 +485,9 @@ suite('Layout', function() {
     be.encode(1, b, 1);
     assert.equal(Buffer('a50000000000000001a5', 'hex').compare(b), 0);
     assert.equal(1, be.decode(b, 1));
+
+    assert.equal(le.decode(Buffer('0000007001000000', 'hex')), 6174015488);
+    assert.equal(le.decode(Buffer('0000008001000000', 'hex')), 6442450944);
   });
   test('Float', function() {
     var be = lo.f32be('eff');
