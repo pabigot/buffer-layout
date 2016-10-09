@@ -5,6 +5,5 @@ node_js:
   - "6"
   - "4"
 after_success:
-  - npm run lint.strict
-  - npm run jscs
+  - npm run eslint
   - npm run coveralls
