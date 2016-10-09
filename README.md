@@ -28,8 +28,9 @@ Layout support is provided for these types of data:
 
 ## Installation
 
-Development and testing is done using Node.js, supporting versions 0.12
-and later.  Install with `npm install buffer-layout`.
+Development and testing is done using Node.js, supporting versions 4 and
+later (earlier versions may work).  Install with `npm install
+buffer-layout`.
 
 ## Examples
 
