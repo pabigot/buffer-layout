@@ -1,3 +1,4 @@
+/* eslint-disable brace-style, max-statements-per-line, no-unused-vars */
 var assert = require('assert');
 var util = require('util');
 var lo = require('../lib/Layout');

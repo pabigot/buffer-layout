@@ -1,3 +1,5 @@
+/* eslint-disable brace-style, max-statements-per-line, no-new */
+
 var assert = require('assert');
 var util = require('util');
 var _ = require('lodash');
@@ -1212,7 +1214,7 @@ suite('Layout', function() {
       assert.equal(obj.u.v0, 0x06050403);
 
       var flo = lo.f32('f32');
-      var vf = un.addVariant(1, flo, 'vf');
+      un.addVariant(1, flo, 'vf');
       var fb = Buffer('01234500805a429876', 'hex');
       var fobj = st.decode(fb);
       assert.equal(fobj.vid, 1);
@@ -1346,7 +1348,7 @@ suite('Layout', function() {
     var un = new lo.Union(lo.u8('v'), lo.u32('c'));
     assert.strictEqual(un.fromArray([1, 2, 3]), undefined);
     var v1 = un.addVariant(1, st, 'v1');
-    var v2 = un.addVariant(2, lo.f32(), 'v2');
+    un.addVariant(2, lo.f32(), 'v2');
     assert(v1 instanceof lo.VariantLayout);
     assert.deepEqual(un.getVariant(1).fromArray([1, 2, 3]), {a: 1, b: 2, c: 3});
     assert.strictEqual(un.getVariant(2).fromArray([1, 2, 3]), undefined);
@@ -1367,22 +1369,22 @@ suite('Layout', function() {
     test('invalid add', function() {
       assert.throws(function() {
         var bs = lo.bits(lo.u32());
-        var bf1 = bs.addField(30);
-        var bf2 = bs.addField(3);
+        bs.addField(30);
+        bs.addField(3);
       }, Error);
       assert.throws(function() {
         var bs = lo.bits(lo.u8());
-        var bf1 = addField(2);
-        var bf2 = addField(7);
+        bs.addField(2);
+        bs.addField(7);
       }, Error);
       assert.throws(function() {
         var bs = lo.bits(lo.u8());
-        var bf1 = addField(0);
+        bs.addField(0);
       }, Error);
       assert.throws(function() {
         var bs = lo.bits(lo.u8());
-        var bf1 = addField(6);
-        var bf2 = addField(-2);
+        bs.addField(6);
+        bs.addField(-2);
       }, Error);
     });
     test('size', function() {
@@ -1536,9 +1538,9 @@ suite('Layout', function() {
     test('fieldFor', function() {
       var d = new lo.BitStructure(lo.u32(), true);
       var b = d.addBoolean('b');
-      var b4 = d.addField(4, 'b4');
+      d.addField(4, 'b4');
       var c11 = d.addField(11, 'c11');
-      var d16 = d.addField(16, 'd16');
+      d.addField(16, 'd16');
       assert.strictEqual(d.fieldFor(), undefined);
       assert.strictEqual(d.fieldFor('b'), b);
       assert.strictEqual(d.fieldFor('c11'), c11);
@@ -1673,7 +1675,7 @@ suite('Layout', function() {
       assert.equal(dp.u.ver, 2);
       assert.equal(expectedBlob.compare(dp.u.blob), 0);
 
-      var v3 = pld.addVariant(2, new lo.Sequence(lo.u32(), 2, 'u32'), 'v3');
+      pld.addVariant(2, new lo.Sequence(lo.u32(), 2, 'u32'), 'v3');
       assert.deepEqual(pld.decode(b, 2), {v3: [0x13121110, 0x17161514]});
 
       dp = pkt.decode(b);
@@ -1686,23 +1688,21 @@ suite('Layout', function() {
                                   lo.u8('ver')]);
       var pld = new lo.Union(lo.offset(ver, -ver.span),
                              new lo.Blob(8, 'blob'));
-      var pkt = new lo.Structure([hdr, pld]);
       var expectedBlob = Buffer('1011121314151617', 'hex');
       var b = Buffer('01021011121314151617', 'hex');
       assert.deepEqual(hdr.decode(b), {id: 1, ver: 2});
       var du = pld.decode(b, 2);
       assert.equal(du.ver, 2);
       assert.equal(expectedBlob.compare(du.blob), 0);
-      var dp = pkt.decode(b);
       /* This is what I want, but can't get. */
+      // var dp = pkt.decode(b);
       // assert.equal(dp.id, 1);
       // assert.equal(dp.ver, 2);
       // assert.equal(expectedBlob.compare(dp.blob), 0);
 
-      var v3 = pld.addVariant(2, new lo.Sequence(lo.u32(), 2, 'u32'), 'v3');
+      pld.addVariant(2, new lo.Sequence(lo.u32(), 2, 'u32'), 'v3');
       assert.deepEqual(pld.decode(b, 2), {v3: [0x13121110, 0x17161514]});
 
-      dp = pkt.decode(b);
       /* Ditto on want */
       // assert.deepEqual(dp, {id:1, ver:2, u32: [0x13121110, 0x17161514]});
     });
@@ -1713,9 +1713,6 @@ suite('Layout', function() {
       var hdr = lo.struct([lo.u8('id'),
                            lo.u8('ver')]);
       var pld = lo.union(lo.offset(ver, -ver.span), lo.blob(8, 'blob'));
-      var pkt = lo.struct([hdr, pld]);
-      var expectedBlob = Buffer('1011121314151617', 'hex');
-      var b = Buffer('01021011121314151617', 'hex');
       assert(hdr instanceof lo.Structure);
       assert(pld instanceof lo.Union);
       assert(pld.defaultLayout instanceof lo.Blob);
@@ -1909,11 +1906,9 @@ suite('Layout', function() {
         this.struct = v;
       }
       util.inherits(VStruct, Union);
-      {
-        var str = lo.struct([lo.u32('u32'), lo.u16('u16'), lo.s16('s16')]);
-        lo.bindConstructorLayout(Struct, str);
-        lo.bindConstructorLayout(VStruct, Union.layout_.addVariant(3, str, 'struct'));
-      }
+      var str = lo.struct([lo.u32('u32'), lo.u16('u16'), lo.s16('s16')]);
+      lo.bindConstructorLayout(Struct, str);
+      lo.bindConstructorLayout(VStruct, Union.layout_.addVariant(3, str, 'struct'));
       var b = new Buffer(Union.layout_.span);
       b.fill(0);
       var u = Union.decode(b);
