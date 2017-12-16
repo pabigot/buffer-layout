@@ -10,7 +10,6 @@ module.exports = {
   rules: {
     'guard-for-in': 'off',
     'new-cap': 'off',
-    'no-var': 'off',
     'prefer-rest-params': 'off',
     'prefer-spread': 'off',
     __temporary: 'off',

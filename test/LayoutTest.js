@@ -1,4 +1,4 @@
-/* eslint-disable brace-style, max-statements-per-line, no-new */
+/* eslint-disable brace-style, max-statements-per-line, no-new, no-var */
 
 var assert = require('assert');
 var util = require('util');
