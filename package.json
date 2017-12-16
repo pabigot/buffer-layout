@@ -28,7 +28,7 @@
     "mocha": "~4.0.1"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=4.5"
   },
   "scripts": {
     "coverage": "istanbul cover _mocha -- -u tdd",
