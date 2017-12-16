@@ -10,7 +10,7 @@
   ],
   "homepage": "https://github.com/pabigot/buffer-layout",
   "bugs": "https://github.com/pabigot/buffer-layout/issues",
-  "repository" : {
+  "repository": {
     "type": "git",
     "url": "https://github.com/pabigot/buffer-layout.git"
   },
