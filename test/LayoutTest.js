@@ -56,19 +56,19 @@ suite('Layout', function() {
       assert.equal(d.property, 'tag');
     });
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.Layout(); }, TypeError);
-      assert.throws(function() { new lo.Layout('3'); }, TypeError);
-      assert.throws(function() { new lo.Layout('three'); }, TypeError);
+      assert.throws(function() {new lo.Layout();}, TypeError);
+      assert.throws(function() {new lo.Layout('3');}, TypeError);
+      assert.throws(function() {new lo.Layout('three');}, TypeError);
     });
     test('abstractness', function() {
       var d = new lo.Layout(3);
       var b = new Buffer(3);
-      assert.throws(function() { d.decode(b); });
-      assert.throws(function() { d.encode('sth', b); });
+      assert.throws(function() {d.decode(b);});
+      assert.throws(function() {d.encode('sth', b);});
     });
     test('#getSpan', function() {
       assert.equal((new lo.Layout(3)).getSpan(), 3);
-      assert.throws(function() { (new lo.Layout(-1)).getSpan(); }, RangeError);
+      assert.throws(function() {(new lo.Layout(-1)).getSpan();}, RangeError);
     });
   });
   suite('UInt', function() {
@@ -105,7 +105,7 @@ suite('Layout', function() {
       var b = new Buffer(3);
       assert.equal(d.span, 3);
       assert.equal(0x563412, d.decode(Buffer('123456', 'hex')));
-      assert.throws(function() { d.encode(0x1234567, b); });
+      assert.throws(function() {d.encode(0x1234567, b);});
     });
     test('u48', function() {
       var d = lo.u48('t');
@@ -130,7 +130,7 @@ suite('Layout', function() {
       assert.equal(0xA534, d.decode(b, 2));
     });
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.UInt(8); }, RangeError);
+      assert.throws(function() {new lo.UInt(8);}, RangeError);
     });
   });
   suite('UIntBE', function() {
@@ -152,24 +152,24 @@ suite('Layout', function() {
       var b = new Buffer(3);
       assert.equal(d.span, 3);
       assert.equal(0x123456, d.decode(Buffer('123456', 'hex')));
-      assert.throws(function() { d.encode(0x1234567, b); });
-      assert.throws(function() { d.encode(-1, b); });
+      assert.throws(function() {d.encode(0x1234567, b);});
+      assert.throws(function() {d.encode(-1, b);});
     });
     test('u32be', function() {
       var d = lo.u32be('t');
       var b = new Buffer(4);
       assert.equal(d.span, 4);
       assert.equal(0x12345678, d.decode(Buffer('12345678', 'hex')));
-      assert.throws(function() { d.encode(0x123456789, b); });
-      assert.throws(function() { d.encode(-1, b); });
+      assert.throws(function() {d.encode(0x123456789, b);});
+      assert.throws(function() {d.encode(-1, b);});
     });
     test('u40be', function() {
       var d = lo.u40be('t');
       var b = new Buffer(5);
       assert.equal(d.span, 5);
       assert.equal(0x123456789a, d.decode(Buffer('123456789a', 'hex')));
-      assert.throws(function() { d.encode(0x123456789ab, b); });
-      assert.throws(function() { d.encode(-1, b); });
+      assert.throws(function() {d.encode(0x123456789ab, b);});
+      assert.throws(function() {d.encode(-1, b);});
     });
     test('u48be', function() {
       var d = lo.u48be('t');
@@ -193,7 +193,7 @@ suite('Layout', function() {
       assert.equal(0x34A5, d.decode(b, 2));
     });
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.UIntBE(8); }, RangeError);
+      assert.throws(function() {new lo.UIntBE(8);}, RangeError);
     });
   });
   suite('Int', function() {
@@ -239,8 +239,8 @@ suite('Layout', function() {
       assert.equal(0x563412, d.decode(Buffer('123456', 'hex')));
       assert.equal(-1, d.decode(Buffer('FFFFFF', 'hex')));
       assert.equal(-0x800000, d.decode(Buffer('000080', 'hex')));
-      assert.throws(function() { d.encode(0x800000, b); });
-      assert.throws(function() { d.encode(-0x800001, b); });
+      assert.throws(function() {d.encode(0x800000, b);});
+      assert.throws(function() {d.encode(-0x800001, b);});
     });
     test('s40', function() {
       var d = lo.s40('t');
@@ -249,8 +249,8 @@ suite('Layout', function() {
       assert.equal(0x123456789a, d.decode(Buffer('9a78563412', 'hex')));
       assert.equal(-1, d.decode(Buffer('FFFFFFFFFF', 'hex')));
       assert.equal(-0x8000000000, d.decode(Buffer('0000000080', 'hex')));
-      assert.throws(function() { d.encode(0x8000000000, b); });
-      assert.throws(function() { d.encode(-0x8000000001, b); });
+      assert.throws(function() {d.encode(0x8000000000, b);});
+      assert.throws(function() {d.encode(-0x8000000001, b);});
     });
     test('s48', function() {
       var d = lo.s48('t');
@@ -272,7 +272,7 @@ suite('Layout', function() {
       assert.equal(lo.u48be().decode(b), 0x8720f279b78f);
     });
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.Int(8); }, RangeError);
+      assert.throws(function() {new lo.Int(8);}, RangeError);
     });
   });
   suite('IntBE', function() {
@@ -302,8 +302,8 @@ suite('Layout', function() {
       assert.equal(0x123456, d.decode(Buffer('123456', 'hex')));
       assert.equal(-1, d.decode(Buffer('FFFFFF', 'hex')));
       assert.equal(-0x800000, d.decode(Buffer('800000', 'hex')));
-      assert.throws(function() { d.encode(0x800000, b); });
-      assert.throws(function() { d.encode(-0x800001, b); });
+      assert.throws(function() {d.encode(0x800000, b);});
+      assert.throws(function() {d.encode(-0x800001, b);});
     });
     test('s32be', function() {
       var d = lo.s32be('t');
@@ -312,8 +312,8 @@ suite('Layout', function() {
       assert.equal(0x12345678, d.decode(Buffer('12345678', 'hex')));
       assert.equal(-1, d.decode(Buffer('FFFFFFFF', 'hex')));
       assert.equal(-0x80000000, d.decode(Buffer('80000000', 'hex')));
-      assert.throws(function() { d.encode(0x80000000, b); });
-      assert.throws(function() { d.encode(-0x80000001, b); });
+      assert.throws(function() {d.encode(0x80000000, b);});
+      assert.throws(function() {d.encode(-0x80000001, b);});
     });
     test('s40be', function() {
       var d = lo.s40be('t');
@@ -322,8 +322,8 @@ suite('Layout', function() {
       assert.equal(0x123456789a, d.decode(Buffer('123456789a', 'hex')));
       assert.equal(-1, d.decode(Buffer('FFFFFFFFFF', 'hex')));
       assert.equal(-0x8000000000, d.decode(Buffer('8000000000', 'hex')));
-      assert.throws(function() { d.encode(0x8000000000, b); });
-      assert.throws(function() { d.encode(-0x8000000001, b); });
+      assert.throws(function() {d.encode(0x8000000000, b);});
+      assert.throws(function() {d.encode(-0x8000000001, b);});
     });
     test('s48be', function() {
       var d = lo.s48be('t');
@@ -345,7 +345,7 @@ suite('Layout', function() {
       assert.equal(lo.u48().decode(b), 0x8720f279b78f);
     });
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.IntBE(8, 'u64'); }, RangeError);
+      assert.throws(function() {new lo.IntBE(8, 'u64');}, RangeError);
     });
   });
   test('RoundedUInt64', function() {
@@ -564,15 +564,15 @@ suite('Layout', function() {
   });
   suite('Sequence', function() {
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.Sequence(); }, TypeError);
-      assert.throws(function() { new lo.Sequence(lo.u8()); }, TypeError);
-      assert.throws(function() { new lo.Sequence(lo.u8(),
-                                                 '5 is not an integer'); },
+      assert.throws(function() {new lo.Sequence();}, TypeError);
+      assert.throws(function() {new lo.Sequence(lo.u8());}, TypeError);
+      assert.throws(function() {new lo.Sequence(lo.u8(),
+                                                 '5 is not an integer');},
                     TypeError);
-      assert.throws(function() { new lo.Sequence(lo.u8(), lo.u8()); },
+      assert.throws(function() {new lo.Sequence(lo.u8(), lo.u8());},
                     TypeError);
-      assert.throws(function() { new lo.Sequence(lo.u8(),
-                                                 lo.offset(lo.f32())); },
+      assert.throws(function() {new lo.Sequence(lo.u8(),
+                                                 lo.offset(lo.f32()));},
                     TypeError);
     });
     test('basics', function() {
@@ -670,11 +670,11 @@ suite('Layout', function() {
   });
   suite('Structure', function() {
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.Structure(); }, TypeError);
-      assert.throws(function() { new lo.Structure('stuff'); }, TypeError);
-      assert.throws(function() { new lo.Structure(['stuff']); }, TypeError);
+      assert.throws(function() {new lo.Structure();}, TypeError);
+      assert.throws(function() {new lo.Structure('stuff');}, TypeError);
+      assert.throws(function() {new lo.Structure(['stuff']);}, TypeError);
       // no unnamed variable-length fields
-      assert.throws(function() { new lo.Structure([lo.cstr()]); }, Error);
+      assert.throws(function() {new lo.Structure([lo.cstr()]);}, Error);
     });
     test('basics', function() {
       var st = new lo.Structure([lo.u8('u8'),
@@ -743,7 +743,7 @@ suite('Layout', function() {
                  st: {
                    u8: 23,
                    u16: 65432,
-                   s16be: -12345
+                   s16be: -12345,
                  },
                  s24: -123456};
       var b = new Buffer(12);
@@ -863,17 +863,17 @@ suite('Layout', function() {
   suite('VariantLayout', function() {
     test('invalid ctor', function() {
       var un = new lo.Union(lo.u8(), lo.u32());
-      assert.throws(function() { new lo.VariantLayout(); }, TypeError);
-      assert.throws(function() { new lo.VariantLayout('other'); }, TypeError);
-      assert.throws(function() { new lo.VariantLayout(un); }, TypeError);
-      assert.throws(function() { new lo.VariantLayout(un, 1.2); }, TypeError);
-      assert.throws(function() { new lo.VariantLayout(un, 'str'); }, TypeError);
-      assert.throws(function() { new lo.VariantLayout(un, 1); }, TypeError);
-      assert.throws(function() { new lo.VariantLayout(un, 1, 'other'); },
+      assert.throws(function() {new lo.VariantLayout();}, TypeError);
+      assert.throws(function() {new lo.VariantLayout('other');}, TypeError);
+      assert.throws(function() {new lo.VariantLayout(un);}, TypeError);
+      assert.throws(function() {new lo.VariantLayout(un, 1.2);}, TypeError);
+      assert.throws(function() {new lo.VariantLayout(un, 'str');}, TypeError);
+      assert.throws(function() {new lo.VariantLayout(un, 1);}, TypeError);
+      assert.throws(function() {new lo.VariantLayout(un, 1, 'other');},
                     TypeError);
-      assert.throws(function() { new lo.VariantLayout(un, 1, lo.f64()); },
+      assert.throws(function() {new lo.VariantLayout(un, 1, lo.f64());},
                     Error);
-      assert.throws(function() { new lo.VariantLayout(un, 1, lo.f32()); },
+      assert.throws(function() {new lo.VariantLayout(un, 1, lo.f32());},
                     TypeError);
     });
     test('ctor', function() {
@@ -894,10 +894,10 @@ suite('Layout', function() {
       assert.equal(un.getSpan(b), 5);
       assert.equal(Buffer('0168692100', 'hex').compare(b.slice(0, 5)), 0);
       // This one overruns the Buffer
-      assert.throws(function() { d.encode({s: 'far too long'}, b); },
+      assert.throws(function() {d.encode({s: 'far too long'}, b);},
                     RangeError);
       // This one fits in the buffer but overruns the union
-      assert.throws(function() { d.encode({s: 'too long'}, b); }, Error);
+      assert.throws(function() {d.encode({s: 'too long'}, b);}, Error);
     });
   });
   suite('ExternalLayout', function() {
@@ -906,7 +906,7 @@ suite('Layout', function() {
       assert(el instanceof lo.ExternalLayout);
       assert(el instanceof lo.Layout);
       assert.equal(el.property, 'prop');
-      assert.throws(function() { el.isCount(); }, Error);
+      assert.throws(function() {el.isCount();}, Error);
     });
   });
   suite('GreedyCount', function() {
@@ -923,8 +923,8 @@ suite('Layout', function() {
       assert.equal(nel.elementSpan, 5);
       assert.equal(nel.property, 'name');
 
-      assert.throws(function() { lo.greedy('hi'); }, TypeError);
-      assert.throws(function() { lo.greedy(0); }, TypeError);
+      assert.throws(function() {lo.greedy('hi');}, TypeError);
+      assert.throws(function() {lo.greedy(0);}, TypeError);
     });
     test('#decode', function() {
       var el = new lo.greedy();
@@ -966,21 +966,21 @@ suite('Layout', function() {
       var b = Buffer('0001020304050607', 'hex');
       assert.equal(u8.decode(b), 0);
       assert.equal(al.decode(b), 1);
-      assert.throws(function() { bl.decode(b); }, RangeError);
+      assert.throws(function() {bl.decode(b);}, RangeError);
       assert.equal(u8.decode(b, 4), 4);
       assert.equal(al.decode(b, 4), 5);
       assert.equal(bl.decode(b, 4), 3);
       assert.equal(u8.encode(0x80, b), 1);
       assert.equal(al.encode(0x91, b), 1);
-      assert.throws(function() { bl.encode(0x70, b); }, RangeError);
+      assert.throws(function() {bl.encode(0x70, b);}, RangeError);
       assert.equal(u8.encode(0x84, b, 4), 1);
       assert.equal(al.encode(0x94, b, 4), 1);
       assert.equal(bl.encode(0x74, b, 4), 1);
       assert.equal(Buffer('8091027484940607', 'hex').compare(b), 0);
     });
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.OffsetLayout('hi'); }, TypeError);
-      assert.throws(function() { new lo.OffsetLayout(lo.u8(), 'hi'); },
+      assert.throws(function() {new lo.OffsetLayout('hi');}, TypeError);
+      assert.throws(function() {new lo.OffsetLayout(lo.u8(), 'hi');},
                     TypeError);
     });
   });
@@ -988,17 +988,17 @@ suite('Layout', function() {
     test('abstract', function() {
       var ud = new lo.UnionDiscriminator('p');
       assert.equal(ud.property, 'p');
-      assert.throws(function() { ud.decode(Buffer('00', 'hex')); }, Error);
-      assert.throws(function() { ud.encode(0, new Buffer(1)); }, Error);
+      assert.throws(function() {ud.decode(Buffer('00', 'hex'));}, Error);
+      assert.throws(function() {ud.encode(0, new Buffer(1));}, Error);
     });
   });
   suite('UnionLayoutDiscriminator', function() {
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.UnionLayoutDiscriminator('hi'); },
+      assert.throws(function() {new lo.UnionLayoutDiscriminator('hi');},
                     TypeError);
-      assert.throws(function() { lo.unionLayoutDiscriminator('hi'); },
+      assert.throws(function() {lo.unionLayoutDiscriminator('hi');},
                     TypeError);
-      assert.throws(function() { new lo.UnionLayoutDiscriminator(lo.f32()); },
+      assert.throws(function() {new lo.UnionLayoutDiscriminator(lo.f32());},
                     TypeError);
       assert.throws(function() {
         new lo.UnionLayoutDiscriminator(lo.u8(), 'hi');
@@ -1007,11 +1007,11 @@ suite('Layout', function() {
   });
   suite('Union', function() {
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.Union(); }, TypeError);
-      assert.throws(function() { new lo.Union('other'); }, TypeError);
-      assert.throws(function() { new lo.Union(lo.f32()); }, TypeError);
-      assert.throws(function() { new lo.Union(lo.u8(), 'other'); }, TypeError);
-      assert.throws(function() { new lo.Union(lo.u8(), lo.cstr()); }, Error);
+      assert.throws(function() {new lo.Union();}, TypeError);
+      assert.throws(function() {new lo.Union('other');}, TypeError);
+      assert.throws(function() {new lo.Union(lo.f32());}, TypeError);
+      assert.throws(function() {new lo.Union(lo.u8(), 'other');}, TypeError);
+      assert.throws(function() {new lo.Union(lo.u8(), lo.cstr());}, Error);
     });
     test('basics', function() {
       var dlo = lo.u8();
@@ -1080,8 +1080,8 @@ suite('Layout', function() {
       assert.notEqual(un.span, vlo.span + lo3.span);
       assert.deepEqual(un.decode(b), obj);
       assert.equal(Buffer('0305060406', 'hex').compare(b), 0);
-      assert.throws(function() { v2.encode(obj, b); }, TypeError);
-      assert.throws(function() { v2.decode(b); }, Error);
+      assert.throws(function() {v2.encode(obj, b);}, TypeError);
+      assert.throws(function() {v2.decode(b);}, Error);
     });
     test('custom default', function() {
       var dlo = lo.u8('number');
@@ -1130,7 +1130,7 @@ suite('Layout', function() {
       assert.equal(b2.toString('hex'), b.toString('hex'));
       var obj2 = {variant: obj.number,
                   content: obj.payload};
-      assert.throws(function() { un.encode(obj2, b2); });
+      assert.throws(function() {un.encode(obj2, b2);});
     });
     test('issue#7.internal.anon', function() {
       var dlo = lo.u8();
@@ -1253,7 +1253,7 @@ suite('Layout', function() {
       assert.equal(un.encode(src, b), un.span);
       assert.equal(Buffer('0201020304', 'hex').compare(b), 0);
 
-      assert.throws(function() { un.getSourceVariant({other: 3}); }, Error);
+      assert.throws(function() {un.getSourceVariant({other: 3});}, Error);
       src = {str: 'hi'};
       vlo = un.getSourceVariant(src);
       assert.strictEqual(vlo, v3);
@@ -1270,6 +1270,7 @@ suite('Layout', function() {
       var csrc;
       un.configGetSourceVariant(function(src) {
         csrc = src;
+        // eslint-disable-next-line no-invalid-this
         return this.defaultGetSourceVariant(src);
       });
       var src = {v: 3, u32: 29};
@@ -1286,7 +1287,7 @@ suite('Layout', function() {
       assert(0 > un.span);
 
       b.fill(0xFF);
-      assert.throws(function() { un.decode(b); }, Error);
+      assert.throws(function() {un.decode(b);}, Error);
       var obj = {u32: 0x12345678};
       assert.equal(un.encode(obj, b), 1 + 4);
       assert.equal(v1.getSpan(b), 5);
@@ -1314,7 +1315,7 @@ suite('Layout', function() {
       assert.deepEqual(un.decode(b), obj);
 
       b[0] = 5;
-      assert.throws(function() { un.getSpan(b); }, Error);
+      assert.throws(function() {un.getSpan(b);}, Error);
 
       b.fill(0xa5);
       assert.equal(un.encode(obj, b, 1), 1 + 3 + 1);
@@ -1355,16 +1356,16 @@ suite('Layout', function() {
   });
   suite('BitStructure', function() {
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.BitStructure(); }, TypeError);
-      assert.throws(function() { new lo.BitStructure(lo.f32()); }, TypeError);
-      assert.throws(function() { new lo.BitStructure(lo.s32()); }, TypeError);
-      assert.throws(function() { new lo.BitStructure(lo.u40()); }, Error);
+      assert.throws(function() {new lo.BitStructure();}, TypeError);
+      assert.throws(function() {new lo.BitStructure(lo.f32());}, TypeError);
+      assert.throws(function() {new lo.BitStructure(lo.s32());}, TypeError);
+      assert.throws(function() {new lo.BitStructure(lo.u40());}, Error);
 
       var bs = new lo.BitStructure(lo.u32());
-      assert.throws(function() { new lo.BitField(lo.u32(), 8); }, TypeError);
-      assert.throws(function() { new lo.BitField(bs, 'hi'); }, TypeError);
-      assert.throws(function() { new lo.BitField(bs, 0); }, TypeError);
-      assert.throws(function() { new lo.BitField(bs, 40); }, Error);
+      assert.throws(function() {new lo.BitField(lo.u32(), 8);}, TypeError);
+      assert.throws(function() {new lo.BitField(bs, 'hi');}, TypeError);
+      assert.throws(function() {new lo.BitField(bs, 0);}, TypeError);
+      assert.throws(function() {new lo.BitField(bs, 40);}, Error);
     });
     test('invalid add', function() {
       assert.throws(function() {
@@ -1404,8 +1405,8 @@ suite('Layout', function() {
       bf10.encode((1 << 10) - 1);
       bf6.encode((1 << 6) - 1);
       assert.equal(bs._packedGetValue(), 0xFFFF);
-      assert.throws(function() { bf6.encode('hi', b); }, Error);
-      assert.throws(function() { bf6.encode(1 << 6, b); }, Error);
+      assert.throws(function() {bf6.encode('hi', b);}, Error);
+      assert.throws(function() {bf6.encode(1 << 6, b);}, Error);
 
       b = new Buffer(2 + bs.span);
       b.fill(0xa5);
@@ -1442,7 +1443,7 @@ suite('Layout', function() {
       assert.equal(bf2.valueMask, 0x03);
       assert.equal(bf2.wordMask, 0x06);
 
-      assert.throws(function() { bs.addField(30); });
+      assert.throws(function() {bs.addField(30);});
       bs.addField(29, 'x');
       var bf3 = bs.fields[2];
       assert.equal(bf3.bits, 29);
@@ -1480,7 +1481,7 @@ suite('Layout', function() {
       assert.equal(bf2.valueMask, 0x3);
       assert.equal(bf2.wordMask, 0x60000000);
 
-      assert.throws(function() { bs.addField(30); });
+      assert.throws(function() {bs.addField(30);});
       bs.addField(29, 'x');
       var bf3 = bs.fields[2];
       assert.equal(bf3.bits, 29);
@@ -1589,19 +1590,19 @@ suite('Layout', function() {
       assert.equal(b[0], 0);
       bs.encode({}, b);
       assert.equal(b[0], 0);
-      assert.throws(function() { bs.encode({v: false}, b); },
-                    function(err) { return checkError(err, TypeError, /BitField.encode\[v\] value must be integer/); });
-      assert.throws(function() { bs.encode({v: 1.2}, b); },
-                    function(err) { return checkError(err, TypeError, /BitField.encode\[v\] value must be integer/); });
-      assert.throws(function() { bs.encode({b: 1.2}, b); },
-                    function(err) { return checkError(err, TypeError, /BitField.encode\[b\] value must be integer/); });
+      assert.throws(function() {bs.encode({v: false}, b);},
+                    function(err) {return checkError(err, TypeError, /BitField.encode\[v\] value must be integer/);});
+      assert.throws(function() {bs.encode({v: 1.2}, b);},
+                    function(err) {return checkError(err, TypeError, /BitField.encode\[v\] value must be integer/);});
+      assert.throws(function() {bs.encode({b: 1.2}, b);},
+                    function(err) {return checkError(err, TypeError, /BitField.encode\[b\] value must be integer/);});
     });
   });
   suite('Blob', function() {
     test('invalid ctor', function() {
-      assert.throws(function() { new lo.Blob(); }, TypeError);
-      assert.throws(function() { new lo.Blob(lo.u8()); }, TypeError);
-      assert.throws(function() { new lo.Blob(lo.offset(lo.f32())); },
+      assert.throws(function() {new lo.Blob();}, TypeError);
+      assert.throws(function() {new lo.Blob(lo.u8());}, TypeError);
+      assert.throws(function() {new lo.Blob(lo.offset(lo.f32()));},
                     TypeError);
     });
     test('ctor', function() {
@@ -1623,8 +1624,8 @@ suite('Layout', function() {
       assert.equal(Buffer('030405', 'hex').compare(bv), 0);
       assert.equal(bl.encode(Buffer('112233', 'hex'), b, 1), 3);
       assert.equal(Buffer('0111223305', 'hex').compare(b), 0);
-      assert.throws(function() { bl.encode('ABC', b); }, Error);
-      assert.throws(function() { bl.encode(Buffer('0102', 'hex'), b); },
+      assert.throws(function() {bl.encode('ABC', b);}, Error);
+      assert.throws(function() {bl.encode(Buffer('0102', 'hex'), b);},
                     Error);
     });
     test('var length', function() {
@@ -1726,7 +1727,7 @@ suite('Layout', function() {
     });
     test('#getSpan', function() {
       var cst = new lo.CString();
-      assert.throws(function() { cst.getSpan(); }, TypeError);
+      assert.throws(function() {cst.getSpan();}, TypeError);
       assert.equal(cst.getSpan(Buffer('00', 'hex')), 1);
       assert.equal(cst.getSpan(Buffer('4100', 'hex')), 2);
       assert.equal(cst.getSpan(Buffer('4100', 'hex'), 1), 1);
@@ -1752,13 +1753,13 @@ suite('Layout', function() {
       assert.equal(Buffer('414200ff', 'hex').compare(b), 0);
       assert.equal(cst.encode(5, b), 1 + 1);
       assert.equal(Buffer('350000ff', 'hex').compare(b), 0);
-      assert.throws(function() { cst.encode('too long', b); }, RangeError);
+      assert.throws(function() {cst.encode('too long', b);}, RangeError);
     });
     test('in struct', function() {
       var st = lo.struct([lo.cstr('k'),
                           lo.cstr('v')]);
       var b = Buffer('6100323300', 'hex');
-      assert.throws(function() { st.getSpan(); }, RangeError);
+      assert.throws(function() {st.getSpan();}, RangeError);
       assert.equal(st.fields[0].getSpan(b), 2);
       assert.equal(st.fields[1].getSpan(b, 2), 3);
       assert.equal(st.getSpan(b), 5);
@@ -1797,16 +1798,16 @@ suite('Layout', function() {
   suite('objectConstructor', function() {
     test('invalid ctor', function() {
       function Class() {}
-      assert.throws(function() { lo.bindConstructorLayout(4); }, TypeError);
-      assert.throws(function() { lo.bindConstructorLayout(Class); }, TypeError);
-      assert.throws(function() { lo.bindConstructorLayout(Class, 4); }, TypeError);
+      assert.throws(function() {lo.bindConstructorLayout(4);}, TypeError);
+      assert.throws(function() {lo.bindConstructorLayout(Class);}, TypeError);
+      assert.throws(function() {lo.bindConstructorLayout(Class, 4);}, TypeError);
       var clo = lo.struct([lo.u8('u8')]);
       lo.bindConstructorLayout(Class, clo);
       assert(Class.hasOwnProperty('layout_'));
       assert(clo.hasOwnProperty('boundConstructor_'));
-      assert.throws(function() { lo.bindConstructorLayout(Class, clo); }, Error);
+      assert.throws(function() {lo.bindConstructorLayout(Class, clo);}, Error);
       function Class2() {}
-      assert.throws(function() { lo.bindConstructorLayout(Class2, clo); }, Error);
+      assert.throws(function() {lo.bindConstructorLayout(Class2, clo);}, Error);
     });
     test('struct', function() {
       function Sample(temp_dCel, humidity_ppt) {
@@ -1864,7 +1865,7 @@ suite('Layout', function() {
       assert.deepEqual(po, p);
     });
     test('bits', function() {
-      function Header() { }
+      function Header() {}
       Header.prototype.power = function() {
         return ['off', 'lo', 'med', 'hi'][this.pwr];
       };
@@ -1883,7 +1884,7 @@ suite('Layout', function() {
       assert.equal(b.compare(nb), 0);
     });
     test('union', function() {
-      function Union() { }
+      function Union() {}
       lo.bindConstructorLayout(Union, lo.union(lo.u8('var'), lo.blob(8, 'unk')));
       function VFloat(v) {
         this.f32 = v;

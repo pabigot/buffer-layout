@@ -79,17 +79,17 @@ struct {
     lo.bindConstructorLayout(Union,
                              lo.union(lo.u8('t'), lo.seq(lo.u8(), 4, 'u8')));
 
-    function Vu32(v) { this.u32 = v; }
+    function Vu32(v) {this.u32 = v;}
     util.inherits(Vu32, Union);
     lo.bindConstructorLayout(Vu32,
                              Union.layout_.addVariant('w'.charCodeAt(0), lo.u32(), 'u32'));
 
-    function Vs16(v) { this.s16 = v; }
+    function Vs16(v) {this.s16 = v;}
     util.inherits(Vs16, Union);
     lo.bindConstructorLayout(Vs16,
                              Union.layout_.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16'));
 
-    function Vf32(v) { this.f32 = v; }
+    function Vf32(v) {this.f32 = v;}
     util.inherits(Vf32, Union);
     lo.bindConstructorLayout(Vf32,
                              Union.layout_.addVariant('f'.charCodeAt(0), lo.f32(), 'f32'));
@@ -205,6 +205,7 @@ struct ds {
       if (src.hasOwnProperty('b')) {
         return src.b ? tr : fa;
       }
+      // eslint-disable-next-line no-invalid-this
       return this.defaultGetSourceVariant(src);
     });
 
