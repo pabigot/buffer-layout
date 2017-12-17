@@ -67,13 +67,13 @@ from the least or most significant bit;</li>
 <li>NUL-terminated C strings;</li>
 <li>Blobs of fixed or variable-length raw data.</li>
 </ul>
-<h2>Installation</h2><p>Development and testing is done using Node.js, supporting versions 0.12
+<h2>Installation</h2><p>Development and testing is done using Node.js, supporting versions 4.5
 and later.  Install with <code>npm install buffer-layout</code>.</p>
 <h2>Examples</h2><p>All examples are from the <code>test/examples.js</code> unit test and assume the
 following context:</p>
-<pre class="prettyprint source"><code>var assert = require('assert');
-var util = require('util');
-var lo = require('buffer-layout');</code></pre><p>The examples give only a taste of what can be done.  Structures, unions,
+<pre class="prettyprint source"><code>const assert = require('assert');
+const util = require('util');
+const lo = require('buffer-layout');</code></pre><p>The examples give only a taste of what can be done.  Structures, unions,
 and sequences can nest; <a href="http://pabigot.github.io/buffer-layout/module-Layout-UnionDiscriminator.html">union
 discriminators</a>
 can be within the union or external to it; sequence and blob lengths may
@@ -81,10 +81,10 @@ be fixed or read from the buffer.</p>
 <p>For full details see the <a href="http://pabigot.github.io/buffer-layout/">documentation</a>.</p>
 <h3>Four-element array of 16-bit signed little-endian integers</h3><p>The C definition:</p>
 <pre class="prettyprint source"><code>int16_t arr[4] = { 1, -1, 3, -3 };</code></pre><p>The buffer-layout way:</p>
-<pre class="prettyprint source"><code>var ds = lo.seq(lo.s16(), 4);
-var b = new Buffer(8);
+<pre class="prettyprint source"><code>const ds = lo.seq(lo.s16(), 4);
+const b = Buffer.alloc(8);
 assert.equal(ds.encode([1, -1, 3, -3], b), 4 * 2);
-assert.equal(Buffer('0100ffff0300fdff', 'hex').compare(b), 0);
+assert.equal(Buffer.from('0100ffff0300fdff', 'hex').compare(b), 0);
 assert.deepEqual(ds.decode(b), [1, -1, 3, -3]);</code></pre><p>See <a href="http://pabigot.github.io/buffer-layout/module-Layout-Int.html">Int</a>
 and <a href="http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html">Sequence</a>.</p>
 <h3>A native C <code>struct</code> on a 32-bit little-endian machine</h3><p>The C definition:</p>
@@ -92,14 +92,14 @@ and <a href="http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html"
   uint8_t v;
   uint32_t u32;
 } st;</code></pre><p>The buffer-layout way:</p>
-<pre class="prettyprint source"><code>var ds = lo.struct([lo.u8('v'),
+<pre class="prettyprint source"><code>const ds = lo.struct([lo.u8('v'),
                     lo.seq(lo.u8(), 3), // alignment padding
                     lo.u32('u32')]);
 assert.equal(ds.offsetOf('u32'), 4);
-var b = new Buffer(8);
+const b = Buffer.alloc(8);
 b.fill(0xbd);
 assert.equal(ds.encode({v: 1, u32: 0x12345678}, b), 1 + 3 + 4);
-assert.equal(Buffer('01bdbdbd78563412', 'hex').compare(b), 0);
+assert.equal(Buffer.from('01bdbdbd78563412', 'hex').compare(b), 0);
 assert.deepEqual(ds.decode(b), {v: 1, u32: 0x12345678});</code></pre><p>Note that the C language requires padding which must be explicitly added
 in the buffer-layout structure definition.  Since the padding is not
 accessible, the corresponding layout has no
@@ -110,13 +110,13 @@ accessible, the corresponding layout has no
   uint8_t v;
   uint32_t u32;
 } __attribute__((__packed__)) st;</code></pre><p>The buffer-layout way:</p>
-<pre class="prettyprint source"><code>var ds = lo.struct([lo.u8('v'),
+<pre class="prettyprint source"><code>const ds = lo.struct([lo.u8('v'),
                     lo.u32('u32')]);
 assert.equal(ds.offsetOf('u32'), 1);
-var b = new Buffer(5);
+const b = Buffer.alloc(5);
 b.fill(0xbd);
 assert.equal(ds.encode({v: 1, u32: 0x12345678}, b), 1 + 4);
-assert.equal(Buffer('0178563412', 'hex').compare(b), 0);
+assert.equal(Buffer.from('0178563412', 'hex').compare(b), 0);
 assert.deepEqual(ds.decode(b), {v: 1, u32: 0x12345678});</code></pre><h3>A tagged union of 4-byte values</h3><p>Assume a 5-byte packed structure where the interpretation of the last
 four bytes depends on the first byte.  The C definition:</p>
 <pre class="prettyprint source"><code>struct {
@@ -128,20 +128,20 @@ four bytes depends on the first byte.  The C definition:</p>
     float f32;      // when t is 'f'
   } u;
 } __attribute__((__packed__)) un;</code></pre><p>The buffer-layout way:</p>
-<pre class="prettyprint source"><code>var t = lo.u8('t');
-var un = lo.union(t, lo.seq(lo.u8(), 4, 'u8'));
-var u32 = un.addVariant('w'.charCodeAt(0), lo.u32(), 'u32');
-var s16 = un.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16');
-var f32 = un.addVariant('f'.charCodeAt(0), lo.f32(), 'f32');
-var b = new Buffer(un.span);
-assert.deepEqual(un.decode(Buffer('7778563412', 'hex')),
+<pre class="prettyprint source"><code>const t = lo.u8('t');
+const un = lo.union(t, lo.seq(lo.u8(), 4, 'u8'));
+const u32 = un.addVariant('w'.charCodeAt(0), lo.u32(), 'u32');
+const s16 = un.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16');
+const f32 = un.addVariant('f'.charCodeAt(0), lo.f32(), 'f32');
+const b = Buffer.alloc(un.span);
+assert.deepEqual(un.decode(Buffer.from('7778563412', 'hex')),
                  {u32: 0x12345678});
-assert.deepEqual(un.decode(Buffer('660000bd41', 'hex')),
+assert.deepEqual(un.decode(Buffer.from('660000bd41', 'hex')),
                  {f32: 23.625});
-assert.deepEqual(un.decode(Buffer('a5a5a5a5a5', 'hex')),
+assert.deepEqual(un.decode(Buffer.from('a5a5a5a5a5', 'hex')),
                  {t: 0xa5, u8: [0xa5, 0xa5, 0xa5, 0xa5]});
 assert.equal(s16.encode({s16: [123, -123]}, b), 1 + 2 * 2);
-assert.equal(Buffer('687b0085ff', 'hex').compare(b), 0);</code></pre><p>See <a href="http://pabigot.github.io/buffer-layout/module-Layout-Union.html">Union</a>.</p>
+assert.equal(Buffer.from('687b0085ff', 'hex').compare(b), 0);</code></pre><p>See <a href="http://pabigot.github.io/buffer-layout/module-Layout-Union.html">Union</a>.</p>
 <h3>Decoding into class instances</h3><p>Using the same 5-byte packet structure but with JavaScript classes
 representing the union and the variants:</p>
 <pre class="prettyprint source"><code>function Union() { }
@@ -163,20 +163,20 @@ util.inherits(Vf32, Union);
 lo.bindConstructorLayout(Vf32,
                          Union.layout_.addVariant('f'.charCodeAt(0), lo.f32(), 'f32'));
 
-var v = Union.decode(Buffer('7778563412', 'hex'));
+let v = Union.decode(Buffer.from('7778563412', 'hex'));
 assert(v instanceof Vu32);
 assert(v instanceof Union);
 assert.equal(v.u32, 0x12345678);
 
-v = Union.decode(Buffer('a5a5a5a5a5', 'hex'));
+v = Union.decode(Buffer.from('a5a5a5a5a5', 'hex'));
 assert(v instanceof Union);
 assert.equal(v.t, 0xa5);
 assert.deepEqual(v.u8, [0xa5, 0xa5, 0xa5, 0xa5]);
 
-var b = new Buffer(Union.layout_.span);
+const b = Buffer.alloc(Union.layout_.span);
 v = new Vf32(23.625);
 v.encode(b);
-assert.equal(Buffer('660000bd41', 'hex').compare(b), 0);</code></pre><p>See
+assert.equal(Buffer.from('660000bd41', 'hex').compare(b), 0);</code></pre><p>See
 <a href="http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#makeDestinationObject">Layout.makeDestinationObject()</a>
 and
 <a href="http://pabigot.github.io/buffer-layout/module-Layout.html#.bindConstructorLayout">bindConstructorLayout</a>.</p>
@@ -187,23 +187,23 @@ and
   unsigned int b04l18: 24;
   unsigned int b1Cl04: 4;
 } st;</code></pre><p>The buffer-layout way:</p>
-<pre class="prettyprint source"><code>var ds = lo.bits(lo.u32());
-var b = new Buffer(4);
+<pre class="prettyprint source"><code>const ds = lo.bits(lo.u32());
+const b = Buffer.alloc(4);
 ds.addField(3, 'b00l03');
 ds.addBoolean('flg03');
 ds.addField(24, 'b04l18');
 ds.addField(4, 'b1Cl04');
 b.fill(0xff);
 assert.equal(ds.encode({b00l03: 3, b04l18: 24, b1Cl04: 4}, b), 4);
-assert.equal(Buffer('8b010040', 'hex').compare(b), 0);
+assert.equal(Buffer.from('8b010040', 'hex').compare(b), 0);
 assert.deepEqual(ds.decode(b),
                  {b00l03: 3, flg03: true, b04l18: 24, b1Cl04: 4});</code></pre><p>See <a href="http://pabigot.github.io/buffer-layout/module-Layout-BitStructure.html">BitStructure</a>.</p>
 <h3>64-bit values as Numbers</h3><p>The C definition:</p>
 <pre class="prettyprint source"><code>uint64_t v = 0x0102030405060708ULL;</code></pre><p>The buffer-layout way:</p>
-<pre class="prettyprint source"><code>var ds = lo.nu64be();
-var b = Buffer('0102030405060708', 'hex');
-var v = 72623859790382856;
-var nv = v - 6;
+<pre class="prettyprint source"><code>const ds = lo.nu64be();
+const b = Buffer.from('0102030405060708', 'hex');
+const v = 72623859790382856;
+const nv = v - 6;
 assert.equal(v, nv);
 assert.equal(ds.decode(b), nv);</code></pre><p>Note that because the exact value is not less than 2^53 it cannot be
 represented as a JavaScript Number, and is instead approximated by a
@@ -211,29 +211,30 @@ nearby representable integer that is equivalent within Numbers.</p>
 <p>See <a href="http://pabigot.github.io/buffer-layout/module-Layout-NearUInt64.html">NearUInt64</a>.</p>
 <h3>A NUL-terminated C string</h3><p>The C definition:</p>
 <pre class="prettyprint source"><code>const char str[] = &quot;hi!&quot;;</code></pre><p>The buffer-layout way:</p>
-<pre class="prettyprint source"><code>var ds = lo.cstr();
-var b = new Buffer(8);
+<pre class="prettyprint source"><code>const ds = lo.cstr();
+const b = Buffer.alloc(8);
 assert.equal(ds.encode('hi!', b), 3 + 1);
-var slen = ds.getSpan(b);
+const slen = ds.getSpan(b);
 assert.equal(slen, 4);
-assert.equal(Buffer('68692100', 'hex').compare(b.slice(0, slen)), 0);
+assert.equal(Buffer.from('68692100', 'hex').compare(b.slice(0, slen)), 0);
 assert.equal(ds.decode(b), 'hi!');</code></pre><p>See <a href="http://pabigot.github.io/buffer-layout/module-Layout-CString.html">CString</a>.</p>
 <h3>A fixed-length block of data offset within a buffer</h3><p>The buffer-layout way:</p>
-<pre class="prettyprint source"><code>var ds = lo.blob(4);
-var b = Buffer('0102030405060708', 'hex');
-assert.equal(Buffer('03040506', 'hex').compare(ds.decode(b, 2)), 0);</code></pre><p>See <a href="http://pabigot.github.io/buffer-layout/module-Layout-Blob.html">Blob</a>.</p>
+<pre class="prettyprint source"><code>const ds = lo.blob(4);
+const b = Buffer.from('0102030405060708', 'hex');
+assert.equal(Buffer.from('03040506', 'hex').compare(ds.decode(b, 2)), 0);</code></pre><p>See <a href="http://pabigot.github.io/buffer-layout/module-Layout-Blob.html">Blob</a>.</p>
 <h3>A variable-length array of pairs of C strings</h3><p>The buffer-layout way:</p>
-<pre class="prettyprint source"><code>var pr = lo.seq(lo.cstr(), 2);
-var n = lo.u8('n');
-var vla = lo.seq(pr, lo.offset(n, -1), 'a');
-var st = lo.struct([n, vla], 'st');
-var b = new Buffer(32);
-var arr = [['k1', 'v1'], ['k2', 'v2'], ['k3', 'etc']];
+<pre class="prettyprint source"><code>const pr = lo.seq(lo.cstr(), 2);
+const n = lo.u8('n');
+const vla = lo.seq(pr, lo.offset(n, -1), 'a');
+const st = lo.struct([n, vla], 'st');
+const b = Buffer.alloc(32);
+const arr = [['k1', 'v1'], ['k2', 'v2'], ['k3', 'etc']];
 b.fill(0);
-assert.equal(st.encode({a: arr}, b), 1 + (2 * ((2 + 1) + (2 + 1)) + (2 + 1) + (3 + 1)));
-var span = st.getSpan(b);
+assert.equal(st.encode({a: arr}, b),
+             1 + (2 * ((2 + 1) + (2 + 1)) + (2 + 1) + (3 + 1)));
+const span = st.getSpan(b);
 assert.equal(span, 20);
-assert.equal(Buffer('036b31007631006b32007632006b330065746300', 'hex')
+assert.equal(Buffer.from('036b31007631006b32007632006b330065746300', 'hex')
              .compare(b.slice(0, span)), 0);
 assert.deepEqual(st.decode(b), {n: 3, a: arr});</code></pre><p>See <a href="http://pabigot.github.io/buffer-layout/module-Layout-OffsetLayout.html">OffsetLayout</a>.</p>
 <h3>A C flexible array member with implicit length</h3><p>When data is obtained over a packetized interface the length of the
@@ -243,16 +244,16 @@ packet can provide implicit limits on the last field.</p>
   uint8_t prop;
   uint16_t data[];
 };</code></pre><p>The buffer-layout way:</p>
-<pre class="prettyprint source"><code>var st = lo.struct([lo.u8('prop'),
+<pre class="prettyprint source"><code>const st = lo.struct([lo.u8('prop'),
                     lo.seq(lo.u16(),
                            lo.greedy(lo.u16().span),
                            'data')],
                    'ds');
-var b = Buffer('21010002030405', 'hex');
+const b = Buffer.from('21010002030405', 'hex');
 assert.deepEqual(st.decode(b), {prop: 33, data: [0x0001, 0x0302, 0x0504]});
 b.fill(0xFF);
-assert.equal(st.encode({prop: 9, data: [5,6]}, b), 1 + 2 * 2);
-assert.equal(Buffer('0905000600FFFF', 'hex').compare(b), 0);</code></pre><h3>Tagged values, or variable-length unions</h3><p>Storing arbitrary data using a leading byte to identify the content then
+assert.equal(st.encode({prop: 9, data: [5, 6]}, b), 1 + 2 * 2);
+assert.equal(Buffer.from('0905000600FFFF', 'hex').compare(b), 0);</code></pre><h3>Tagged values, or variable-length unions</h3><p>Storing arbitrary data using a leading byte to identify the content then
 a value that takes up only as much room as is necessary.</p>
 <p>The example also shows how to extend the variant recognition API to
 support abitrary constant without consuming space for them in the
@@ -260,14 +261,14 @@ encoded union.  This could be used to make something similar to
 <a href="http://bsonspec.org/spec.html">BSON</a>.</p>
 <p>Here's the code that defines the union, the variants, and the
 recognition of <code>true</code> and <code>false</code> values for <code>b</code> as distinct variants:</p>
-<pre class="prettyprint source"><code>var un = lo.union(lo.u8('t'));
-var u8 = un.addVariant('B'.charCodeAt(0), lo.u8(), 'u8');
-var s16 = un.addVariant('h'.charCodeAt(0), lo.s16(), 's16');
-var s48 = un.addVariant('Q'.charCodeAt(0), lo.s48(), 's48');
-var cstr = un.addVariant('s'.charCodeAt(0), lo.cstr(), 'str');
-var tr = un.addVariant('T'.charCodeAt(0), lo.const(true), 'b');
-var fa = un.addVariant('F'.charCodeAt(0), lo.const(false), 'b');
-var b = new Buffer(1 + 6);
+<pre class="prettyprint source"><code>const un = lo.union(lo.u8('t'));
+const u8 = un.addVariant('B'.charCodeAt(0), lo.u8(), 'u8');
+const s16 = un.addVariant('h'.charCodeAt(0), lo.s16(), 's16');
+const s48 = un.addVariant('Q'.charCodeAt(0), lo.s48(), 's48');
+const cstr = un.addVariant('s'.charCodeAt(0), lo.cstr(), 'str');
+const tr = un.addVariant('T'.charCodeAt(0), lo.const(true), 'b');
+const fa = un.addVariant('F'.charCodeAt(0), lo.const(false), 'b');
+const b = Buffer.alloc(1 + 6);
 un.configGetSourceVariant(function(src) {
   if (src.hasOwnProperty('b')) {
     return src.b ? tr : fa;
@@ -278,37 +279,35 @@ decoding each of the alternatives:</p>
 <pre class="prettyprint source"><code>b.fill(0xff);
 assert.equal(un.encode({u8: 1}, b), 1 + 1);
 assert.equal(un.getSpan(b), 2);
-assert.equal(Buffer('4201ffffffffff', 'hex').compare(b), 0);
+assert.equal(Buffer.from('4201ffffffffff', 'hex').compare(b), 0);
 assert.equal(un.decode(b).u8, 1);
 
 b.fill(0xff);
 assert.equal(un.encode({s16: -32000}, b), 1 + 2);
 assert.equal(un.getSpan(b), 3);
-assert.equal(Buffer('680083ffffffff', 'hex').compare(b), 0);
+assert.equal(Buffer.from('680083ffffffff', 'hex').compare(b), 0);
 assert.equal(un.decode(b).s16, -32000);
 
 b.fill(0xff);
-var v48 = Math.pow(2, 47) - 1;
+const v48 = Math.pow(2, 47) - 1;
 assert.equal(un.encode({s48: v48}, b), 1 + 6);
 assert.equal(un.getSpan(b), 7);
-assert.equal(Buffer('51ffffffffff7f', 'hex').compare(b), 0);
+assert.equal(Buffer.from('51ffffffffff7f', 'hex').compare(b), 0);
 assert.equal(un.decode(b).s48, v48);
 
 b.fill(0xff);
 assert.equal(un.encode({b: true}, b), 1);
 assert.equal(un.getSpan(b), 1);
-assert.equal(Buffer('54ffffffffffff', 'hex').compare(b), 0);
+assert.equal(Buffer.from('54ffffffffffff', 'hex').compare(b), 0);
 assert.strictEqual(un.decode(b).b, true);
 
 b.fill(0xff);
 assert.equal(un.encode({b: false}, b), 1);
 assert.equal(un.getSpan(b), 1);
-assert.equal(Buffer('46ffffffffffff', 'hex').compare(b), 0);
+assert.equal(Buffer.from('46ffffffffffff', 'hex').compare(b), 0);
 assert.strictEqual(un.decode(b).b, false);</code></pre><p><strong>NOTE</strong> This code tickles a long-standing <a href="https://github.com/nodejs/node/pull/3994">bug in
-Buffer.writeInt{L,B}E</a>. <code>buffer-layout</code>
-provides a <a href="http://pabigot.github.io/buffer-layout/module-patchIssue3992.html">module that patches
-<code>Buffer</code></a>
-to fix the bug if it detects that the running Node has the error.</p></article>
+Buffer.writeInt{L,B}E</a>; if you
+are using Node prior to 4.2.4 or 5.2.0 you should update.</p></article>
     </section>
 
 
@@ -319,13 +318,13 @@ to fix the bug if it detects that the running Node has the error.</p></article>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li><li><a href="module-patchIssue3992.html">patchIssue3992</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Boolean.html">Boolean</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Mar 27 2016 12:07:53 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Dec 17 2017 03:40:50 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -28,27 +28,10 @@
 
 <header>
     
-        <h2>
-            <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>Structure</h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>
+            <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>Structure<span class="signature">(fields, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-
-    <h4 class="name" id="Structure"><span class="type-signature"></span>new Structure<span class="signature">(fields, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Represent a contiguous sequence of arbitrary layout elements as an
+            <div class="class-description"><p>Represent a contiguous sequence of arbitrary layout elements as an
 Object.</p>
 <p><em>Factory</em>: <a href="module-Layout.html#.struct">struct</a></p>
 <p><strong>NOTE</strong> The <a href="module-Layout-Layout.html#span">span</a> of the structure is variable
@@ -59,8 +42,27 @@ how much space to use for storage.  We can only identify the value
 for a field when it has a <a href="module-Layout-Layout.html#property">property</a>.  As
 such, although a structure may contain both unnamed fields and
 variable-length fields, it cannot contain an unnamed
-variable-length field.</p>
-</div>
+variable-length field.</p></div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    
+    <h4 class="name" id="Structure"><span class="type-signature"></span>new Structure<span class="signature">(fields, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
 
 
 
@@ -197,7 +199,7 @@ is not defined.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1180">line 1180</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1175">line 1175</a>
     </li></ul></dd>
     
 
@@ -255,6 +257,8 @@ layout.</li>
 
 
 
+
+
     
     </div>
 
@@ -275,7 +279,9 @@ layout.</li>
 
     
 
-     
+    
+
+    
 
     
 
@@ -344,7 +350,7 @@ will not be mutated.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1214">line 1214</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1207">line 1207</a>
     </li></ul></dd>
     
 
@@ -416,7 +422,7 @@ decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line230">line 230</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line179">line 179</a>
     </li></ul></dd>
     
 
@@ -488,7 +494,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line220">line 220</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line169">line 169</a>
     </li></ul></dd>
     
 
@@ -515,7 +521,9 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
 
     
 
+    
     <h4 class="name" id="decode"><span class="type-signature"></span>decode<span class="signature">(b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number|Array|Object}</span></h4>
+    
 
     
 
@@ -664,7 +672,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line262">line 262</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line213">line 213</a>
     </li></ul></dd>
     
 
@@ -720,12 +728,16 @@ starts.  If absent a zero offset is inferred.</p></td>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="encode"><span class="type-signature"></span>encode<span class="signature">()</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -783,7 +795,7 @@ left unmodified.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1256">line 1256</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1251">line 1251</a>
     </li></ul></dd>
     
 
@@ -809,12 +821,16 @@ left unmodified.</p>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="fromArray"><span class="type-signature"></span>fromArray<span class="signature">(values)</span><span class="type-signature"> &rarr; {Object|undefined}</span></h4>
+    
 
     
 
@@ -931,7 +947,7 @@ layouts.  Any unused values are ignored.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line371">line 371</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line309">line 309</a>
     </li></ul></dd>
     
 
@@ -978,12 +994,16 @@ layouts.  Any unused values are ignored.</p></td>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="getSpan"><span class="type-signature"></span>getSpan<span class="signature">(b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    
 
     
 
@@ -1132,7 +1152,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line321">line 321</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line259">line 259</a>
     </li></ul></dd>
     
 
@@ -1217,12 +1237,16 @@ returned.</li>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="layoutFor"><span class="type-signature"></span>layoutFor<span class="signature">(property)</span><span class="type-signature"> &rarr; {<a href="module-Layout-Layout.html">module:Layout~Layout</a>}</span></h4>
+    
 
     
 
@@ -1322,7 +1346,7 @@ returned.</li>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1310">line 1310</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1307">line 1307</a>
     </li></ul></dd>
     
 
@@ -1373,12 +1397,16 @@ undefined if there is no such property.</li>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="makeDestinationObject"><span class="type-signature"></span>makeDestinationObject<span class="signature">()</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -1397,7 +1425,7 @@ instances, which means:</p>
 </ul>
 <p>If left undefined the JavaScript representation of these layouts
 will be Object instances.</p>
-<p>See <a href="module-Layout.html#.bindConstructorLayout">bindConstructorLayout()</a>.</p>
+<p>See bindConstructorLayout().</p>
 </div>
 
 
@@ -1446,7 +1474,7 @@ will be Object instances.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line247">line 247</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line197">line 197</a>
     </li></ul></dd>
     
 
@@ -1472,12 +1500,16 @@ will be Object instances.</p>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="offsetOf"><span class="type-signature"></span>offsetOf<span class="signature">(property)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    
 
     
 
@@ -1577,7 +1609,7 @@ will be Object instances.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1333">line 1333</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1329">line 1329</a>
     </li></ul></dd>
     
 
@@ -1631,12 +1663,16 @@ returned.</li>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="replicate"><span class="type-signature"></span>replicate<span class="signature">(property)</span><span class="type-signature"> &rarr; {<a href="module-Layout-Layout.html">module:Layout~Layout</a>}</span></h4>
+    
 
     
 
@@ -1745,7 +1781,7 @@ immutable.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line344">line 344</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line282">line 282</a>
     </li></ul></dd>
     
 
@@ -1796,6 +1832,8 @@ set to <code>property</code>.</li>
 
 
 
+
+
         
     
 
@@ -1812,13 +1850,13 @@ set to <code>property</code>.</li>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li><li><a href="module-patchIssue3992.html">patchIssue3992</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Boolean.html">Boolean</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Mar 27 2016 12:07:53 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Dec 17 2017 03:40:50 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

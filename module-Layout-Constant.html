@@ -28,8 +28,14 @@
 
 <header>
     
-        <h2>
-            <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>Constant</h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>
+            <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>Constant<span class="signature">(value, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description"><p>Contain a constant value.</p>
+<p>This layout may be used in cases where a JavaScript value can be
+inferred without an expression in the binary encoding.  An example
+would be a <a href="module-Layout-VariantLayout.html">variant layout</a> where the content
+is implied by the union <a href="module-Layout-Union.html#discriminator">discriminator</a>.</p></div>
         
     
 </header>
@@ -40,20 +46,16 @@
         
 
     
+    <h2>Constructor</h2>
+    
 
+    
     <h4 class="name" id="Constant"><span class="type-signature"></span>new Constant<span class="signature">(value, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
 
     
 
 
-
-<div class="description">
-    <p>Contain a constant value.</p>
-<p>This layout may be used in cases where a JavaScript value can be
-inferred without an expression in the binary encoding.  An example
-would be a <a href="module-Layout-VariantLayout.html">variant layout</a> where the content
-is implied by the union <a href="module-Layout-Union.html#discriminator">discriminator</a>.</p>
-</div>
 
 
 
@@ -197,7 +199,7 @@ be frozen prior passing it to this constructor.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2347">line 2347</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2385">line 2385</a>
     </li></ul></dd>
     
 
@@ -207,6 +209,8 @@ be frozen prior passing it to this constructor.</p></td>
 
     
 </dl>
+
+
 
 
 
@@ -243,7 +247,9 @@ be frozen prior passing it to this constructor.</p></td>
 
     
 
-     
+    
+
+    
 
     
 
@@ -306,7 +312,7 @@ decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line230">line 230</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line179">line 179</a>
     </li></ul></dd>
     
 
@@ -378,7 +384,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line220">line 220</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line169">line 169</a>
     </li></ul></dd>
     
 
@@ -445,7 +451,7 @@ the content of the value.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2357">line 2357</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2398">line 2398</a>
     </li></ul></dd>
     
 
@@ -472,7 +478,9 @@ the content of the value.</p>
 
     
 
+    
     <h4 class="name" id="decode"><span class="type-signature"></span>decode<span class="signature">(b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number|Array|Object}</span></h4>
+    
 
     
 
@@ -621,7 +629,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line262">line 262</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line213">line 213</a>
     </li></ul></dd>
     
 
@@ -677,12 +685,16 @@ starts.  If absent a zero offset is inferred.</p></td>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="encode"><span class="type-signature"></span>encode<span class="signature">(src, b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    
 
     
 
@@ -870,7 +882,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line288">line 288</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line239">line 239</a>
     </li></ul></dd>
     
 
@@ -924,12 +936,16 @@ written.</li>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="fromArray"><span class="type-signature"></span>fromArray<span class="signature">(values)</span><span class="type-signature"> &rarr; {Object|undefined}</span></h4>
+    
 
     
 
@@ -1046,7 +1062,7 @@ layouts.  Any unused values are ignored.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line371">line 371</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line309">line 309</a>
     </li></ul></dd>
     
 
@@ -1093,12 +1109,16 @@ layouts.  Any unused values are ignored.</p></td>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="getSpan"><span class="type-signature"></span>getSpan<span class="signature">(b, offset<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    
 
     
 
@@ -1247,7 +1267,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line321">line 321</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line259">line 259</a>
     </li></ul></dd>
     
 
@@ -1332,12 +1352,16 @@ returned.</li>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="makeDestinationObject"><span class="type-signature"></span>makeDestinationObject<span class="signature">()</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -1356,7 +1380,7 @@ instances, which means:</p>
 </ul>
 <p>If left undefined the JavaScript representation of these layouts
 will be Object instances.</p>
-<p>See <a href="module-Layout.html#.bindConstructorLayout">bindConstructorLayout()</a>.</p>
+<p>See bindConstructorLayout().</p>
 </div>
 
 
@@ -1405,7 +1429,7 @@ will be Object instances.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line247">line 247</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line197">line 197</a>
     </li></ul></dd>
     
 
@@ -1431,12 +1455,16 @@ will be Object instances.</p>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="replicate"><span class="type-signature"></span>replicate<span class="signature">(property)</span><span class="type-signature"> &rarr; {<a href="module-Layout-Layout.html">module:Layout~Layout</a>}</span></h4>
+    
 
     
 
@@ -1545,7 +1573,7 @@ immutable.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line344">line 344</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line282">line 282</a>
     </li></ul></dd>
     
 
@@ -1596,6 +1624,8 @@ set to <code>property</code>.</li>
 
 
 
+
+
         
     
 
@@ -1612,13 +1642,13 @@ set to <code>property</code>.</li>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li><li><a href="module-patchIssue3992.html">patchIssue3992</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Boolean.html">Boolean</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Mar 27 2016 12:07:53 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Dec 17 2017 03:40:50 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>
