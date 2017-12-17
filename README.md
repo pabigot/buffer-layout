@@ -28,7 +28,7 @@ Layout support is provided for these types of data:
 
 ## Installation
 
-Development and testing is done using Node.js, supporting versions 0.12
+Development and testing is done using Node.js, supporting versions 4.5
 and later.  Install with `npm install buffer-layout`.
 
 ## Examples
@@ -36,9 +36,9 @@ and later.  Install with `npm install buffer-layout`.
 All examples are from the `test/examples.js` unit test and assume the
 following context:
 
-    var assert = require('assert');
-    var util = require('util');
-    var lo = require('buffer-layout');
+    const assert = require('assert');
+    const util = require('util');
+    const lo = require('buffer-layout');
 
 The examples give only a taste of what can be done.  Structures, unions,
 and sequences can nest; [union
@@ -56,10 +56,10 @@ The C definition:
 
 The buffer-layout way:
 
-    var ds = lo.seq(lo.s16(), 4);
-    var b = new Buffer(8);
+    const ds = lo.seq(lo.s16(), 4);
+    const b = Buffer.alloc(8);
     assert.equal(ds.encode([1, -1, 3, -3], b), 4 * 2);
-    assert.equal(Buffer('0100ffff0300fdff', 'hex').compare(b), 0);
+    assert.equal(Buffer.from('0100ffff0300fdff', 'hex').compare(b), 0);
     assert.deepEqual(ds.decode(b), [1, -1, 3, -3]);
 
 See [Int](http://pabigot.github.io/buffer-layout/module-Layout-Int.html)
@@ -76,14 +76,14 @@ The C definition:
 
 The buffer-layout way:
 
-    var ds = lo.struct([lo.u8('v'),
+    const ds = lo.struct([lo.u8('v'),
                         lo.seq(lo.u8(), 3), // alignment padding
                         lo.u32('u32')]);
     assert.equal(ds.offsetOf('u32'), 4);
-    var b = new Buffer(8);
+    const b = Buffer.alloc(8);
     b.fill(0xbd);
     assert.equal(ds.encode({v: 1, u32: 0x12345678}, b), 1 + 3 + 4);
-    assert.equal(Buffer('01bdbdbd78563412', 'hex').compare(b), 0);
+    assert.equal(Buffer.from('01bdbdbd78563412', 'hex').compare(b), 0);
     assert.deepEqual(ds.decode(b), {v: 1, u32: 0x12345678});
 
 Note that the C language requires padding which must be explicitly added
@@ -104,13 +104,13 @@ The C definition:
 
 The buffer-layout way:
 
-    var ds = lo.struct([lo.u8('v'),
+    const ds = lo.struct([lo.u8('v'),
                         lo.u32('u32')]);
     assert.equal(ds.offsetOf('u32'), 1);
-    var b = new Buffer(5);
+    const b = Buffer.alloc(5);
     b.fill(0xbd);
     assert.equal(ds.encode({v: 1, u32: 0x12345678}, b), 1 + 4);
-    assert.equal(Buffer('0178563412', 'hex').compare(b), 0);
+    assert.equal(Buffer.from('0178563412', 'hex').compare(b), 0);
     assert.deepEqual(ds.decode(b), {v: 1, u32: 0x12345678});
 
 ### A tagged union of 4-byte values
@@ -130,20 +130,20 @@ four bytes depends on the first byte.  The C definition:
 
 The buffer-layout way:
 
-    var t = lo.u8('t');
-    var un = lo.union(t, lo.seq(lo.u8(), 4, 'u8'));
-    var u32 = un.addVariant('w'.charCodeAt(0), lo.u32(), 'u32');
-    var s16 = un.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16');
-    var f32 = un.addVariant('f'.charCodeAt(0), lo.f32(), 'f32');
-    var b = new Buffer(un.span);
-    assert.deepEqual(un.decode(Buffer('7778563412', 'hex')),
+    const t = lo.u8('t');
+    const un = lo.union(t, lo.seq(lo.u8(), 4, 'u8'));
+    const u32 = un.addVariant('w'.charCodeAt(0), lo.u32(), 'u32');
+    const s16 = un.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16');
+    const f32 = un.addVariant('f'.charCodeAt(0), lo.f32(), 'f32');
+    const b = Buffer.alloc(un.span);
+    assert.deepEqual(un.decode(Buffer.from('7778563412', 'hex')),
                      {u32: 0x12345678});
-    assert.deepEqual(un.decode(Buffer('660000bd41', 'hex')),
+    assert.deepEqual(un.decode(Buffer.from('660000bd41', 'hex')),
                      {f32: 23.625});
-    assert.deepEqual(un.decode(Buffer('a5a5a5a5a5', 'hex')),
+    assert.deepEqual(un.decode(Buffer.from('a5a5a5a5a5', 'hex')),
                      {t: 0xa5, u8: [0xa5, 0xa5, 0xa5, 0xa5]});
     assert.equal(s16.encode({s16: [123, -123]}, b), 1 + 2 * 2);
-    assert.equal(Buffer('687b0085ff', 'hex').compare(b), 0);
+    assert.equal(Buffer.from('687b0085ff', 'hex').compare(b), 0);
 
 See [Union](http://pabigot.github.io/buffer-layout/module-Layout-Union.html).
 
@@ -171,20 +171,20 @@ representing the union and the variants:
     lo.bindConstructorLayout(Vf32,
                              Union.layout_.addVariant('f'.charCodeAt(0), lo.f32(), 'f32'));
 
-    var v = Union.decode(Buffer('7778563412', 'hex'));
+    let v = Union.decode(Buffer.from('7778563412', 'hex'));
     assert(v instanceof Vu32);
     assert(v instanceof Union);
     assert.equal(v.u32, 0x12345678);
 
-    v = Union.decode(Buffer('a5a5a5a5a5', 'hex'));
+    v = Union.decode(Buffer.from('a5a5a5a5a5', 'hex'));
     assert(v instanceof Union);
     assert.equal(v.t, 0xa5);
     assert.deepEqual(v.u8, [0xa5, 0xa5, 0xa5, 0xa5]);
 
-    var b = new Buffer(Union.layout_.span);
+    const b = Buffer.alloc(Union.layout_.span);
     v = new Vf32(23.625);
     v.encode(b);
-    assert.equal(Buffer('660000bd41', 'hex').compare(b), 0);
+    assert.equal(Buffer.from('660000bd41', 'hex').compare(b), 0);
 
 See
 [Layout.makeDestinationObject()](http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#makeDestinationObject)
@@ -204,15 +204,15 @@ The C definition:
 
 The buffer-layout way:
 
-    var ds = lo.bits(lo.u32());
-    var b = new Buffer(4);
+    const ds = lo.bits(lo.u32());
+    const b = Buffer.alloc(4);
     ds.addField(3, 'b00l03');
     ds.addBoolean('flg03');
     ds.addField(24, 'b04l18');
     ds.addField(4, 'b1Cl04');
     b.fill(0xff);
     assert.equal(ds.encode({b00l03: 3, b04l18: 24, b1Cl04: 4}, b), 4);
-    assert.equal(Buffer('8b010040', 'hex').compare(b), 0);
+    assert.equal(Buffer.from('8b010040', 'hex').compare(b), 0);
     assert.deepEqual(ds.decode(b),
                      {b00l03: 3, flg03: true, b04l18: 24, b1Cl04: 4});
 
@@ -226,10 +226,10 @@ The C definition:
 
 The buffer-layout way:
 
-    var ds = lo.nu64be();
-    var b = Buffer('0102030405060708', 'hex');
-    var v = 72623859790382856;
-    var nv = v - 6;
+    const ds = lo.nu64be();
+    const b = Buffer.from('0102030405060708', 'hex');
+    const v = 72623859790382856;
+    const nv = v - 6;
     assert.equal(v, nv);
     assert.equal(ds.decode(b), nv);
 
@@ -247,12 +247,12 @@ The C definition:
 
 The buffer-layout way:
 
-    var ds = lo.cstr();
-    var b = new Buffer(8);
+    const ds = lo.cstr();
+    const b = Buffer.alloc(8);
     assert.equal(ds.encode('hi!', b), 3 + 1);
-    var slen = ds.getSpan(b);
+    const slen = ds.getSpan(b);
     assert.equal(slen, 4);
-    assert.equal(Buffer('68692100', 'hex').compare(b.slice(0, slen)), 0);
+    assert.equal(Buffer.from('68692100', 'hex').compare(b.slice(0, slen)), 0);
     assert.equal(ds.decode(b), 'hi!');
 
 See [CString](http://pabigot.github.io/buffer-layout/module-Layout-CString.html).
@@ -261,9 +261,9 @@ See [CString](http://pabigot.github.io/buffer-layout/module-Layout-CString.html)
 
 The buffer-layout way:
 
-    var ds = lo.blob(4);
-    var b = Buffer('0102030405060708', 'hex');
-    assert.equal(Buffer('03040506', 'hex').compare(ds.decode(b, 2)), 0);
+    const ds = lo.blob(4);
+    const b = Buffer.from('0102030405060708', 'hex');
+    assert.equal(Buffer.from('03040506', 'hex').compare(ds.decode(b, 2)), 0);
 
 See [Blob](http://pabigot.github.io/buffer-layout/module-Layout-Blob.html).
 
@@ -271,17 +271,18 @@ See [Blob](http://pabigot.github.io/buffer-layout/module-Layout-Blob.html).
 
 The buffer-layout way:
 
-    var pr = lo.seq(lo.cstr(), 2);
-    var n = lo.u8('n');
-    var vla = lo.seq(pr, lo.offset(n, -1), 'a');
-    var st = lo.struct([n, vla], 'st');
-    var b = new Buffer(32);
-    var arr = [['k1', 'v1'], ['k2', 'v2'], ['k3', 'etc']];
+    const pr = lo.seq(lo.cstr(), 2);
+    const n = lo.u8('n');
+    const vla = lo.seq(pr, lo.offset(n, -1), 'a');
+    const st = lo.struct([n, vla], 'st');
+    const b = Buffer.alloc(32);
+    const arr = [['k1', 'v1'], ['k2', 'v2'], ['k3', 'etc']];
     b.fill(0);
-    assert.equal(st.encode({a: arr}, b), 1 + (2 * ((2 + 1) + (2 + 1)) + (2 + 1) + (3 + 1)));
-    var span = st.getSpan(b);
+    assert.equal(st.encode({a: arr}, b),
+                 1 + (2 * ((2 + 1) + (2 + 1)) + (2 + 1) + (3 + 1)));
+    const span = st.getSpan(b);
     assert.equal(span, 20);
-    assert.equal(Buffer('036b31007631006b32007632006b330065746300', 'hex')
+    assert.equal(Buffer.from('036b31007631006b32007632006b330065746300', 'hex')
                  .compare(b.slice(0, span)), 0);
     assert.deepEqual(st.decode(b), {n: 3, a: arr});
 
@@ -301,16 +302,16 @@ The C definition:
 
 The buffer-layout way:
 
-    var st = lo.struct([lo.u8('prop'),
+    const st = lo.struct([lo.u8('prop'),
                         lo.seq(lo.u16(),
                                lo.greedy(lo.u16().span),
                                'data')],
                        'ds');
-    var b = Buffer('21010002030405', 'hex');
+    const b = Buffer.from('21010002030405', 'hex');
     assert.deepEqual(st.decode(b), {prop: 33, data: [0x0001, 0x0302, 0x0504]});
     b.fill(0xFF);
-    assert.equal(st.encode({prop: 9, data: [5,6]}, b), 1 + 2 * 2);
-    assert.equal(Buffer('0905000600FFFF', 'hex').compare(b), 0);
+    assert.equal(st.encode({prop: 9, data: [5, 6]}, b), 1 + 2 * 2);
+    assert.equal(Buffer.from('0905000600FFFF', 'hex').compare(b), 0);
 
 ### Tagged values, or variable-length unions
 
@@ -325,14 +326,14 @@ encoded union.  This could be used to make something similar to
 Here's the code that defines the union, the variants, and the
 recognition of `true` and `false` values for `b` as distinct variants:
 
-    var un = lo.union(lo.u8('t'));
-    var u8 = un.addVariant('B'.charCodeAt(0), lo.u8(), 'u8');
-    var s16 = un.addVariant('h'.charCodeAt(0), lo.s16(), 's16');
-    var s48 = un.addVariant('Q'.charCodeAt(0), lo.s48(), 's48');
-    var cstr = un.addVariant('s'.charCodeAt(0), lo.cstr(), 'str');
-    var tr = un.addVariant('T'.charCodeAt(0), lo.const(true), 'b');
-    var fa = un.addVariant('F'.charCodeAt(0), lo.const(false), 'b');
-    var b = new Buffer(1 + 6);
+    const un = lo.union(lo.u8('t'));
+    const u8 = un.addVariant('B'.charCodeAt(0), lo.u8(), 'u8');
+    const s16 = un.addVariant('h'.charCodeAt(0), lo.s16(), 's16');
+    const s48 = un.addVariant('Q'.charCodeAt(0), lo.s48(), 's48');
+    const cstr = un.addVariant('s'.charCodeAt(0), lo.cstr(), 'str');
+    const tr = un.addVariant('T'.charCodeAt(0), lo.const(true), 'b');
+    const fa = un.addVariant('F'.charCodeAt(0), lo.const(false), 'b');
+    const b = Buffer.alloc(1 + 6);
     un.configGetSourceVariant(function(src) {
       if (src.hasOwnProperty('b')) {
         return src.b ? tr : fa;
@@ -346,36 +347,34 @@ decoding each of the alternatives:
     b.fill(0xff);
     assert.equal(un.encode({u8: 1}, b), 1 + 1);
     assert.equal(un.getSpan(b), 2);
-    assert.equal(Buffer('4201ffffffffff', 'hex').compare(b), 0);
+    assert.equal(Buffer.from('4201ffffffffff', 'hex').compare(b), 0);
     assert.equal(un.decode(b).u8, 1);
 
     b.fill(0xff);
     assert.equal(un.encode({s16: -32000}, b), 1 + 2);
     assert.equal(un.getSpan(b), 3);
-    assert.equal(Buffer('680083ffffffff', 'hex').compare(b), 0);
+    assert.equal(Buffer.from('680083ffffffff', 'hex').compare(b), 0);
     assert.equal(un.decode(b).s16, -32000);
 
     b.fill(0xff);
-    var v48 = Math.pow(2, 47) - 1;
+    const v48 = Math.pow(2, 47) - 1;
     assert.equal(un.encode({s48: v48}, b), 1 + 6);
     assert.equal(un.getSpan(b), 7);
-    assert.equal(Buffer('51ffffffffff7f', 'hex').compare(b), 0);
+    assert.equal(Buffer.from('51ffffffffff7f', 'hex').compare(b), 0);
     assert.equal(un.decode(b).s48, v48);
 
     b.fill(0xff);
     assert.equal(un.encode({b: true}, b), 1);
     assert.equal(un.getSpan(b), 1);
-    assert.equal(Buffer('54ffffffffffff', 'hex').compare(b), 0);
+    assert.equal(Buffer.from('54ffffffffffff', 'hex').compare(b), 0);
     assert.strictEqual(un.decode(b).b, true);
 
     b.fill(0xff);
     assert.equal(un.encode({b: false}, b), 1);
     assert.equal(un.getSpan(b), 1);
-    assert.equal(Buffer('46ffffffffffff', 'hex').compare(b), 0);
+    assert.equal(Buffer.from('46ffffffffffff', 'hex').compare(b), 0);
     assert.strictEqual(un.decode(b).b, false);
 
 **NOTE** This code tickles a long-standing [bug in
-Buffer.writeInt{L,B}E](https://github.com/nodejs/node/pull/3994). `buffer-layout`
-provides a [module that patches
-`Buffer`](http://pabigot.github.io/buffer-layout/module-patchIssue3992.html)
-to fix the bug if it detects that the running Node has the error.
+Buffer.writeInt{L,B}E](https://github.com/nodejs/node/pull/3994); if you
+are using Node prior to 4.2.4 or 5.2.0 you should update.

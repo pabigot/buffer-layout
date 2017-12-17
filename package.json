@@ -1,6 +1,6 @@
 {
   "name": "buffer-layout",
-  "version": "0.13.0",
+  "version": "1.0.0",
   "description": "Translation between JavaScript values and Buffers",
   "keywords": [
     "Buffer",
@@ -10,7 +10,7 @@
   ],
   "homepage": "https://github.com/pabigot/buffer-layout",
   "bugs": "https://github.com/pabigot/buffer-layout/issues",
-  "repository" : {
+  "repository": {
     "type": "git",
     "url": "https://github.com/pabigot/buffer-layout.git"
   },
@@ -18,61 +18,23 @@
   "author": "Peter A. Bigot <pab@pabigot.com>",
   "main": "./lib/Layout.js",
   "devDependencies": {
-    "coveralls": "~2.11.6",
-    "istanbul": "~0.4.2",
-    "jscs": "~2.11.0",
-    "jsdoc": "~3.4.0",
-    "jshint": "^2.9.1",
-    "jslint": "~0.9.6",
-    "lodash": "~4.0.0",
-    "mocha": "~2.4.0"
+    "coveralls": "~3.0.0",
+    "eslint": "~4.13.1",
+    "eslint-config-google": "~0.9.1",
+    "eslint-plugin-pabigot": "~1.1.0",
+    "istanbul": "~0.4.5",
+    "jsdoc": "~3.5.5",
+    "lodash": "~4.17.4",
+    "mocha": "~4.0.1"
   },
   "engines": {
-    "node": ">=0.12"
+    "node": ">=4.5"
   },
   "scripts": {
     "coverage": "istanbul cover _mocha -- -u tdd",
     "coveralls": "istanbul cover _mocha --report lcovonly -- -u tdd && cat ./coverage/lcov.info | coveralls",
-    "jscs": "jscs lib/ test/",
+    "eslint": "eslint lib/ test/",
     "jsdoc": "jsdoc -c jsdoc/conf.json",
-    "jslint": "jslint lib/Layout.js || true",
-    "lint": "jshint lib/*.js test/*.js || true",
-    "lint.strict": "jshint lib/Layout.js",
     "test": "mocha -u tdd"
-  },
-  "jshintConfig": {
-    "node": true,
-    "laxbreak": true
-  },
-  "jscsConfig": {
-    "preset": "google",
-    "requireOperatorBeforeLineBreak": false,
-    "maximumLineLength": {
-      "value": 120,
-      "allExcept": ["comments", "regex"]
-    },
-    "requireCamelCaseOrUpperCaseIdentifiers": {
-      "allowedSuffixes": [
-        "_dCel",
-        "_ppt"
-      ]
-    },
-    "jsDoc": {
-      "checkAnnotations": {
-        "preset": "jsdoc3",
-        "extra": {
-          "local": true
-        }
-      },
-      "checkParamNames": true,
-      "requireParamTypes": true,
-      "checkRedundantParams": true,
-      "checkReturnTypes": true,
-      "checkRedundantReturns": true,
-      "requireReturnTypes": true,
-      "checkTypes": true,
-      "checkRedundantAccess": true,
-      "requireNewlineAfterDescription": true
-    }
   }
 }

@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.0.0] - 2017-12-17
+
+* Minimum Node version increased to 4.5 to support dependency
+  on
+  [Buffer.alloc()](https://nodejs.org/dist/latest-v4.x/docs/api/buffer.html#buffer_class_method_buffer_alloc_size_fill_encoding).
+* Removed [patch][node:issue#3994] for [ancient buffer bug][node:issue#3992]
+* Update to ES6 classes and other features
+* Documentation clarifications.
+* Update dependent packages.
+* Switch to [npm:eslint] and deal with fallout.
+
 ## [0.13.0] - 2016-03-27
 
 * **API** Add [fieldFor][doc:BitStructure.fieldFor].
@@ -10,7 +21,7 @@
 
 * Disable coverage testing for [patchIssue3992][doc:patchIssue3992] to
   avoid taking a penalty on node versions that have been updated.
-  
+
 ## [0.12.0] - 2016-03-08
 
 * **API** Replace `setClassLayout` with [bindConstructorLayout][doc:bindConstructorLayout].
@@ -99,12 +110,14 @@
   list.
 * Document [destination parameter to decode][issue#2].
 * Allow [user-defined name for union discriminators][issue#1].
-	
+
 ## 0.1.0 - 2015-10-25
 
 * Initial release.
 
-[0.13.0]: https://github.com/pabigot/buffer-layout/compare/v0.12.1...v0.13.0
+[1.0.0]: https://github.com/pabigot/buffer-layout/compare/v0.13.0...v1.0.0
+[0.13.0]: https://github.com/pabigot/buffer-layout/compare/v0.12.0...v0.13.0
+[0.12.1]: https://github.com/pabigot/buffer-layout/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/pabigot/buffer-layout/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/pabigot/buffer-layout/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/pabigot/buffer-layout/compare/v0.9.0...v0.10.0
@@ -120,6 +133,7 @@
 [doc:bindConstructorLayout]: http://pabigot.github.io/buffer-layout/module-Layout.html#.bindConstructorLayout
 [doc:BitField]: http://pabigot.github.io/buffer-layout/module-Layout-BitField.html
 [doc:BitStructure]: http://pabigot.github.io/buffer-layout/module-Layout-BitStructure.html
+[doc:BitStructure.fieldFor]: http://pabigot.github.io/buffer-layout/module-Layout-BitStructure.html#fieldFor
 [doc:Blob]: http://pabigot.github.io/buffer-layout/module-Layout-Blob.html
 [doc:Blob.length]: http://pabigot.github.io/buffer-layout/module-Layout-Blob.html#length
 [doc:Boolean]: http://pabigot.github.io/buffer-layout/module-Layout-Boolean.html
@@ -158,8 +172,10 @@
 [ci:travis]: https://travis-ci.org/pabigot/buffer-layout
 [ci:coveralls]: https://coveralls.io/github/pabigot/buffer-layout
 [node:issue#3992]: https://github.com/nodejs/node/issues/3992
+[node:issue#3994]: https://github.com/nodejs/node/issues/3994
 [npm:istanbul]: https://www.npmjs.com/package/istanbul
 [npm:jscs]: https://www.npmjs.com/package/jscs
+[npm:eslint]: https://www.npmjs.com/package/eslint
 
 <!---
 # Local Variables:
