@@ -834,7 +834,8 @@ suite('Layout', function() {
       var cstr = lo.cstr('cstr');
       var u16 = lo.u16('u16');
       var d = lo.struct([u8, s32, cstr, u16], 's');
-      assert.strictEqual(d.layoutFor(), undefined);
+      assert.throws(() => d.layoutFor(),
+                    err => ('property must be string' === err.message));
       assert.strictEqual(d.layoutFor('u8'), u8);
       assert.strictEqual(d.layoutFor('cstr'), cstr);
       assert.strictEqual(d.layoutFor('other'), undefined);
@@ -852,7 +853,8 @@ suite('Layout', function() {
       var cstr = lo.cstr('cstr');
       var u16 = lo.u16('u16');
       var d = lo.struct([u8, s32, cstr, u16], 's');
-      assert.strictEqual(d.offsetOf(), undefined);
+      assert.throws(() => d.offsetOf(),
+                    err => ('property must be string' === err.message));
       assert.strictEqual(d.offsetOf('u8'), 0);
       assert.strictEqual(d.offsetOf('s32'), 1);
       assert.strictEqual(d.offsetOf('cstr'), 5);
@@ -1542,7 +1544,8 @@ suite('Layout', function() {
       d.addField(4, 'b4');
       var c11 = d.addField(11, 'c11');
       d.addField(16, 'd16');
-      assert.strictEqual(d.fieldFor(), undefined);
+      assert.throws(() => d.fieldFor(),
+                    err => ('property must be string' === err.message));
       assert.strictEqual(d.fieldFor('b'), b);
       assert.strictEqual(d.fieldFor('c11'), c11);
       assert.strictEqual(d.fieldFor('other'), undefined);
