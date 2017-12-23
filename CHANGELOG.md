@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2017-12-23
+* **API** Interpret string argument to BitStructure `msb` parameter as
+  a `property` parameter, resolving [issue #17][issue#17].
+
 ## [1.0.0] - 2017-12-17
 
 * Minimum Node version increased to 4.5 to support dependency
@@ -172,6 +176,7 @@
 [issue#13]: https://github.com/pabigot/buffer-layout/issues/13
 [issue#14]: https://github.com/pabigot/buffer-layout/issues/14
 [issue#15]: https://github.com/pabigot/buffer-layout/issues/15
+[issue#17]: https://github.com/pabigot/buffer-layout/issues/17
 [ci:travis]: https://travis-ci.org/pabigot/buffer-layout
 [ci:coveralls]: https://coveralls.io/github/pabigot/buffer-layout
 [node:issue#3992]: https://github.com/nodejs/node/issues/3992

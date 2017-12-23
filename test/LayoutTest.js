@@ -1369,6 +1369,23 @@ suite('Layout', function() {
       assert.throws(function() {new lo.BitField(bs, 0);}, TypeError);
       assert.throws(function() {new lo.BitField(bs, 40);}, Error);
     });
+    suite('ctor argument processing', function() {
+      it('should infer property when passed string', function() {
+        var bs = new lo.BitStructure(lo.u8(), 'flags');
+        assert.strictEqual(bs.msb, false);
+        assert.strictEqual(bs.property, 'flags');
+      });
+      it('should respect msb without property', function() {
+        var bs = new lo.BitStructure(lo.u8(), true);
+        assert.strictEqual(bs.msb, true);
+        assert.strictEqual(bs.property, undefined);
+      });
+      it('should accept msb with property', function() {
+        var bs = new lo.BitStructure(lo.u8(), 'flags', 'flags');
+        assert.strictEqual(bs.msb, true);
+        assert.strictEqual(bs.property, 'flags');
+      });
+    }); // ctor argument processing
     test('invalid add', function() {
       assert.throws(function() {
         var bs = lo.bits(lo.u32());
