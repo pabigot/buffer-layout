@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>BitStructure<span class="signature">(word, msb, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>BitStructure<span class="signature">(word, msb<span class="signature-attributes">opt</span>, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
             <div class="class-description"><p>Contain a sequence of bit fields as an unsigned integer.</p>
 <p><em>Factory</em>: <a href="module-Layout.html#.bits">bits</a></p>
@@ -52,7 +52,7 @@ properties with numeric or <a href="module-Layout-Boolean.html">boolean</a> valu
     
 
     
-    <h4 class="name" id="BitStructure"><span class="type-signature"></span>new BitStructure<span class="signature">(word, msb, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="BitStructure"><span class="type-signature"></span>new BitStructure<span class="signature">(word, msb<span class="signature-attributes">opt</span>, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -142,6 +142,8 @@ bytes wide.</p></td>
             
                 <td class="attributes">
                 
+                    &lt;optional><br>
+                
 
                 
 
@@ -151,9 +153,12 @@ bytes wide.</p></td>
 
             
 
-            <td class="description last"><p><code>true</code> if the bit numbering starts at the most
-significant bit of the containing word; <code>false</code> (default) if it
-starts at the least significant bit of the containing word.</p></td>
+            <td class="description last"><p><code>true</code> if the bit numbering starts at the
+most significant bit of the containing word; <code>false</code> (default) if
+it starts at the least significant bit of the containing word.  If
+the parameter at this position is a string and <code>property</code> is
+<code>undefined</code> the value of this argument will instead be used as the
+value of <code>property</code>.</p></td>
         </tr>
 
     
@@ -227,7 +232,7 @@ starts at the least significant bit of the containing word.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1933">line 1933</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1959">line 1959</a>
     </li></ul></dd>
     
 
@@ -333,7 +338,7 @@ not manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1964">line 1964</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1995">line 1995</a>
     </li></ul></dd>
     
 
@@ -400,7 +405,7 @@ bit of the corresponding section of the packed value.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1956">line 1956</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1987">line 1987</a>
     </li></ul></dd>
     
 
@@ -607,7 +612,7 @@ on <a href="module-Layout-BitStructure.html#msb">msb</a>.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1947">line 1947</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1978">line 1978</a>
     </li></ul></dd>
     
 
@@ -737,7 +742,7 @@ fields with <code>boolean</code> value representation.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2039">line 2039</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2070">line 2070</a>
     </li></ul></dd>
     
 
@@ -914,7 +919,7 @@ resulting bitfield is returned.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2026">line 2026</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2057">line 2057</a>
     </li></ul></dd>
     
 
@@ -1239,7 +1244,7 @@ value is left unmodified.  Unused bits are also left unmodified.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2000">line 2000</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2031">line 2031</a>
     </li></ul></dd>
     
 
@@ -1374,7 +1379,7 @@ value is left unmodified.  Unused bits are also left unmodified.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2055">line 2055</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2086">line 2086</a>
     </li></ul></dd>
     
 
@@ -1500,8 +1505,8 @@ the desired layout.</p>
 
             
 
-            <td class="description last"><p>an array of values that correspond to the
-default order for properties.  As with <a href="module-Layout-Layout.html#decode">decode</a>
+            <td class="description last"><p>an array of values that correspond to the</p>
+<p>default order for properties.  As with <a href="module-Layout-Layout.html#decode">decode</a>
 layout elements that have no property name are skipped when
 iterating over the array values.  Only the top-level properties are
 assigned; arguments are not assigned to properties of contained
@@ -2137,7 +2142,7 @@ set to <code>property</code>.</li>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Dec 17 2017 03:40:50 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Jan 06 2018 13:04:24 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>

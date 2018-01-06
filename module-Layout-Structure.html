@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>Structure<span class="signature">(fields, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>Structure<span class="signature">(fields, property<span class="signature-attributes">opt</span>, decodePrefixes<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
             <div class="class-description"><p>Represent a contiguous sequence of arbitrary layout elements as an
 Object.</p>
@@ -57,7 +57,7 @@ variable-length field.</p></div>
     
 
     
-    <h4 class="name" id="Structure"><span class="type-signature"></span>new Structure<span class="signature">(fields, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Structure"><span class="type-signature"></span>new Structure<span class="signature">(fields, property<span class="signature-attributes">opt</span>, decodePrefixes<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -162,6 +162,39 @@ is not defined.</p></td>
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>decodePrefixes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-Layout-Boolean.html">module:Layout~Boolean</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>initializer for <a href="module-Layout-Structure.html#decodePrefixes">property</a>.</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -199,7 +232,7 @@ is not defined.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1175">line 1175</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1178">line 1178</a>
     </li></ul></dd>
     
 
@@ -290,6 +323,75 @@ layout.</li>
 
         
             
+<h4 class="name" id="decodePrefixes"><span class="type-signature"></span>decodePrefixes<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Control behavior of <a href="module-Layout-Layout.html#decode">decode()</a> given short
+buffers.</p>
+<p>In some situations a structure many be extended with additional
+fields over time, with older installations providing only a
+prefix of the full structure.  If this property is <code>true</code>
+decoding will accept those buffers and leave subsequent fields
+undefined, as long as the buffer ends at a field boundary.
+Defaults to <code>false</code>.</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1226">line 1226</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
 <h4 class="name" id="fields"><span class="type-signature"></span>fields<span class="type-signature"> :Array.&lt;<a href="module-Layout-Layout.html">module:Layout~Layout</a>></span></h4>
 
 
@@ -350,7 +452,7 @@ will not be mutated.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1207">line 1207</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1215">line 1215</a>
     </li></ul></dd>
     
 
@@ -795,7 +897,7 @@ left unmodified.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1251">line 1251</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1274">line 1274</a>
     </li></ul></dd>
     
 
@@ -896,8 +998,8 @@ the desired layout.</p>
 
             
 
-            <td class="description last"><p>an array of values that correspond to the
-default order for properties.  As with <a href="module-Layout-Layout.html#decode">decode</a>
+            <td class="description last"><p>an array of values that correspond to the</p>
+<p>default order for properties.  As with <a href="module-Layout-Layout.html#decode">decode</a>
 layout elements that have no property name are skipped when
 iterating over the array values.  Only the top-level properties are
 assigned; arguments are not assigned to properties of contained
@@ -1346,7 +1448,7 @@ returned.</li>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1307">line 1307</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1330">line 1330</a>
     </li></ul></dd>
     
 
@@ -1609,7 +1711,7 @@ will be Object instances.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1329">line 1329</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1352">line 1352</a>
     </li></ul></dd>
     
 
@@ -1856,7 +1958,7 @@ set to <code>property</code>.</li>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Dec 17 2017 03:40:50 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Jan 06 2018 13:04:24 GMT-0600 (CST)
 </footer>
 
 <script> prettyPrint(); </script>
