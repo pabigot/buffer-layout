@@ -786,6 +786,50 @@ suite('Layout', function() {
       assert.equal(slo.encode({a: 5, s: 'hi'}, b), 4);
       assert.equal(slo.encode({a: 5, s: 'hi'}, b, 5), 4);
     });
+    suite('prefix decoding', function() {
+      const fields = [
+        lo.u32('u32'),
+        lo.u16('u16'),
+        lo.u8('u8'),
+      ];
+      const b = Buffer.from('01020304111221', 'hex');
+      test('rejects partial by default', function() {
+        const slo = lo.struct(fields);
+        assert.strictEqual(slo.decodePrefixes, false);
+        assert.deepEqual(slo.decode(b), {
+          u32: 0x04030201,
+          u16: 0x1211,
+          u8: 0x21,
+        });
+        assert.throws(() => slo.decode(b.slice(0, 4)), RangeError);
+      });
+      test('accepts full fields if enabled', function() {
+        const slo = lo.struct(fields, true);
+        assert.strictEqual(slo.decodePrefixes, true);
+        assert.deepEqual(slo.decode(b), {
+          u32: 0x04030201,
+          u16: 0x1211,
+          u8: 0x21,
+        });
+        assert.deepEqual(slo.decode(b.slice(0, 4)), {
+          u32: 0x04030201,
+        });
+        assert.deepEqual(slo.decode(b.slice(0, 6)), {
+          u32: 0x04030201,
+          u16: 0x1211,
+        });
+        assert.throws(() => slo.decode(b.slice(0, 3)), RangeError);
+      });
+      test('preserved by replicate', function() {
+        const property = 'name';
+        const slo = lo.struct(fields, property, true);
+        assert.strictEqual(slo.property, property);
+        assert.strictEqual(slo.decodePrefixes, true);
+        const slo2 = slo.replicate('other');
+        assert.strictEqual(slo2.property, 'other');
+        assert.strictEqual(slo2.decodePrefixes, true);
+      });
+    });
   });
   suite('replicate', function() {
     test('uint', function() {
