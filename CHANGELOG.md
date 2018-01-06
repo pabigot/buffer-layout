@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.0] - 2018-01-06
+
+* **API** Add a third parameter to Structure specifying it should decode
+  short buffers as prefixes, resolving [issue #19][issue#19].
+* **API** Interpret string argument to BitStructure `msb` parameter as
+  a `property` parameter, resolving [issue #17][issue#17].
+
 ## [1.0.0] - 2017-12-17
 
 * Minimum Node version increased to 4.5 to support dependency
@@ -115,6 +122,7 @@
 
 * Initial release.
 
+[1.1.0]: https://github.com/pabigot/buffer-layout/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/pabigot/buffer-layout/compare/v0.13.0...v1.0.0
 [0.13.0]: https://github.com/pabigot/buffer-layout/compare/v0.12.0...v0.13.0
 [0.12.1]: https://github.com/pabigot/buffer-layout/compare/v0.12.0...v0.12.1
@@ -169,6 +177,8 @@
 [issue#13]: https://github.com/pabigot/buffer-layout/issues/13
 [issue#14]: https://github.com/pabigot/buffer-layout/issues/14
 [issue#15]: https://github.com/pabigot/buffer-layout/issues/15
+[issue#17]: https://github.com/pabigot/buffer-layout/issues/17
+[issue#19]: https://github.com/pabigot/buffer-layout/issues/19
 [ci:travis]: https://travis-ci.org/pabigot/buffer-layout
 [ci:coveralls]: https://coveralls.io/github/pabigot/buffer-layout
 [node:issue#3992]: https://github.com/nodejs/node/issues/3992
