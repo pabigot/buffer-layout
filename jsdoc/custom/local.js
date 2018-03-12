@@ -30,9 +30,20 @@ function buildRE(prefix, tag) {
 exports.handlers = {
     jsdocCommentFound: function(e) {
         if (thisModule) for (var local in registry) {
-            var sv = '$1'+thisModule+'~'+'$2';
-            e.comment = e.comment.replace(buildRE('{', local), sv);
-            e.comment = e.comment.replace(buildRE('{@link\\s*\\*?\\s*', local), sv);
+            /* Handle {@link local} => {@link module~local|local} (across EOL) */
+            var re = new RegExp('({@link\\s*\\*?\\s*)\\b(' + local + '\\b[^|}]*)}', 'g');
+            e.comment = e.comment.replace(re,
+                                         '$1' + thisModule + '~$2\|$2}');
+
+            /* Handle {local} => {thisModule~local}.  Brace reference
+             * doesn't support providing alternative text. */
+            e.comment = e.comment.replace(buildRE('{', local),
+                                          '$1' + thisModule + '~$2');
+
+            /* Handle `@cmd local` => `@cmd thisModule~local` for
+             * certain commands (across EOL) */
+            e.comment = e.comment.replace(buildRE('@(event|link|memberof|name)\\s*\\*?\\s*', local),
+                                         '$1' + thisModule + '~$3');
         }
     },
 
