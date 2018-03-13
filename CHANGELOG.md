@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+* **API** Allow the layout parameter of
+  a [VariantLayout][doc:VariantLayout] to be omitted in cases where no
+  data beyond the discriminator is required,
+  resolving [issue #20][issue#20].
+
 ## [1.1.0] - 2018-01-06
 
 * **API** Add a third parameter to Structure specifying it should decode
@@ -157,14 +162,15 @@
 [doc:NearInt64]: http://pabigot.github.io/buffer-layout/module-Layout-NearInt64.html
 [doc:OffsetLayout]: http://pabigot.github.io/buffer-layout/module-Layout-OffsetLayout.html
 [doc:patchIssue3992]: http://pabigot.github.io/buffer-layout/module-patchIssue3992.html
-[doc:Union]: http://pabigot.github.io/buffer-layout/module-Layout-Union.html
-[doc:Union.getSourceVariant]: http://pabigot.github.io/buffer-layout/module-Layout-Union.html#getSourceVariant
-[doc:UnionDiscriminator]: http://pabigot.github.io/buffer-layout/module-Layout-UnionDiscriminator.html
 [doc:Sequence]: http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html
 [doc:Sequence.count]: http://pabigot.github.io/buffer-layout/module-Layout-Sequence.html#count
 [doc:Structure]: http://pabigot.github.io/buffer-layout/module-Layout-Structure.html
 [doc:Structure.layoutFor]: http://pabigot.github.io/buffer-layout/module-Layout-Structure.html#layoutFor
 [doc:Structure.offsetOf]: http://pabigot.github.io/buffer-layout/module-Layout-Structure.html#offsetOf
+[doc:Union]: http://pabigot.github.io/buffer-layout/module-Layout-Union.html
+[doc:Union.getSourceVariant]: http://pabigot.github.io/buffer-layout/module-Layout-Union.html#getSourceVariant
+[doc:UnionDiscriminator]: http://pabigot.github.io/buffer-layout/module-Layout-UnionDiscriminator.html
+[doc:VariantLayout]: http://pabigot.github.io/buffer-layout/module-Layout-VariantLayout.html
 [issue#1]: https://github.com/pabigot/buffer-layout/issues/1
 [issue#2]: https://github.com/pabigot/buffer-layout/issues/2
 [issue#3]: https://github.com/pabigot/buffer-layout/issues/3
@@ -182,6 +188,7 @@
 [issue#15]: https://github.com/pabigot/buffer-layout/issues/15
 [issue#17]: https://github.com/pabigot/buffer-layout/issues/17
 [issue#19]: https://github.com/pabigot/buffer-layout/issues/19
+[issue#20]: https://github.com/pabigot/buffer-layout/issues/20
 [ci:travis]: https://travis-ci.org/pabigot/buffer-layout
 [ci:coveralls]: https://coveralls.io/github/pabigot/buffer-layout
 [node:issue#3992]: https://github.com/nodejs/node/issues/3992
