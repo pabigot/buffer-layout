@@ -1923,6 +1923,77 @@ suite('Layout', function() {
       assert.equal(Buffer.from('68690075006300', 'hex').compare(b), 0);
     });
   });
+  suite('UTF8', function() {
+    test('ctor', function() {
+      const cst = lo.utf8();
+      assert(0 > cst.span);
+      assert.strictEqual(cst.maxSpan, -1);
+    });
+    test('ctor with maxSpan', function() {
+      const cst = lo.utf8(5);
+      assert.strictEqual(cst.maxSpan, 5);
+    });
+    test('ctor with invalid maxSpan', function() {
+      assert.throws(() => new lo.UTF8(23.1), TypeError);
+    });
+    test('#getSpan', function() {
+      const cst = new lo.UTF8();
+      assert.throws(() => cst.getSpan(), TypeError);
+      assert.equal(cst.getSpan(Buffer.from('00', 'hex')), 1);
+      assert.equal(cst.getSpan(Buffer.from('4100', 'hex')), 2);
+      assert.equal(cst.getSpan(Buffer.from('4100', 'hex'), 1), 1);
+      assert.equal(cst.getSpan(Buffer.from('4142', 'hex')), 2);
+    });
+    test('#decode', function() {
+      const cst = new lo.UTF8(3);
+      assert.equal(cst.decode(Buffer.from('00', 'hex')), '\x00');
+      assert.equal(cst.decode(Buffer.from('4100', 'hex')), 'A\x00');
+      assert.equal(cst.decode(Buffer.from('4100', 'hex'), 1), '\x00');
+      assert.equal(cst.decode(Buffer.from('4142', 'hex')), 'AB');
+      assert.throws(() => cst.decode(Buffer.from('four', 'utf8')),
+                    RangeError);
+    });
+    test('#encode', function() {
+      const cst = new lo.UTF8();
+      const b = Buffer.alloc(3);
+      b.fill(0xFF);
+      assert.equal(cst.encode('', b), 0);
+      assert.equal(Buffer.from('ffffff', 'hex').compare(b), 0);
+      assert.equal(cst.encode('A', b), 1);
+      assert.equal(Buffer.from('41ffff', 'hex').compare(b), 0);
+      assert.equal(cst.encode('B', b, 1), 1);
+      assert.equal(Buffer.from('4142ff', 'hex').compare(b), 0);
+      assert.equal(cst.encode(5, b), 1);
+      assert.equal(Buffer.from('3542ff', 'hex').compare(b), 0);
+      assert.equal(cst.encode('abc', b), 3);
+      assert.equal(Buffer.from('616263', 'hex').compare(b), 0);
+      assert.throws(() => cst.encode('four', b), RangeError);
+    });
+    test('#encode with maxSpan', function() {
+      const cst = new lo.UTF8(2);
+      const b = Buffer.alloc(3);
+      b.fill(0xFF);
+      assert.throws(() => cst.encode('abc', b), RangeError);
+    });
+    test('in struct', function() {
+      const st = lo.struct([lo.utf8('k'),
+                            lo.utf8('v')]);
+      const b = Buffer.from('6162323334', 'hex');
+      assert.throws(() => st.getSpan(), RangeError);
+      assert.equal(st.fields[0].getSpan(b), b.length);
+      assert.equal(st.fields[1].getSpan(b, 2), b.length - 2);
+      assert.equal(st.getSpan(b), b.length);
+      assert.deepEqual(st.decode(b), {k: 'ab234', v: ''});
+    });
+    test('in seq', function() {
+      const seq = lo.seq(lo.utf8(), 3);
+      const b = Buffer.from('4162633435', 'hex');
+      assert.deepEqual(seq.decode(b), ['Abc45', '', '']);
+      b.fill(0xFF);
+      assert.equal(seq.encode(['hi', 'u', 'c'], b), 2 + 1 + 1);
+      assert.equal(Buffer.from('68697563ff', 'hex').compare(b), 0);
+    });
+  });
   suite('Constant', function() {
     test('ctor', function() {
       const c = new lo.Constant('value', 'p');

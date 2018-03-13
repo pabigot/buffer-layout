@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* **API** Add [UTF8][doc:UTF8] to encode UTF strings in a possibly
+  bounded buffer, resolving [issue #21][issue#21].
 * **API** Allow the layout parameter of
   a [VariantLayout][doc:VariantLayout] to be omitted in cases where no
   data beyond the discriminator is required,
@@ -170,6 +172,7 @@
 [doc:Union]: http://pabigot.github.io/buffer-layout/module-Layout-Union.html
 [doc:Union.getSourceVariant]: http://pabigot.github.io/buffer-layout/module-Layout-Union.html#getSourceVariant
 [doc:UnionDiscriminator]: http://pabigot.github.io/buffer-layout/module-Layout-UnionDiscriminator.html
+[doc:UTF8]: http://pabigot.github.io/buffer-layout/module-Layout-UTF8.html
 [doc:VariantLayout]: http://pabigot.github.io/buffer-layout/module-Layout-VariantLayout.html
 [issue#1]: https://github.com/pabigot/buffer-layout/issues/1
 [issue#2]: https://github.com/pabigot/buffer-layout/issues/2
@@ -189,6 +192,7 @@
 [issue#17]: https://github.com/pabigot/buffer-layout/issues/17
 [issue#19]: https://github.com/pabigot/buffer-layout/issues/19
 [issue#20]: https://github.com/pabigot/buffer-layout/issues/20
+[issue#21]: https://github.com/pabigot/buffer-layout/issues/21
 [ci:travis]: https://travis-ci.org/pabigot/buffer-layout
 [ci:coveralls]: https://coveralls.io/github/pabigot/buffer-layout
 [node:issue#3992]: https://github.com/nodejs/node/issues/3992
