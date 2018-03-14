@@ -130,10 +130,14 @@ four bytes depends on the first byte.  The C definition:</p>
 } __attribute__((__packed__)) un;</code></pre><p>The buffer-layout way:</p>
 <pre class="prettyprint source"><code>const t = lo.u8('t');
 const un = lo.union(t, lo.seq(lo.u8(), 4, 'u8'));
+const nul = un.addVariant('n'.charCodeAt(0), 'nul');
 const u32 = un.addVariant('w'.charCodeAt(0), lo.u32(), 'u32');
 const s16 = un.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16');
 const f32 = un.addVariant('f'.charCodeAt(0), lo.f32(), 'f32');
 const b = Buffer.alloc(un.span);
+assert.deepEqual(un.decode(b), {t: 0, u8: [0, 0, 0, 0]});
+assert.deepEqual(un.decode(Buffer.from('6e01020304', 'hex')),
+                 {nul: true});
 assert.deepEqual(un.decode(Buffer.from('7778563412', 'hex')),
                  {u32: 0x12345678});
 assert.deepEqual(un.decode(Buffer.from('660000bd41', 'hex')),
@@ -147,6 +151,11 @@ representing the union and the variants:</p>
 <pre class="prettyprint source"><code>function Union() { }
 lo.bindConstructorLayout(Union,
                          lo.union(lo.u8('t'), lo.seq(lo.u8(), 4, 'u8')));
+
+function Vn() {}
+util.inherits(Vn, Union);
+lo.bindConstructorLayout(Vn,
+                         Union.layout_.addVariant('n'.charCodeAt(0), 'nul'));
 
 function Vu32(v) { this.u32 = v; }
 util.inherits(Vu32, Union);
@@ -176,7 +185,14 @@ assert.deepEqual(v.u8, [0xa5, 0xa5, 0xa5, 0xa5]);
 const b = Buffer.alloc(Union.layout_.span);
 v = new Vf32(23.625);
 v.encode(b);
-assert.equal(Buffer.from('660000bd41', 'hex').compare(b), 0);</code></pre><p>See
+assert.equal(Buffer.from('660000bd41', 'hex').compare(b), 0);
+
+b.fill(0xFF);
+v = new Vn();
+v.encode(b);
+assert.equal(Buffer.from('6effffffff', 'hex').compare(b), 0);</code></pre><p>Note that one variant (<code>'n'</code>) carries no data, leaving the remainder of
+the buffer unchanged when stored.</p>
+<p>See
 <a href="http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#makeDestinationObject">Layout.makeDestinationObject()</a>
 and
 <a href="http://pabigot.github.io/buffer-layout/module-Layout.html#.bindConstructorLayout">bindConstructorLayout</a>.</p>
@@ -318,13 +334,13 @@ are using Node prior to 4.2.4 or 5.2.0 you should update.</p></article>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-UTF8.html">UTF8</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Jan 06 2018 13:04:24 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Mar 14 2018 06:58:27 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

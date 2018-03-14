@@ -33,10 +33,11 @@
         
             <div class="class-description"><p>Contain a sequence of bit fields as an unsigned integer.</p>
 <p><em>Factory</em>: <a href="module-Layout.html#.bits">bits</a></p>
-<p>This is a container element; within it there are <a href="module-Layout-BitField.html">BitField</a> instances that provide the extracted properties.
-The container simply defines the aggregate representation and its
-bit ordering.  The representation is an object containing
-properties with numeric or <a href="module-Layout-Boolean.html">boolean</a> values.</p>
+<p>This is a container element; within it there are <a href="module-Layout-BitField.html">BitField</a>
+instances that provide the extracted properties.  The container
+simply defines the aggregate representation and its bit ordering.
+The representation is an object containing properties with numeric
+or <a href="module-Layout-Boolean.html">Boolean</a> values.</p>
 <p><a href="module-Layout-BitField.html">BitField</a>s are added with the <a href="module-Layout-BitStructure.html#addField">addField</a> and <a href="module-Layout-BitStructure.html#addBoolean">addBoolean</a> methods.</p></div>
         
     
@@ -119,8 +120,7 @@ properties with numeric or <a href="module-Layout-Boolean.html">boolean</a> valu
             
 
             <td class="description last"><p>initializer for <a href="module-Layout-BitStructure.html#word">word</a>.  The parameter must be an instance of
-<a href="module-Layout-UInt.html">UInt</a> (or <a href="module-Layout-UIntBE.html">UIntBE</a>) that is no more than 4
-bytes wide.</p></td>
+<a href="module-Layout-UInt.html">UInt</a> (or <a href="module-Layout-UIntBE.html">UIntBE</a>) that is no more than 4 bytes wide.</p></td>
         </tr>
 
     
@@ -232,7 +232,7 @@ value of <code>property</code>.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1959">line 1959</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1977">line 1977</a>
     </li></ul></dd>
     
 
@@ -297,8 +297,8 @@ value of <code>property</code>.</p></td>
 
 
 <div class="description">
-    <p>The sequence of <a href="module-Layout-BitField.html">BitField</a> layouts that
-comprise the packed structure.</p>
+    <p>The sequence of <a href="module-Layout-BitField.html">BitField</a> layouts that comprise the
+packed structure.</p>
 <p><strong>NOTE</strong> The array remains mutable to allow fields to be <a href="module-Layout-BitStructure.html#addField">added</a> after construction.  Users should
 not manipulate the content of this property.</p>
 </div>
@@ -338,7 +338,7 @@ not manipulate the content of this property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1995">line 1995</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2013">line 2013</a>
     </li></ul></dd>
     
 
@@ -366,8 +366,8 @@ not manipulate the content of this property.</p>
 significant bit growing down (<code>true</code>), or the least significant
 bit growing up (<code>false</code>).</p>
 <p><strong>NOTE</strong> Regardless of this value, the least significant bit of
-any <a href="module-Layout-BitField.html">BitField</a> value is the least significant
-bit of the corresponding section of the packed value.</p>
+any <a href="module-Layout-BitField.html">BitField</a> value is the least significant bit of the
+corresponding section of the packed value.</p>
 </div>
 
 
@@ -405,7 +405,7 @@ bit of the corresponding section of the packed value.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1987">line 1987</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2005">line 2005</a>
     </li></ul></dd>
     
 
@@ -477,7 +477,7 @@ decoded Object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line179">line 179</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line178">line 178</a>
     </li></ul></dd>
     
 
@@ -503,8 +503,7 @@ decoded Object.</p>
 <div class="description">
     <p>The span of the layout in bytes.</p>
 <p>Positive values are generally expected.</p>
-<p>Zero will only appear in <a href="module-Layout-Constant.html">Constant</a>s and in
-<a href="module-Layout-Sequence.html">Sequence</a>s where the <a href="module-Layout-Sequence.html#count">count</a> is zero.</p>
+<p>Zero will only appear in <a href="module-Layout-Constant.html">Constant</a>s and in <a href="module-Layout-Sequence.html">Sequence</a>s where the <a href="module-Layout-Sequence.html#count">count</a> is zero.</p>
 <p>A negative value indicates that the span is value-specific, and
 must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.</p>
 </div>
@@ -549,7 +548,7 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line169">line 169</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line168">line 168</a>
     </li></ul></dd>
     
 
@@ -573,8 +572,8 @@ must be obtained using <a href="module-Layout-Layout.html#getSpan">getSpan</a>.<
 
 
 <div class="description">
-    <p>The layout used for the packed value.  <a href="module-Layout-BitField.html">BitField</a> instances are packed sequentially depending
-on <a href="module-Layout-BitStructure.html#msb">msb</a>.</p>
+    <p>The layout used for the packed value.  <a href="module-Layout-BitField.html">BitField</a>
+instances are packed sequentially depending on <a href="module-Layout-BitStructure.html#msb">msb</a>.</p>
 </div>
 
 
@@ -612,7 +611,7 @@ on <a href="module-Layout-BitStructure.html#msb">msb</a>.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1978">line 1978</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line1996">line 1996</a>
     </li></ul></dd>
     
 
@@ -742,7 +741,7 @@ fields with <code>boolean</code> value representation.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2070">line 2070</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2088">line 2088</a>
     </li></ul></dd>
     
 
@@ -919,7 +918,7 @@ resulting bitfield is returned.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2057">line 2057</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2075">line 2075</a>
     </li></ul></dd>
     
 
@@ -1121,7 +1120,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line213">line 213</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line212">line 212</a>
     </li></ul></dd>
     
 
@@ -1244,7 +1243,7 @@ value is left unmodified.  Unused bits are also left unmodified.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2031">line 2031</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2049">line 2049</a>
     </li></ul></dd>
     
 
@@ -1379,7 +1378,7 @@ value is left unmodified.  Unused bits are also left unmodified.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2086">line 2086</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2104">line 2104</a>
     </li></ul></dd>
     
 
@@ -1448,12 +1447,12 @@ undefined if there is no such property.</li>
 <div class="description">
     <p>Create an object from layout properties and an array of values.</p>
 <p><strong>NOTE</strong> This function returns <code>undefined</code> if invoked on a layout
-that does not return its value as an Object.  Objects are returned
-for things that are a <a href="module-Layout-Structure.html">Structure</a>, which includes
+that does not return its value as an Object.  Objects are
+returned for things that are a <a href="module-Layout-Structure.html">Structure</a>, which includes
 <a href="module-Layout-VariantLayout.html">variant layouts</a> if they are structures, and
-excludes <a href="module-Layout-Union.html">Union</a>s.  If you want this feature for a
-union you must use getVariant to select
-the desired layout.</p>
+excludes <a href="module-Layout-Union.html">Union</a>s.  If you want this feature for a union
+you must use getVariant to select the
+desired layout.</p>
 </div>
 
 
@@ -1505,8 +1504,8 @@ the desired layout.</p>
 
             
 
-            <td class="description last"><p>an array of values that correspond to the</p>
-<p>default order for properties.  As with <a href="module-Layout-Layout.html#decode">decode</a>
+            <td class="description last"><p>an array of values that correspond to the
+default order for properties.  As with <a href="module-Layout-Layout.html#decode">decode</a>
 layout elements that have no property name are skipped when
 iterating over the array values.  Only the top-level properties are
 assigned; arguments are not assigned to properties of contained
@@ -1556,7 +1555,7 @@ layouts.  Any unused values are ignored.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line309">line 309</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line308">line 308</a>
     </li></ul></dd>
     
 
@@ -1761,7 +1760,7 @@ starts.  If absent a zero offset is inferred.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line259">line 259</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line258">line 258</a>
     </li></ul></dd>
     
 
@@ -1874,7 +1873,7 @@ instances, which means:</p>
 </ul>
 <p>If left undefined the JavaScript representation of these layouts
 will be Object instances.</p>
-<p>See bindConstructorLayout().</p>
+<p>See <a href="module-Layout.html#~bindConstructorLayout">bindConstructorLayout</a>.</p>
 </div>
 
 
@@ -1923,7 +1922,7 @@ will be Object instances.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line197">line 197</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line196">line 196</a>
     </li></ul></dd>
     
 
@@ -2067,7 +2066,7 @@ immutable.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line282">line 282</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line281">line 281</a>
     </li></ul></dd>
     
 
@@ -2136,13 +2135,13 @@ set to <code>property</code>.</li>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-UTF8.html">UTF8</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Jan 06 2018 13:04:24 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Mar 14 2018 06:58:27 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Float</title>
+    <title>JSDoc: Class: UTF8</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Float</h1>
+    <h1 class="page-title">Class: UTF8</h1>
 
     
 
@@ -29,10 +29,14 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>Float<span class="signature">(property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-Layout.html">Layout</a>~</span>UTF8<span class="signature">(maxSpan<span class="signature-attributes">opt</span>, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description"><p>Represent a 32-bit floating point number in little-endian format.</p>
-<p><em>Factory</em>: <a href="module-Layout.html#.f32">f32</a></p></div>
+            <div class="class-description"><p>Contain a UTF8 string with implicit length.</p>
+<p><em>Factory</em>: <a href="module-Layout.html#.utf8">utf8</a></p>
+<p><strong>NOTE</strong> Because the length is implicit in the size of the buffer
+this layout should be used only in isolation, or in a situation
+where the length can be expressed by operating on a slice of the
+containing buffer.</p></div>
         
     
 </header>
@@ -47,7 +51,7 @@
     
 
     
-    <h4 class="name" id="Float"><span class="type-signature"></span>new Float<span class="signature">(property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="UTF8"><span class="type-signature"></span>new UTF8<span class="signature">(maxSpan<span class="signature-attributes">opt</span>, property<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -89,13 +93,48 @@
 
         <tr>
             
+                <td class="name"><code>maxSpan</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the maximum length allowed for encoded
+string content.  If not provided there is no bound on the allowed
+content.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>property</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -156,7 +195,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line889">line 889</a>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2427">line 2427</a>
     </li></ul></dd>
     
 
@@ -212,6 +251,73 @@
 
     
         <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="maxSpan"><span class="type-signature"></span>maxSpan<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>The maximum span of the layout in bytes.</p>
+<p>Positive values are generally expected.  Zero is abnormal.
+Attempts to encode or decode a value that exceeds this length
+will throw a <code>RangeError</code>.</p>
+<p>A negative value indicates that there is no bound on the length
+of the content.</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layout.js.html">Layout.js</a>, <a href="Layout.js.html#line2450">line 2450</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
 
         
             
@@ -1129,12 +1235,12 @@ starts.  If absent a zero offset is inferred.</p></td>
     
 
     
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
         <a href="module-Layout-Layout.html#getSpan">module:Layout~Layout#getSpan</a>
     </li></ul></dd>
-    
-
     
 
     

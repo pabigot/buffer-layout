@@ -151,6 +151,7 @@
  * @local Blob
  * @local CString
  * @local Constant
+ * @local bindConstructorLayout
  * @module Layout
  * @license MIT
  * @author Peter A. Bigot
@@ -175,7 +176,6 @@ const assert = require('assert');
  * @param {string} [property] - Initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @abstract
  */
 class Layout {
@@ -188,9 +188,8 @@ class Layout {
      *
      * Positive values are generally expected.
      *
-     * Zero will only appear in {@link Constant|Constant}s and in
-     * {@link Sequence|Sequence}s where the {@link
-     * Sequence#count|count} is zero.
+     * Zero will only appear in {@link Constant}s and in {@link
+     * Sequence}s where the {@link Sequence#count|count} is zero.
      *
      * A negative value indicates that the span is value-specific, and
      * must be obtained using {@link Layout#getSpan|getSpan}. */
@@ -212,15 +211,15 @@ class Layout {
    *
    * Used only for layouts that {@link Layout#decode|decode} to Object
    * instances, which means:
-   * * {@link Structure|Structure}
-   * * {@link Union|Union}
-   * * {@link VariantLayout|VariantLayout}
-   * * {@link BitStructure|BitStructure}
+   * * {@link Structure}
+   * * {@link Union}
+   * * {@link VariantLayout}
+   * * {@link BitStructure}
    *
    * If left undefined the JavaScript representation of these layouts
    * will be Object instances.
    *
-   * See {@link module:Layout.bindConstructorLayout|bindConstructorLayout()}.
+   * See {@link bindConstructorLayout}.
    */
   makeDestinationObject() {
     return {};
@@ -247,7 +246,7 @@ class Layout {
    *
    * @param {(Number|Array|Object)} src - the value to be encoded into
    * the buffer.  The type accepted depends on the (sub-)type of {@link
-   * Layout|Layout}.
+   * Layout}.
    *
    * @param {Buffer} b - the buffer into which encoded data will be
    * written.
@@ -295,7 +294,7 @@ class Layout {
    * Replicate the layout using a new property.
    *
    * This function must be used to get a structurally-equivalent layout
-   * with a different name since all {@link Layout|Layout} instances are
+   * with a different name since all {@link Layout} instances are
    * immutable.
    *
    * **NOTE** This is a shallow copy.  All fields except {@link
@@ -318,12 +317,12 @@ class Layout {
    * Create an object from layout properties and an array of values.
    *
    * **NOTE** This function returns `undefined` if invoked on a layout
-   * that does not return its value as an Object.  Objects are returned
-   * for things that are a {@link Structure|Structure}, which includes
+   * that does not return its value as an Object.  Objects are
+   * returned for things that are a {@link Structure}, which includes
    * {@link VariantLayout|variant layouts} if they are structures, and
-   * excludes {@link Union|Union}s.  If you want this feature for a
-   * union you must use {@link Union.getVariant|getVariant} to select
-   * the desired layout.
+   * excludes {@link Union}s.  If you want this feature for a union
+   * you must use {@link Union.getVariant|getVariant} to select the
+   * desired layout.
    *
    * @param {Array} values - an array of values that correspond to the
    * default order for properties.  As with {@link Layout#decode|decode}
@@ -377,8 +376,8 @@ exports.nameWithProperty = nameWithProperty;
  * @param {class} Class - a JavaScript class with a nullary
  * constructor.
  *
- * @param {Layout} layout - the {@link Layout|Layout} instance used to
- * encode instances of `Class`.
+ * @param {Layout} layout - the {@link Layout} instance used to encode
+ * instances of `Class`.
  */
 function bindConstructorLayout(Class, layout) {
   if ('function' !== typeof Class) {
@@ -421,8 +420,7 @@ exports.bindConstructorLayout = bindConstructorLayout;
  *
  * **NOTE** This is an abstract base class; you can create instances
  * if it amuses you, but they won't support {@link
- * ExternalLayout#isCount|isCount} or other {@link Layout|Layout}
- * functions.
+ * ExternalLayout#isCount|isCount} or other {@link Layout} functions.
  *
  * @param {Number} span - initializer for {@link Layout#span|span}.
  * The parameter can range from 1 through 6.
@@ -451,7 +449,7 @@ class ExternalLayout extends Layout {
 }
 
 /**
- * An {@link ExternalLayout|ExternalLayout} that determines its {@link
+ * An {@link ExternalLayout} that determines its {@link
  * Layout#decode|value} based on offset into and length of the buffer
  * on which it is invoked.
  *
@@ -463,7 +461,6 @@ class ExternalLayout extends Layout {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {ExternalLayout}
  */
 class GreedyCount extends ExternalLayout {
@@ -503,10 +500,9 @@ class GreedyCount extends ExternalLayout {
 }
 
 /**
- * An {@link ExternalLayout|ExternalLayout} that supports accessing a
- * {@link Layout|Layout} at a fixed offset from the start of another
- * Layout.  The offset may be before, within, or after the base
- * layout.
+ * An {@link ExternalLayout} that supports accessing a {@link Layout}
+ * at a fixed offset from the start of another Layout.  The offset may
+ * be before, within, or after the base layout.
  *
  * *Factory*: {@link module:Layout.offset|offset}
  *
@@ -521,7 +517,6 @@ class GreedyCount extends ExternalLayout {
  * OffsetLayout#layout|layout}.  If not provided the `layout` is used
  * unchanged.
  *
- * @constructor
  * @augments {Layout}
  */
 class OffsetLayout extends ExternalLayout {
@@ -587,7 +582,6 @@ class OffsetLayout extends ExternalLayout {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class UInt extends Layout {
@@ -630,7 +624,6 @@ class UInt extends Layout {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class UIntBE extends Layout {
@@ -673,7 +666,6 @@ class UIntBE extends Layout {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class Int extends Layout {
@@ -716,7 +708,6 @@ class Int extends Layout {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class IntBE extends Layout {
@@ -770,7 +761,6 @@ function roundedInt64(hi32, lo32) {
  * **NOTE** Values with magnitude greater than 2^52 may not decode to
  * the exact value of the encoded representation.
  *
- * @constructor
  * @augments {Layout}
  */
 class NearUInt64 extends Layout {
@@ -809,7 +799,6 @@ class NearUInt64 extends Layout {
  * **NOTE** Values with magnitude greater than 2^52 may not decode to
  * the exact value of the encoded representation.
  *
- * @constructor
  * @augments {Layout}
  */
 class NearUInt64BE extends Layout {
@@ -848,7 +837,6 @@ class NearUInt64BE extends Layout {
  * **NOTE** Values with magnitude greater than 2^52 may not decode to
  * the exact value of the encoded representation.
  *
- * @constructor
  * @augments {Layout}
  */
 class NearInt64 extends Layout {
@@ -887,7 +875,6 @@ class NearInt64 extends Layout {
  * **NOTE** Values with magnitude greater than 2^52 may not decode to
  * the exact value of the encoded representation.
  *
- * @constructor
  * @augments {Layout}
  */
 class NearInt64BE extends Layout {
@@ -925,7 +912,6 @@ class NearInt64BE extends Layout {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class Float extends Layout {
@@ -959,7 +945,6 @@ class Float extends Layout {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class FloatBE extends Layout {
@@ -993,7 +978,6 @@ class FloatBE extends Layout {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class Double extends Layout {
@@ -1027,7 +1011,6 @@ class Double extends Layout {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class DoubleBE extends Layout {
@@ -1068,7 +1051,6 @@ class DoubleBE extends Layout {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class Sequence extends Layout {
@@ -1095,7 +1077,7 @@ class Sequence extends Layout {
     /** The number of elements in the sequence.
      *
      * This will be either a non-negative integer or an instance of
-     * {@link ExternalLayout|ExternalLayout} for which {@link
+     * {@link ExternalLayout} for which {@link
      * ExternalLayout#isCount|isCount()} is `true`. */
     this.count = count;
   }
@@ -1144,7 +1126,7 @@ class Sequence extends Layout {
     return rv;
   }
 
-  /** Implement {@link Layout#encode|encode} for {@link Sequence|Sequence}.
+  /** Implement {@link Layout#encode|encode} for {@link Sequence}.
    *
    * **NOTE** If `src` is shorter than {@link Sequence#count|count} then
    * the unused space in the buffer is left unchanged.  If `src` is
@@ -1152,16 +1134,15 @@ class Sequence extends Layout {
    * ignored.
    *
    * **NOTE** If {@link Layout#count|count} is an instance of {@link
-   * ExternalLayout|ExternalLayout} then the length of `src` will be
-   * encoded as the count after `src` is encoded. */
+   * ExternalLayout} then the length of `src` will be encoded as the
+   * count after `src` is encoded. */
   encode(src, b, offset) {
     if (undefined === offset) {
       offset = 0;
     }
     const elo = this.elementLayout;
     const span = src.reduce((span, v) => {
-      elo.encode(v, b, offset + span);
-      return span + elo.getSpan(b, offset + span);
+      return span + elo.encode(v, b, offset + span);
     }, 0);
     if (this.count instanceof ExternalLayout) {
       this.count.encode(src.length, b, offset);
@@ -1178,7 +1159,7 @@ class Sequence extends Layout {
  *
  * **NOTE** The {@link Layout#span|span} of the structure is variable
  * if any layout in {@link Structure#fields|fields} has a variable
- * span.  When {@link Layout|encode|encoding} we must have a value for
+ * span.  When {@link Layout#encode|encoding} we must have a value for
  * all variable-length fields, or we wouldn't be able to figure out
  * how much space to use for storage.  We can only identify the value
  * for a field when it has a {@link Layout#property|property}.  As
@@ -1200,7 +1181,6 @@ class Sequence extends Layout {
  * @throws {Error} - if `fields` contains an unnamed variable-length
  * layout.
  *
- * @constructor
  * @augments {Layout}
  */
 class Structure extends Layout {
@@ -1230,7 +1210,7 @@ class Structure extends Layout {
     }
     super(span, property);
 
-    /** The sequence of {@link Layout|Layout} values that comprise the
+    /** The sequence of {@link Layout} values that comprise the
      * structure.
      *
      * The individual elements need not be the same type, and may be
@@ -1294,7 +1274,7 @@ class Structure extends Layout {
     return dest;
   }
 
-  /** Implement {@link Layout#encode|encode} for {@link Structure|Structure}.
+  /** Implement {@link Layout#encode|encode} for {@link Structure}.
    *
    * If `src` is missing a property for a member with a defined {@link
    * Layout#property|property} the corresponding region of the buffer is
@@ -1397,7 +1377,7 @@ class Structure extends Layout {
 
 /**
  * An object that can provide a {@link
- * Union#discriminator|discriminator} API for {@link * Union|Union}.
+ * Union#discriminator|discriminator} API for {@link Union}.
  *
  * **NOTE** This is an abstract base class; you can create instances
  * if it amuses you, but they won't support the {@link
@@ -1407,7 +1387,6 @@ class Structure extends Layout {
  * @param {string} [property] - Default for {@link
  * UnionDiscriminator#property|property}.
  *
- * @constructor
  * @abstract
  */
 class UnionDiscriminator {
@@ -1438,9 +1417,9 @@ class UnionDiscriminator {
 
 /**
  * An object that can provide a {@link
- * UnionDiscriminator|discriminator API} for {@link Union|Union} using
- * an unsigned integral {@link Layout|Layout} instance located either
- * inside or outside the union.
+ * UnionDiscriminator|discriminator API} for {@link Union} using an
+ * unsigned integral {@link Layout} instance located either inside or
+ * outside the union.
  *
  * @param {ExternalLayout} layout - initializes {@link
  * UnionLayoutDiscriminator#layout|layout}.  Must satisfy {@link
@@ -1451,7 +1430,6 @@ class UnionDiscriminator {
  * from `layout`, but defaulting to `variant` if neither `property`
  * nor layout provide a property name.
  *
- * @constructor
  * @augments {UnionDiscriminator}
  */
 class UnionLayoutDiscriminator extends UnionDiscriminator {
@@ -1463,8 +1441,8 @@ class UnionLayoutDiscriminator extends UnionDiscriminator {
 
     super(property || layout.property || 'variant');
 
-    /** The {@link ExternalLayout|ExternalLayout} used to access the
-     * discriminator value. */
+    /** The {@link ExternalLayout} used to access the discriminator
+     * value. */
     this.layout = layout;
   }
 
@@ -1508,36 +1486,34 @@ class UnionLayoutDiscriminator extends UnionDiscriminator {
  * UnionDiscriminator#property|property} (in the case of the {@link
  * Union#defaultLayout|default layout}), or by using {@link
  * Union#getVariant|getVariant} and examining the resulting {@link
- * VariantLayout|VariantLayout} instance.
+ * VariantLayout} instance.
  *
  * A variant compatible with a JavaScript object can be identified
  * using {@link Union#getSourceVariant|getSourceVariant}.
  *
  * @param {(UnionDiscriminator|ExternalLayout|Layout)} discr - How to
  * identify the layout used to interpret the union contents.  The
- * parameter must be an instance of {@link
- * UnionDiscriminator|UnionDiscriminator}, an {@link
- * ExternalLayout|ExternalLayout} that satisfies {@link
- * ExternalLayout#isCount|isCount()}, or {@link UInt|UInt} (or {@link
- * UIntBE|UIntBE}).  When a non-external layout element is passed the
- * layout appears at the start of the union.  In all cases the
- * (synthesized) {@link UnionDiscriminator|UnionDiscriminator}
- * instance is recorded as {@link Union#discriminator|discriminator}.
+ * parameter must be an instance of {@link UnionDiscriminator}, an
+ * {@link ExternalLayout} that satisfies {@link
+ * ExternalLayout#isCount|isCount()}, or {@link UInt} (or {@link
+ * UIntBE}).  When a non-external layout element is passed the layout
+ * appears at the start of the union.  In all cases the (synthesized)
+ * {@link UnionDiscriminator} instance is recorded as {@link
+ * Union#discriminator|discriminator}.
  *
  * @param {(Layout|null)} defaultLayout - initializer for {@link
- * Union#defaultLayout|defaultLayout}.  If absent defaults to
- * `null`.  If `null` there is no default layout: the union has
- * data-dependent length and attempts to decode or encode unrecognized
- * variants will throw an exception.  A {@link Layout|Layout} instance
- * must have a non-negative {@link Layout#span|span}, and if it lacks
- * a {@link Layout#property|property} the {@link
+ * Union#defaultLayout|defaultLayout}.  If absent defaults to `null`.
+ * If `null` there is no default layout: the union has data-dependent
+ * length and attempts to decode or encode unrecognized variants will
+ * throw an exception.  A {@link Layout} instance must have a
+ * non-negative {@link Layout#span|span}, and if it lacks a {@link
+ * Layout#property|property} the {@link
  * Union#defaultLayout|defaultLayout} will be a {@link
  * Layout#replicate|replica} with property `content`.
  *
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class Union extends Layout {
@@ -1584,12 +1560,12 @@ class Union extends Layout {
 
     /** The interface for the discriminator value in isolation.
      *
-     * This a {@link UnionDiscriminator|UnionDiscriminator} either
-     * passed to the constructor or synthesized from the `discr`
-     * constructor argument.  {@link
+     * This a {@link UnionDiscriminator} either passed to the
+     * constructor or synthesized from the `discr` constructor
+     * argument.  {@link
      * Union#usesPrefixDiscriminator|usesPrefixDiscriminator} will be
      * `true` iff the `discr` parameter was a non-offset {@link
-     * Layout|Layout} instance. */
+     * Layout} instance. */
     this.discriminator = discr;
 
     /** `true` if the {@link Union#discriminator|discriminator} is the
@@ -1612,9 +1588,8 @@ class Union extends Layout {
      *
      * The keys are unsigned integers which should be compatible with
      * {@link Union.discriminator|discriminator}.  The property value
-     * is the corresponding {@link VariantLayout|VariantLayout}
-     * instances assigned to this union by {@link
-     * Union#addVariant|addVariant}.
+     * is the corresponding {@link VariantLayout} instances assigned
+     * to this union by {@link Union#addVariant|addVariant}.
      *
      * **NOTE** The registry remains mutable so that variants can be
      * {@link Union#addVariant|added} at any time.  Users should not
@@ -1680,32 +1655,56 @@ class Union extends Layout {
   /**
    * Method to infer a registered Union variant compatible with `src`.
    *
-   * @param {Object} src - an object presumed to be compatible with the content of the Union.
+   * The first satisified rule in the following sequence defines the
+   * return value:
+   * * If `src` has properties matching the Union discriminator and
+   *   the default layout, `undefined` is returned regardless of the
+   *   value of the discriminator property (this ensures the default
+   *   layout will be used);
+   * * If `src` has a property matching the Union discriminator, the
+   *   value of the discriminator identifies a registered variant, and
+   *   either (a) the variant has no layout, or (b) `src` has the
+   *   variant's property, then the variant is returned (because the
+   *   source satisfies the constraints of the variant it identifies);
+   * * If `src` does not have a property matching the Union
+   *   discriminator, but does have a property matching a registered
+   *   variant, then the variant is returned (because the source
+   *   matches a variant without an explicit conflict);
+   * * An error is thrown (because we either can't identify a variant,
+   *   or we were explicitly told the variant but can't satisfy it).
    *
-   * @return {(undefined|VariantLayout)} - If `src` has properties
-   * matching the Union discriminator and default layout properties this
-   * returns `undefined`.  Otherwise, if `src` has a property matching a
-   * {@link VariantLayout#property|variant property} that variant is
-   * returned.  Otherwise an error is thrown.
+   * @param {Object} src - an object presumed to be compatible with
+   * the content of the Union.
+   *
+   * @return {(undefined|VariantLayout)} - as described above.
    *
    * @throws {Error} - if `src` cannot be associated with a default or
    * registered variant.
    */
   defaultGetSourceVariant(src) {
-    if (src.hasOwnProperty(this.discriminator.property)
-        &amp;&amp; src.hasOwnProperty(this.defaultLayout.property)) {
-      return undefined;
-    }
-    for (const k in this.registry) {
-      const lo = this.registry[k];
-      if (src.hasOwnProperty(lo.property)) {
-        return lo;
+    if (src.hasOwnProperty(this.discriminator.property)) {
+      if (this.defaultLayout
+          &amp;&amp; src.hasOwnProperty(this.defaultLayout.property)) {
+        return undefined;
+      }
+      const vlo = this.registry[src[this.discriminator.property]];
+      if (vlo
+          &amp;&amp; ((!vlo.layout)
+              || src.hasOwnProperty(vlo.property))) {
+        return vlo;
+      }
+    } else {
+      for (const tag in this.registry) {
+        const vlo = this.registry[tag];
+        if (src.hasOwnProperty(vlo.property)) {
+          return vlo;
+        }
       }
     }
     throw new Error('unable to infer src variant');
   }
 
-  /** Implement {@link Layout#decode|decode} for {@link Union|Union}.
+  /** Implement {@link Layout#decode|decode} for {@link Union}.
    *
    * If the variant is {@link Union#addVariant|registered} the return
    * value is an instance of that variant, with no explicit
@@ -1734,7 +1733,7 @@ class Union extends Layout {
     return dest;
   }
 
-  /** Implement {@link Layout#encode|encode} for {@link Union|Union}.
+  /** Implement {@link Layout#encode|encode} for {@link Union}.
    *
    * This API assumes the `src` object is consistent with the union's
    * {@link Union#defaultLayout|default layout}.  To encode variants
@@ -1821,15 +1820,16 @@ class Union extends Layout {
  * @param {Number} variant - initializer for {@link
  * VariantLayout#variant|variant}.
  *
- * @param {Layout} layout - initializer for {@link
- * VariantLayout#layout|layout}.
+ * @param {Layout} [layout] - initializer for {@link
+ * VariantLayout#layout|layout}.  If absent the variant carries no
+ * data.
  *
- * @param {String} property - initializer for {@link
+ * @param {String} [property] - initializer for {@link
  * Layout#property|property}.  Unlike many other layouts, variant
- * layouts must include a property so they can be identified within
- * their containing @{link Union|Union}.
+ * layouts normally include a property name so they can be identified
+ * within their containing {@link Union}.  The property identifier may
+ * be absent only if `layout` is is absent.
  *
- * @constructor
  * @augments {Layout}
  */
 class VariantLayout extends Layout {
@@ -1840,27 +1840,34 @@ class VariantLayout extends Layout {
     if ((!Number.isInteger(variant)) || (0 > variant)) {
       throw new TypeError('variant must be a (non-negative) integer');
     }
-    if (!(layout instanceof Layout)) {
-      throw new TypeError('layout must be a Layout');
+    if (('string' === typeof layout)
+        &amp;&amp; (undefined === property)) {
+      property = layout;
+      layout = null;
     }
-    if ((null !== union.defaultLayout)
-        &amp;&amp; (0 &lt;= layout.span)
-        &amp;&amp; (layout.span > union.defaultLayout.span)) {
-      throw new Error('variant span exceeds span of containing union');
-    }
-    if ('string' !== typeof property) {
-      throw new TypeError('variant must have a String property');
+    if (layout) {
+      if (!(layout instanceof Layout)) {
+        throw new TypeError('layout must be a Layout');
+      }
+      if ((null !== union.defaultLayout)
+          &amp;&amp; (0 &lt;= layout.span)
+          &amp;&amp; (layout.span > union.defaultLayout.span)) {
+        throw new Error('variant span exceeds span of containing union');
+      }
+      if ('string' !== typeof property) {
+        throw new TypeError('variant must have a String property');
+      }
     }
     let span = union.span;
     if (0 > union.span) {
-      span = layout.span;
+      span = layout ? layout.span : 0;
       if ((0 &lt;= span) &amp;&amp; union.usesPrefixDiscriminator) {
         span += union.discriminator.layout.span;
       }
     }
     super(span, property);
 
-    /** The {@link Union|Union} to which this variant belongs. */
+    /** The {@link Union} to which this variant belongs. */
     this.union = union;
 
     /** The unsigned integral value identifying this variant within
@@ -1868,10 +1875,11 @@ class VariantLayout extends Layout {
      * union. */
     this.variant = variant;
 
-    /** The {@link Layout|Layout} to be used when reading/writing the
+    /** The {@link Layout} to be used when reading/writing the
      * non-discriminator part of the {@link
-     * VariantLayout#union|union}. */
-    this.layout = layout;
+     * VariantLayout#union|union}.  If `null` the variant carries no
+     * data. */
+    this.layout = layout || null;
   }
 
   /** @override */
@@ -1905,7 +1913,13 @@ class VariantLayout extends Layout {
     if (this.union.usesPrefixDiscriminator) {
       contentOffset = this.union.discriminator.layout.span;
     }
-    dest[this.property] = this.layout.decode(b, offset + contentOffset);
+    if (this.layout) {
+      dest[this.property] = this.layout.decode(b, offset + contentOffset);
+    } else if (this.property) {
+      dest[this.property] = true;
+    } else if (this.union.usesPrefixDiscriminator) {
+      dest[this.union.discriminator.property] = this.variant;
+    }
     return dest;
   }
 
@@ -1918,15 +1932,19 @@ class VariantLayout extends Layout {
     if (this.union.usesPrefixDiscriminator) {
       contentOffset = this.union.discriminator.layout.span;
     }
-    if (!src.hasOwnProperty(this.property)) {
+    if (this.layout
+        &amp;&amp; (!src.hasOwnProperty(this.property))) {
       throw new TypeError('variant lacks property ' + this.property);
     }
     this.union.discriminator.encode(this.variant, b, offset);
-    this.layout.encode(src[this.property], b, offset + contentOffset);
-    const span = contentOffset + this.layout.getSpan(b, offset + contentOffset);
-    if ((0 &lt;= this.union.span)
-        &amp;&amp; (span > this.union.span)) {
-      throw new Error('encoded variant overruns containing union');
+    let span = contentOffset;
+    if (this.layout) {
+      this.layout.encode(src[this.property], b, offset + contentOffset);
+      span += this.layout.getSpan(b, offset + contentOffset);
+      if ((0 &lt;= this.union.span)
+          &amp;&amp; (span > this.union.span)) {
+        throw new Error('encoded variant overruns containing union');
+      }
     }
     return span;
   }
@@ -1934,7 +1952,9 @@ class VariantLayout extends Layout {
   /** Delegate {@link Layout#fromArray|fromArray} to {@link
    * VariantLayout#layout|layout}. */
   fromArray(values) {
-    return this.layout.fromArray(values);
+    if (this.layout) {
+      return this.layout.fromArray(values);
+    }
   }
 }
 
@@ -1956,20 +1976,19 @@ function fixBitwiseResult(v) {
  *
  * *Factory*: {@link module:Layout.bits|bits}
  *
- * This is a container element; within it there are {@link
- * BitField|BitField} instances that provide the extracted properties.
- * The container simply defines the aggregate representation and its
- * bit ordering.  The representation is an object containing
- * properties with numeric or {@link Boolean|boolean} values.
+ * This is a container element; within it there are {@link BitField}
+ * instances that provide the extracted properties.  The container
+ * simply defines the aggregate representation and its bit ordering.
+ * The representation is an object containing properties with numeric
+ * or {@link Boolean} values.
  *
- * {@link BitField|BitField}s are added with the {@link
+ * {@link BitField}s are added with the {@link
  * BitStructure#addField|addField} and {@link
  * BitStructure#addBoolean|addBoolean} methods.
 
  * @param {Layout} word - initializer for {@link
  * BitStructure#word|word}.  The parameter must be an instance of
- * {@link UInt|UInt} (or {@link UIntBE|UIntBE}) that is no more than 4
- * bytes wide.
+ * {@link UInt} (or {@link UIntBE}) that is no more than 4 bytes wide.
  *
  * @param {bool} [msb] - `true` if the bit numbering starts at the
  * most significant bit of the containing word; `false` (default) if
@@ -1981,7 +2000,6 @@ function fixBitwiseResult(v) {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class BitStructure extends Layout {
@@ -2000,9 +2018,9 @@ class BitStructure extends Layout {
     }
     super(word.span, property);
 
-    /** The layout used for the packed value.  {@link
-     * BitField|BitField} instances are packed sequentially depending
-     * on {@link BitStructure#msb|msb}. */
+    /** The layout used for the packed value.  {@link BitField}
+     * instances are packed sequentially depending on {@link
+     * BitStructure#msb|msb}. */
     this.word = word;
 
     /** Whether the bit sequences are packed starting at the most
@@ -2010,12 +2028,12 @@ class BitStructure extends Layout {
      * bit growing up (`false`).
      *
      * **NOTE** Regardless of this value, the least significant bit of
-     * any {@link BitField|BitField} value is the least significant
-     * bit of the corresponding section of the packed value. */
+     * any {@link BitField} value is the least significant bit of the
+     * corresponding section of the packed value. */
     this.msb = !!msb;
 
-    /** The sequence of {@link BitField|BitField} layouts that
-     * comprise the packed structure.
+    /** The sequence of {@link BitField} layouts that comprise the
+     * packed structure.
      *
      * **NOTE** The array remains mutable to allow fields to be {@link
      * BitStructure#addField|added} after construction.  Users should
@@ -2051,7 +2069,7 @@ class BitStructure extends Layout {
     return dest;
   }
 
-  /** Implement {@link Layout#encode|encode} for {@link BitStructure|BitStructure}.
+  /** Implement {@link Layout#encode|encode} for {@link BitStructure}.
    *
    * If `src` is missing a property for a member with a defined {@link
    * Layout#property|property} the corresponding region of the packed
@@ -2124,8 +2142,7 @@ class BitStructure extends Layout {
 }
 
 /**
- * Represent a sequence of bits within a {@link
- * BitStructure|BitStructure}.
+ * Represent a sequence of bits within a {@link BitStructure}.
  *
  * All bit field values are represented as unsigned integers.
  *
@@ -2133,8 +2150,8 @@ class BitStructure extends Layout {
  * Use the container {@link BitStructure#addField|addField} helper
  * method.
  *
- * **NOTE** BitField instances are not instances of {@link
- * Layout|Layout} since {@link Layout#span|span} measures 8-bit units.
+ * **NOTE** BitField instances are not instances of {@link Layout}
+ * since {@link Layout#span|span} measures 8-bit units.
  *
  * @param {BitStructure} container - initializer for {@link
  * BitField#container|container}.
@@ -2143,8 +2160,6 @@ class BitStructure extends Layout {
  *
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
- *
- * @constructor
  */
 class BitField {
   constructor(container, bits, property) {
@@ -2162,8 +2177,8 @@ class BitField {
                       + totalBits + ' remain)');
     }
 
-    /** The {@link BitStructure|BitStructure} instance to which this
-     * bit field belongs. */
+    /** The {@link BitStructure} instance to which this bit field
+     * belongs. */
     this.container = container;
 
     /** The span of this value in bits. */
@@ -2232,8 +2247,8 @@ class BitField {
 }
 
 /**
- * Represent a single bit within a {@link BitStructure|BitStructure}
- * as a JavaScript boolean.
+ * Represent a single bit within a {@link BitStructure} as a
+ * JavaScript boolean.
  *
  * **NOTE** User code should not invoke this constructor directly.
  * Use the container {@link BitStructure#addBoolean|addBoolean} helper
@@ -2245,7 +2260,6 @@ class BitField {
  * @param {string} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {BitField}
  */
 /* eslint-disable no-extend-native */
@@ -2284,7 +2298,6 @@ class Boolean extends BitField {
  * @param {String} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class Blob extends Layout {
@@ -2304,7 +2317,7 @@ class Blob extends Layout {
     /** The number of bytes in the blob.
      *
      * This may be a non-negative integer, or an instance of {@link
-     * ExternalLayout|ExternalLayout} that satisfies {@link
+     * ExternalLayout} that satisfies {@link
      * ExternalLayout#isCount|isCount()}. */
     this.length = length;
   }
@@ -2330,11 +2343,11 @@ class Blob extends Layout {
     return b.slice(offset, offset + span);
   }
 
-  /** Implement {@link Layout#encode|encode} for {@link Blob|Blob}.
+  /** Implement {@link Layout#encode|encode} for {@link Blob}.
    *
    * **NOTE** If {@link Layout#count|count} is an instance of {@link
-   * ExternalLayout|ExternalLayout} then the length of `src` will be encoded
-   * as the count after `src` is encoded. */
+   * ExternalLayout} then the length of `src` will be encoded as the
+   * count after `src` is encoded. */
   encode(src, b, offset) {
     let span = this.length;
     if (this.length instanceof ExternalLayout) {
@@ -2367,7 +2380,6 @@ class Blob extends Layout {
  * @param {String} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class CString extends Layout {
@@ -2422,6 +2434,100 @@ class CString extends Layout {
 }
 
 /**
+ * Contain a UTF8 string with implicit length.
+ *
+ * *Factory*: {@link module:Layout.utf8|utf8}
+ *
+ * **NOTE** Because the length is implicit in the size of the buffer
+ * this layout should be used only in isolation, or in a situation
+ * where the length can be expressed by operating on a slice of the
+ * containing buffer.
+ *
+ * @param {Number} [maxSpan] - the maximum length allowed for encoded
+ * string content.  If not provided there is no bound on the allowed
+ * content.
+ *
+ * @param {String} [property] - initializer for {@link
+ * Layout#property|property}.
+ *
+ * @augments {Layout}
+ */
+class UTF8 extends Layout {
+  constructor(maxSpan, property) {
+    if (('string' === typeof maxSpan)
+        &amp;&amp; (undefined === property)) {
+      property = maxSpan;
+      maxSpan = undefined;
+    }
+    if (undefined === maxSpan) {
+      maxSpan = -1;
+    } else if (!Number.isInteger(maxSpan)) {
+      throw new TypeError('maxSpan must be an integer');
+    }
+
+    super(-1, property);
+
+    /** The maximum span of the layout in bytes.
+     *
+     * Positive values are generally expected.  Zero is abnormal.
+     * Attempts to encode or decode a value that exceeds this length
+     * will throw a `RangeError`.
+     *
+     * A negative value indicates that there is no bound on the length
+     * of the content. */
+    this.maxSpan = maxSpan;
+  }
+
+  /** @override */
+  getSpan(b, offset) {
+    if (!(b instanceof Buffer)) {
+      throw new TypeError('b must be a Buffer');
+    }
+    if (undefined === offset) {
+      offset = 0;
+    }
+    return b.length - offset;
+  }
+
+  /** @override */
+  decode(b, offset, dest) {
+    if (undefined === offset) {
+      offset = 0;
+    }
+    let span = this.getSpan(b, offset);
+    if ((0 &lt;= this.maxSpan)
+        &amp;&amp; (this.maxSpan &lt; span)) {
+      throw new RangeError('text length exceeds maxSpan');
+    }
+    return b.slice(offset, offset + span).toString('utf-8');
+  }
+
+  /** @override */
+  encode(src, b, offset) {
+    if (undefined === offset) {
+      offset = 0;
+    }
+    /* Must force this to a string, lest it be a number and the
+     * "utf8-encoding" below actually allocate a buffer of length
+     * src */
+    if ('string' !== typeof src) {
+      src = src.toString();
+    }
+    const srcb = new Buffer(src, 'utf8');
+    const span = srcb.length;
+    if ((0 &lt;= this.maxSpan)
+        &amp;&amp; (this.maxSpan &lt; span)) {
+      throw new RangeError('text length exceeds maxSpan');
+    }
+    if ((offset + span) > b.length) {
+      throw new RangeError('encoding overruns Buffer');
+    }
+    srcb.copy(b, offset);
+    return span;
+  }
+}
+
+/**
  * Contain a constant value.
  *
  * This layout may be used in cases where a JavaScript value can be
@@ -2438,7 +2544,6 @@ class CString extends Layout {
  * @param {String} [property] - initializer for {@link
  * Layout#property|property}.
  *
- * @constructor
  * @augments {Layout}
  */
 class Constant extends Layout {
@@ -2491,12 +2596,13 @@ exports.BitField = BitField;
 exports.Boolean = Boolean;
 exports.Blob = Blob;
 exports.CString = CString;
+exports.UTF8 = UTF8;
 exports.Constant = Constant;
 
-/** Factory for {@link GreedyCount|GreedyCount}. */
+/** Factory for {@link GreedyCount}. */
 exports.greedy = ((elementSpan, property) => new GreedyCount(elementSpan, property));
 
-/** Factory for {@link OffsetLayout|OffsetLayout}. */
+/** Factory for {@link OffsetLayout}. */
 exports.offset = ((layout, offset, property) => new OffsetLayout(layout, offset, property));
 
 /** Factory for {@link UInt|unsigned int layouts} spanning one
@@ -2615,28 +2721,31 @@ exports.f64 = (property => new Double(property));
 /** Factory for {@link DoubleBE|big-endian 64-bit floating point} values. */
 exports.f64be = (property => new DoubleBE(property));
 
-/** Factory for {@link Structure|Structure} values. */
+/** Factory for {@link Structure} values. */
 exports.struct = ((fields, property, decodePrefixes) => new Structure(fields, property, decodePrefixes));
 
-/** Factory for {@link BitStructure|BitStructure} values. */
+/** Factory for {@link BitStructure} values. */
 exports.bits = ((word, msb, property) => new BitStructure(word, msb, property));
 
-/** Factory for {@link Sequence|Sequence} values. */
+/** Factory for {@link Sequence} values. */
 exports.seq = ((elementLayout, count, property) => new Sequence(elementLayout, count, property));
 
-/** Factory for {@link Union|Union} values. */
+/** Factory for {@link Union} values. */
 exports.union = ((discr, defaultLayout, property) => new Union(discr, defaultLayout, property));
 
-/** Factory for {@link UnionLayoutDiscriminator|UnionLayoutDiscriminator} values. */
+/** Factory for {@link UnionLayoutDiscriminator} values. */
 exports.unionLayoutDiscriminator = ((layout, property) => new UnionLayoutDiscriminator(layout, property));
 
-/** Factory for {@link Blob|Blob} values. */
+/** Factory for {@link Blob} values. */
 exports.blob = ((length, property) => new Blob(length, property));
 
-/** Factory for {@link CString|CString} values. */
+/** Factory for {@link CString} values. */
 exports.cstr = (property => new CString(property));
 
-/** Factory for {@link Constant|Constant} values. */
+/** Factory for {@link UTF8} values. */
+exports.utf8 = ((maxSpan, property) => new UTF8(maxSpan, property));
+
+/** Factory for {@link Constant} values. */
 exports.const = ((value, property) => new Constant(value, property));
 </code></pre>
         </article>
@@ -2648,13 +2757,13 @@ exports.const = ((value, property) => new Constant(value, property));
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Layout.html">Layout</a></li></ul><h3>Classes</h3><ul><li><a href="module-Layout-BitField.html">BitField</a></li><li><a href="module-Layout-BitStructure.html">BitStructure</a></li><li><a href="module-Layout-Blob.html">Blob</a></li><li><a href="module-Layout-Constant.html">Constant</a></li><li><a href="module-Layout-CString.html">CString</a></li><li><a href="module-Layout-Double.html">Double</a></li><li><a href="module-Layout-DoubleBE.html">DoubleBE</a></li><li><a href="module-Layout-ExternalLayout.html">ExternalLayout</a></li><li><a href="module-Layout-Float.html">Float</a></li><li><a href="module-Layout-FloatBE.html">FloatBE</a></li><li><a href="module-Layout-GreedyCount.html">GreedyCount</a></li><li><a href="module-Layout-Int.html">Int</a></li><li><a href="module-Layout-IntBE.html">IntBE</a></li><li><a href="module-Layout-Layout.html">Layout</a></li><li><a href="module-Layout-NearInt64.html">NearInt64</a></li><li><a href="module-Layout-NearInt64BE.html">NearInt64BE</a></li><li><a href="module-Layout-NearUInt64.html">NearUInt64</a></li><li><a href="module-Layout-NearUInt64BE.html">NearUInt64BE</a></li><li><a href="module-Layout-OffsetLayout.html">OffsetLayout</a></li><li><a href="module-Layout-Sequence.html">Sequence</a></li><li><a href="module-Layout-Structure.html">Structure</a></li><li><a href="module-Layout-UInt.html">UInt</a></li><li><a href="module-Layout-UIntBE.html">UIntBE</a></li><li><a href="module-Layout-Union.html">Union</a></li><li><a href="module-Layout-UnionDiscriminator.html">UnionDiscriminator</a></li><li><a href="module-Layout-UnionLayoutDiscriminator.html">UnionLayoutDiscriminator</a></li><li><a href="module-Layout-UTF8.html">UTF8</a></li><li><a href="module-Layout-VariantLayout.html">VariantLayout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Jan 06 2018 13:04:24 GMT-0600 (CST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Mar 14 2018 06:58:27 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
