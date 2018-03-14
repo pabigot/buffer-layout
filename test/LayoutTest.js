@@ -912,12 +912,11 @@ suite('Layout', function() {
       assert.throws(() => new lo.VariantLayout(un), TypeError);
       assert.throws(() => new lo.VariantLayout(un, 1.2), TypeError);
       assert.throws(() => new lo.VariantLayout(un, 'str'), TypeError);
-      assert.throws(() => new lo.VariantLayout(un, 1), TypeError);
-      assert.throws(() => new lo.VariantLayout(un, 1, 'other'),
-                    TypeError);
       assert.throws(() => new lo.VariantLayout(un, 1, lo.f64()),
                     Error);
       assert.throws(() => new lo.VariantLayout(un, 1, lo.f32()),
+                    TypeError);
+      assert.throws(() => new lo.VariantLayout(un, 1, 23),
                     TypeError);
     });
     test('ctor', function() {
@@ -929,6 +928,21 @@ suite('Layout', function() {
       assert.equal(d.span, 5);
       assert.equal(d.variant, 1);
       assert.equal(d.property, 'd');
+    });
+    test('ctor without layout', function() {
+      const un = new lo.Union(lo.u8(), lo.u32());
+      const v0 = new lo.VariantLayout(un, 0);
+      assert.strictEqual(v0.union, un);
+      assert.equal(v0.span, 5);
+      assert.strictEqual(v0.layout, null);
+      assert.equal(v0.variant, 0);
+      assert.equal(v0.property, undefined);
+      const v1 = new lo.VariantLayout(un, 1, 'nul');
+      assert.strictEqual(v1.union, un);
+      assert.equal(v1.span, 5);
+      assert.strictEqual(v1.layout, null);
+      assert.equal(v1.variant, 1);
+      assert.equal(v1.property, 'nul');
     });
     test('span', function() {
       const un = new lo.Union(lo.u8(), lo.u32());
@@ -1126,6 +1140,10 @@ suite('Layout', function() {
       assert.equal(Buffer.from('0305060406', 'hex').compare(b), 0);
       assert.throws(() => v2.encode(obj, b), TypeError);
       assert.throws(() => v2.decode(b), Error);
+      const v0 = un.addVariant(0, 'v0');
+      assert.equal(un.discriminator.encode(v0.variant, b), dlo.span);
+      assert.strictEqual(un.getVariant(b), v0);
+      assert.deepEqual(un.decode(b), {v0: true});
     });
     test('custom default', function() {
       const dlo = lo.u8('number');
@@ -1268,6 +1286,7 @@ suite('Layout', function() {
     });
     test('from src', function() {
       const un = new lo.Union(lo.u8('v'), lo.u32('u32'));
+      const v0 = un.addVariant(0, 'nul');
       const v1 = un.addVariant(1, lo.f32(), 'f32');
       const v2 = un.addVariant(2, lo.seq(lo.u8(), 4), 'u8.4');
       const v3 = un.addVariant(3, lo.cstr(), 'str');
@@ -1275,12 +1294,39 @@ suite('Layout', function() {
 
       assert.equal(un.span, 5);
 
+      // Unregistered variant with default content
       let src = {v: 5, u32: 0x12345678};
       let vlo = un.getSourceVariant(src);
       assert.strictEqual(vlo, undefined);
       assert.equal(un.encode(src, b), un.span);
       assert.equal(Buffer.from('0578563412', 'hex').compare(b), 0);
 
+      // Unregistered variant without default content
+      src = {v: 5};
+      assert.throws(() => un.getSourceVariant(src), Error);
+
+      // Registered variant with default content
+      src = {v: 1, u32: 0x12345678};
+      assert.strictEqual(un.getSourceVariant(src), undefined);
+
+      // Registered variant with incompatible content
+      src = {v: 2, f32: 26.5};
+      assert.throws(() => un.getSourceVariant(src), Error);
+
+      // Registered variant with no content
+      src = {v: 0};
+      vlo = un.getSourceVariant(src);
+      assert.strictEqual(vlo, v0);
+      b.fill(255);
+      assert.equal(vlo.encode(src, b), 1);
+      assert.strictEqual(un.getSpan(b), 5);
+      assert.equal(Buffer.from('00ffffffff', 'hex').compare(b), 0);
+
+      // Registered variant with compatible content (ignore discriminator)
+      src = {v: 1, f32: 26.5};
+      assert.strictEqual(un.getSourceVariant(src), v1);
+
+      // Inferred variant from content
       src = {f32: 26.5};
       vlo = un.getSourceVariant(src);
       assert.strictEqual(vlo, v1);
@@ -1308,6 +1354,9 @@ suite('Layout', function() {
       assert.equal(vlo.span, un.span);
       assert.equal(vlo.layout.getSpan(b, 1), 3);
       assert.equal(vlo.getSpan(b), un.span);
+
+      src = {v: 6};
+      assert.throws(() => un.getSourceVariant(src), Error);
     });
     test('customize src', function() {
       const un = lo.union(lo.u8('v'), lo.u32('u32'));
@@ -1324,15 +1373,38 @@ suite('Layout', function() {
     });
     test('variable span', function() {
       const un = lo.union(lo.u8('v'));
+      const v0 = un.addVariant(0, 'nul');
       const v1 = un.addVariant(1, lo.u32(), 'u32');
       const v2 = un.addVariant(2, lo.f64(), 'f64');
       const v3 = un.addVariant(3, lo.cstr(), 'str');
+      const v255 = un.addVariant(255); // unnamed contentless
       const b = Buffer.alloc(16);
       assert(0 > un.span);
 
-      b.fill(0xFF);
+      b.fill(0xa5);
       assert.throws(() => un.decode(b), Error);
-      let obj = {u32: 0x12345678};
+
+      let obj = {v: v255.variant};
+      assert.equal(un.encode(obj, b), 1 + 0);
+      assert.equal(Buffer.from('ffa5a5', 'hex')
+                   .compare(b.slice(0, 1 + 2)), 0);
+      assert.strictEqual(v255.layout, null);
+      assert.deepEqual(un.decode(b), obj);
+      assert.equal(v0.getSpan(b), 1);
+      assert.equal(un.getSpan(b), 1);
+
+      obj = {nul: true};
+      b.fill(0xff);
+      assert.equal(un.encode(obj, b), 1 + 0);
+      assert.equal(Buffer.from('00ffff', 'hex')
+                   .compare(b.slice(0, 1 + 2)), 0);
+      assert.strictEqual(v0.layout, null);
+      assert.deepEqual(un.decode(b), obj);
+      assert.equal(v0.getSpan(b), 1);
+      assert.equal(un.getSpan(b), 1);
+
+      b.fill(0xFF);
+      obj = {u32: 0x12345678};
       assert.equal(un.encode(obj, b), 1 + 4);
       assert.equal(v1.getSpan(b), 5);
       assert.equal(un.getSpan(b), 5);
@@ -1376,13 +1448,25 @@ suite('Layout', function() {
       assert(0 > un.span);
       assert(!un.usesPrefixDiscriminator);
       const st = lo.struct([dlo, un], 'st');
+      const v0 = un.addVariant(0, 'nul');
       const v1 = un.addVariant(1, lo.cstr(), 's');
-      const obj = {v: v1.variant, u: {s: 'hi'}};
+      const v2 = un.addVariant(2);
+      let obj = {v: v1.variant, u: {s: 'hi'}};
       const b = Buffer.alloc(6);
       b.fill(0xa5);
       st.encode(obj, b, 1);
       assert.equal(Buffer.from('a501686900a5', 'hex').compare(b), 0);
       assert.deepEqual(st.decode(b, 1), obj);
+      obj = {v: v0.variant};
+      b.fill(0x5a);
+      st.encode(obj, b, 1);
+      assert.equal(Buffer.from('5a005a5a5a5a', 'hex').compare(b), 0);
+      assert.deepEqual(st.decode(b, 1), Object.assign({u: {nul: true}}, obj));
+      obj = {v: v2.variant};
+      b.fill(0x5a);
+      st.encode(obj, b, 1);
+      assert.equal(Buffer.from('5a025a5a5a5a', 'hex').compare(b), 0);
+      assert.deepEqual(st.decode(b, 1), Object.assign({u: {}}, obj));
     });
   });
   test('fromArray', function() {
@@ -1392,9 +1476,11 @@ suite('Layout', function() {
     assert.deepEqual(st.fromArray([1, 2]), {a: 1, b: 2});
     const un = new lo.Union(lo.u8('v'), lo.u32('c'));
     assert.strictEqual(un.fromArray([1, 2, 3]), undefined);
+    un.addVariant(0, 'v0');
     const v1 = un.addVariant(1, st, 'v1');
     un.addVariant(2, lo.f32(), 'v2');
     assert(v1 instanceof lo.VariantLayout);
+    assert.deepEqual(un.getVariant(0).fromArray([1, 2, 3]), undefined);
     assert.deepEqual(un.getVariant(1).fromArray([1, 2, 3]), {a: 1, b: 2, c: 3});
     assert.strictEqual(un.getVariant(2).fromArray([1, 2, 3]), undefined);
   });
@@ -1835,6 +1921,77 @@ suite('Layout', function() {
       assert.deepEqual(seq.decode(b), ['a', 'bc', '5']);
       assert.equal(seq.encode(['hi', 'u', 'c'], b), (1 + 1) + (2 + 1) + (1 + 1));
       assert.equal(Buffer.from('68690075006300', 'hex').compare(b), 0);
+    });
+  });
+  suite('UTF8', function() {
+    test('ctor', function() {
+      const cst = lo.utf8();
+      assert(0 > cst.span);
+      assert.strictEqual(cst.maxSpan, -1);
+    });
+    test('ctor with maxSpan', function() {
+      const cst = lo.utf8(5);
+      assert.strictEqual(cst.maxSpan, 5);
+    });
+    test('ctor with invalid maxSpan', function() {
+      assert.throws(() => new lo.UTF8(23.1), TypeError);
+    });
+    test('#getSpan', function() {
+      const cst = new lo.UTF8();
+      assert.throws(() => cst.getSpan(), TypeError);
+      assert.equal(cst.getSpan(Buffer.from('00', 'hex')), 1);
+      assert.equal(cst.getSpan(Buffer.from('4100', 'hex')), 2);
+      assert.equal(cst.getSpan(Buffer.from('4100', 'hex'), 1), 1);
+      assert.equal(cst.getSpan(Buffer.from('4142', 'hex')), 2);
+    });
+    test('#decode', function() {
+      const cst = new lo.UTF8(3);
+      assert.equal(cst.decode(Buffer.from('00', 'hex')), '\x00');
+      assert.equal(cst.decode(Buffer.from('4100', 'hex')), 'A\x00');
+      assert.equal(cst.decode(Buffer.from('4100', 'hex'), 1), '\x00');
+      assert.equal(cst.decode(Buffer.from('4142', 'hex')), 'AB');
+      assert.throws(() => cst.decode(Buffer.from('four', 'utf8')),
+                    RangeError);
+    });
+    test('#encode', function() {
+      const cst = new lo.UTF8();
+      const b = Buffer.alloc(3);
+      b.fill(0xFF);
+      assert.equal(cst.encode('', b), 0);
+      assert.equal(Buffer.from('ffffff', 'hex').compare(b), 0);
+      assert.equal(cst.encode('A', b), 1);
+      assert.equal(Buffer.from('41ffff', 'hex').compare(b), 0);
+      assert.equal(cst.encode('B', b, 1), 1);
+      assert.equal(Buffer.from('4142ff', 'hex').compare(b), 0);
+      assert.equal(cst.encode(5, b), 1);
+      assert.equal(Buffer.from('3542ff', 'hex').compare(b), 0);
+      assert.equal(cst.encode('abc', b), 3);
+      assert.equal(Buffer.from('616263', 'hex').compare(b), 0);
+      assert.throws(() => cst.encode('four', b), RangeError);
+    });
+    test('#encode with maxSpan', function() {
+      const cst = new lo.UTF8(2);
+      const b = Buffer.alloc(3);
+      b.fill(0xFF);
+      assert.throws(() => cst.encode('abc', b), RangeError);
+    });
+    test('in struct', function() {
+      const st = lo.struct([lo.utf8('k'),
+                            lo.utf8('v')]);
+      const b = Buffer.from('6162323334', 'hex');
+      assert.throws(() => st.getSpan(), RangeError);
+      assert.equal(st.fields[0].getSpan(b), b.length);
+      assert.equal(st.fields[1].getSpan(b, 2), b.length - 2);
+      assert.equal(st.getSpan(b), b.length);
+      assert.deepEqual(st.decode(b), {k: 'ab234', v: ''});
+    });
+    test('in seq', function() {
+      const seq = lo.seq(lo.utf8(), 3);
+      const b = Buffer.from('4162633435', 'hex');
+      assert.deepEqual(seq.decode(b), ['Abc45', '', '']);
+      b.fill(0xFF);
+      assert.equal(seq.encode(['hi', 'u', 'c'], b), 2 + 1 + 1);
+      assert.equal(Buffer.from('68697563ff', 'hex').compare(b), 0);
     });
   });
   suite('Constant', function() {

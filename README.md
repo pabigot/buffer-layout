@@ -132,10 +132,14 @@ The buffer-layout way:
 
     const t = lo.u8('t');
     const un = lo.union(t, lo.seq(lo.u8(), 4, 'u8'));
+    const nul = un.addVariant('n'.charCodeAt(0), 'nul');
     const u32 = un.addVariant('w'.charCodeAt(0), lo.u32(), 'u32');
     const s16 = un.addVariant('h'.charCodeAt(0), lo.seq(lo.s16(), 2), 's16');
     const f32 = un.addVariant('f'.charCodeAt(0), lo.f32(), 'f32');
     const b = Buffer.alloc(un.span);
+    assert.deepEqual(un.decode(b), {t: 0, u8: [0, 0, 0, 0]});
+    assert.deepEqual(un.decode(Buffer.from('6e01020304', 'hex')),
+                     {nul: true});
     assert.deepEqual(un.decode(Buffer.from('7778563412', 'hex')),
                      {u32: 0x12345678});
     assert.deepEqual(un.decode(Buffer.from('660000bd41', 'hex')),
@@ -155,6 +159,11 @@ representing the union and the variants:
     function Union() { }
     lo.bindConstructorLayout(Union,
                              lo.union(lo.u8('t'), lo.seq(lo.u8(), 4, 'u8')));
+
+    function Vn() {}
+    util.inherits(Vn, Union);
+    lo.bindConstructorLayout(Vn,
+                             Union.layout_.addVariant('n'.charCodeAt(0), 'nul'));
 
     function Vu32(v) { this.u32 = v; }
     util.inherits(Vu32, Union);
@@ -185,6 +194,14 @@ representing the union and the variants:
     v = new Vf32(23.625);
     v.encode(b);
     assert.equal(Buffer.from('660000bd41', 'hex').compare(b), 0);
+
+    b.fill(0xFF);
+    v = new Vn();
+    v.encode(b);
+    assert.equal(Buffer.from('6effffffff', 'hex').compare(b), 0);
+
+Note that one variant (`'n'`) carries no data, leaving the remainder of
+the buffer unchanged when stored.
 
 See
 [Layout.makeDestinationObject()](http://pabigot.github.io/buffer-layout/module-Layout-Layout.html#makeDestinationObject)
