@@ -1,5 +1,7 @@
 # Change Log
 
+## [Unreleased]
+
 ## [1.2.2] - 2021-07-05
 
 * Improve [browser compatibility][pr#26] by eliminating a dependence on
@@ -141,6 +143,7 @@
 
 * Initial release.
 
+[Unreleased]: https://github.com/pabigot/buffer-layout/compare/v1.2.2...next
 [1.2.2]: https://github.com/pabigot/buffer-layout/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/pabigot/buffer-layout/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/pabigot/buffer-layout/compare/v1.1.0...v1.2.0
