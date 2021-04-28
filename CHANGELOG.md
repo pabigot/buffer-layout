@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.2.1] - 2021-04-29
+
+* Improve [browser compatibility][pr#24] by using `Buffer.isBuffer` instead of
+  `instanceof` to confirm Buffer types.
+
 ## [1.2.0] - 2018-03-14
 
 * **API** Add [UTF8][doc:UTF8] to encode UTF strings in a possibly
@@ -131,6 +136,7 @@
 
 * Initial release.
 
+[1.2.1]: https://github.com/pabigot/buffer-layout/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/pabigot/buffer-layout/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/pabigot/buffer-layout/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/pabigot/buffer-layout/compare/v0.13.0...v1.0.0
@@ -193,6 +199,7 @@
 [issue#19]: https://github.com/pabigot/buffer-layout/issues/19
 [issue#20]: https://github.com/pabigot/buffer-layout/issues/20
 [issue#21]: https://github.com/pabigot/buffer-layout/issues/21
+[pr#24]: https://github.com/pabigot/buffer-layout/pull/24
 [ci:travis]: https://travis-ci.org/pabigot/buffer-layout
 [ci:coveralls]: https://coveralls.io/github/pabigot/buffer-layout
 [node:issue#3992]: https://github.com/nodejs/node/issues/3992
