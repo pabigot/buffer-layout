@@ -672,7 +672,8 @@ suite('Layout', function() {
       assert.throws(() => new lo.Structure('stuff'), TypeError);
       assert.throws(() => new lo.Structure(['stuff']), TypeError);
       // no unnamed variable-length fields
-      assert.throws(() => new lo.Structure([lo.cstr()]), Error);
+      assert.throws(() => new lo.Structure([lo.cstr()]),
+                    err => checkError(err, Error, /cannot contain unnamed variable-length layout/));
     });
     test('basics', function() {
       const st = new lo.Structure([lo.u8('u8'),

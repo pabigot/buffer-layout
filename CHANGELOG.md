@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.2.2] - 2021-07-05
+
+* Improve [browser compatibility][pr#26] by eliminating a dependence on
+  the Node assert module.
+
 ## [1.2.1] - 2021-04-29
 
 * Improve [browser compatibility][pr#24] by using `Buffer.isBuffer` instead of
@@ -136,6 +141,7 @@
 
 * Initial release.
 
+[1.2.2]: https://github.com/pabigot/buffer-layout/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/pabigot/buffer-layout/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/pabigot/buffer-layout/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/pabigot/buffer-layout/compare/v1.0.0...v1.1.0
@@ -200,6 +206,7 @@
 [issue#20]: https://github.com/pabigot/buffer-layout/issues/20
 [issue#21]: https://github.com/pabigot/buffer-layout/issues/21
 [pr#24]: https://github.com/pabigot/buffer-layout/pull/24
+[pr#26]: https://github.com/pabigot/buffer-layout/pull/26
 [ci:travis]: https://travis-ci.org/pabigot/buffer-layout
 [ci:coveralls]: https://coveralls.io/github/pabigot/buffer-layout
 [node:issue#3992]: https://github.com/nodejs/node/issues/3992
