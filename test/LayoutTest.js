@@ -1763,6 +1763,24 @@ suite('Layout', function() {
     });
     test('basics', function() {
       const bl = new lo.Blob(3, 'bl');
+      const a = new Uint8Array([1, 2, 3, 4, 5]);
+      let bv = bl.decode(a);
+      assert(bv instanceof Buffer);
+      assert.equal(bv.length, bl.span);
+      assert.equal(Buffer.from('010203', 'hex').compare(bv), 0);
+      bv = bl.decode(a, 2);
+      assert.equal(bl.getSpan(a), bl.span);
+      const src = new Uint8Array(Buffer.from('112233', 'hex'));
+      assert.equal(Buffer.from('030405', 'hex').compare(bv), 0);
+      assert.equal(bl.encode(src, a, 1), 3);
+      const b = lo.uint8ArrayToBuffer(a);
+      assert.equal(Buffer.from('0111223305', 'hex').compare(b), 0);
+      assert.throws(() => bl.encode('ABC', a), Error);
+      assert.throws(() => bl.encode(Buffer.from('0102', 'hex'), a),
+                    Error);
+    });
+    test('Buffer', function() {
+      const bl = new lo.Blob(3, 'bl');
       const b = Buffer.from('0102030405', 'hex');
       let bv = bl.decode(b);
       assert(bv instanceof Buffer);
