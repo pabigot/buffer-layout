@@ -598,7 +598,7 @@ suite('Layout', function() {
     });
     test('struct elts', function() {
       const st = new lo.Structure([lo.u8('u8'),
-                                 lo.s32('s32')]);
+                                   lo.s32('s32')]);
       const seq = new lo.Sequence(st, 3);
       const tv = [{u8: 1, s32: 1e4}, {u8: 0, s32: 0}, {u8: 3, s32: -324}];
       const b = Buffer.alloc(15);
@@ -677,8 +677,8 @@ suite('Layout', function() {
     });
     test('basics', function() {
       const st = new lo.Structure([lo.u8('u8'),
-                                 lo.u16('u16'),
-                                 lo.s16be('s16be')]);
+                                   lo.u16('u16'),
+                                   lo.s16be('s16be')]);
       const b = Buffer.alloc(5);
       assert(st instanceof lo.Structure);
       assert(st instanceof lo.Layout);
@@ -695,8 +695,8 @@ suite('Layout', function() {
     });
     test('padding', function() {
       const st = new lo.Structure([lo.u16('u16'),
-                                 lo.u8(),
-                                 lo.s16be('s16be')]);
+                                   lo.u8(),
+                                   lo.s16be('s16be')]);
       const b = Buffer.alloc(5);
       assert.equal(st.span, 5);
       b.fill(0);
@@ -710,8 +710,8 @@ suite('Layout', function() {
     });
     test('missing', function() {
       const st = new lo.Structure([lo.u16('u16'),
-                                 lo.u8('u8'),
-                                 lo.s16be('s16be')]);
+                                   lo.u8('u8'),
+                                   lo.s16be('s16be')]);
       const b = Buffer.alloc(5);
       assert.equal(st.span, 5);
       b.fill(0);
@@ -725,26 +725,26 @@ suite('Layout', function() {
     });
     test('update', function() {
       const st = new lo.Structure([lo.u8('u8'),
-                                 lo.u16('u16'),
-                                 lo.s16be('s16be')]);
+                                   lo.u16('u16'),
+                                   lo.s16be('s16be')]);
       const b = Buffer.from('153412eac8', 'hex');
       const rc = st.decode(b, 0);
       assert.deepEqual(rc, {u8: 21, u16: 0x1234, s16be: -5432});
     });
     test('nested', function() {
       const st = new lo.Structure([lo.u8('u8'),
-                                 lo.u16('u16'),
-                                 lo.s16be('s16be')], 'st');
+                                   lo.u16('u16'),
+                                   lo.s16be('s16be')], 'st');
       const cst = new lo.Structure([lo.u32('u32'),
-                                  st,
-                                  lo.s24('s24')]);
+                                    st,
+                                    lo.s24('s24')]);
       const obj = {u32: 0x12345678,
-                 st: {
-                   u8: 23,
-                   u16: 65432,
-                   s16be: -12345,
-                 },
-                 s24: -123456};
+                   st: {
+                     u8: 23,
+                     u16: 65432,
+                     s16be: -12345,
+                   },
+                   s24: -123456};
       const b = Buffer.alloc(12);
       assert.equal(st.span, 5);
       assert.equal(st.property, 'st');
@@ -1165,8 +1165,8 @@ suite('Layout', function() {
       const vlo = new lo.Sequence(lo.u8(), 3, 'payload');
       const un = new lo.Union(dlo, vlo, 'u');
       const st = new lo.Structure([lo.u16('u16'),
-                                 un,
-                                 lo.s16('s16')]);
+                                   un,
+                                   lo.s16('s16')]);
       const b = Buffer.from('0001020304050607', 'hex');
       const obj = st.decode(b);
       assert.equal(obj.u16, 0x0100);
@@ -1192,7 +1192,7 @@ suite('Layout', function() {
       assert.equal(un.encode(obj, b2), dlo.span + vlo.span);
       assert.equal(b2.toString('hex'), b.toString('hex'));
       const obj2 = {variant: obj.number,
-                  content: obj.payload};
+                    content: obj.payload};
       assert.throws(() => un.encode(obj2, b2));
     });
     test('issue#7.internal.anon', function() {
@@ -1810,9 +1810,9 @@ suite('Layout', function() {
     test('named', function() {
       const ver = lo.u8('ver');
       const hdr = new lo.Structure([lo.u8('id'),
-                                  lo.u8('ver')], 'hdr');
+                                    lo.u8('ver')], 'hdr');
       const pld = new lo.Union(lo.offset(ver, -ver.span),
-                             new lo.Blob(8, 'blob'), 'u');
+                               new lo.Blob(8, 'blob'), 'u');
       const pkt = new lo.Structure([hdr, pld], 's');
       const expectedBlob = Buffer.from('1011121314151617', 'hex');
       const b = Buffer.from('01021011121314151617', 'hex');
@@ -1835,9 +1835,9 @@ suite('Layout', function() {
     test('anon', function() {
       const ver = lo.u8('ver');
       const hdr = new lo.Structure([lo.u8('id'),
-                                  lo.u8('ver')]);
+                                    lo.u8('ver')]);
       const pld = new lo.Union(lo.offset(ver, -ver.span),
-                             new lo.Blob(8, 'blob'));
+                               new lo.Blob(8, 'blob'));
       const expectedBlob = Buffer.from('1011121314151617', 'hex');
       const b = Buffer.from('01021011121314151617', 'hex');
       assert.deepEqual(hdr.decode(b), {id: 1, ver: 2});
@@ -1861,7 +1861,7 @@ suite('Layout', function() {
     test('anon', function() {
       const ver = lo.u8('ver');
       const hdr = lo.struct([lo.u8('id'),
-                           lo.u8('ver')]);
+                             lo.u8('ver')]);
       const pld = lo.union(lo.offset(ver, -ver.span), lo.blob(8, 'blob'));
       assert(hdr instanceof lo.Structure);
       assert(pld instanceof lo.Union);
@@ -1906,7 +1906,7 @@ suite('Layout', function() {
     });
     test('in struct', function() {
       const st = lo.struct([lo.cstr('k'),
-                          lo.cstr('v')]);
+                            lo.cstr('v')]);
       const b = Buffer.from('6100323300', 'hex');
       assert.throws(() => st.getSpan(), RangeError);
       assert.equal(st.fields[0].getSpan(b), 2);
@@ -2035,8 +2035,8 @@ suite('Layout', function() {
         this.humidity_ppt = humidity_ppt;
       }
       const slo = lo.struct([lo.s32('temp_dCel'),
-                           lo.u32('humidity_ppt')],
-                          'sample');
+                             lo.u32('humidity_ppt')],
+                            'sample');
       lo.bindConstructorLayout(Sample, slo);
       assert.strictEqual(Sample.layout_, slo);
       assert(slo.makeDestinationObject() instanceof Sample);

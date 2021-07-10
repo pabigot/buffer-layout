@@ -24,8 +24,8 @@ struct ds {
 } st;
      */
     const ds = lo.struct([lo.u8('v'),
-                        lo.seq(lo.u8(), 3), // alignment padding
-                        lo.u32('u32')]);
+                          lo.seq(lo.u8(), 3), // alignment padding
+                          lo.u32('u32')]);
     assert.equal(ds.offsetOf('u32'), 4);
     const b = Buffer.alloc(8);
     b.fill(0xbd);
@@ -41,7 +41,7 @@ struct ds {
 } __attribute__((__packed__)) st;
      */
     const ds = lo.struct([lo.u8('v'),
-                        lo.u32('u32')]);
+                          lo.u32('u32')]);
     assert.equal(ds.offsetOf('u32'), 1);
     const b = Buffer.alloc(5);
     b.fill(0xbd);
@@ -198,10 +198,10 @@ struct ds {
 };
      */
     const st = lo.struct([lo.u8('prop'),
-                        lo.seq(lo.u16(),
-                               lo.greedy(lo.u16().span),
-                               'data')],
-                       'ds');
+                          lo.seq(lo.u16(),
+                                 lo.greedy(lo.u16().span),
+                                 'data')],
+                         'ds');
     const b = Buffer.from('21010002030405', 'hex');
     assert.deepEqual(st.decode(b), {prop: 33, data: [0x0001, 0x0302, 0x0504]});
     b.fill(0xFF);
