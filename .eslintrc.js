@@ -16,6 +16,12 @@ module.exports = {
     camelcase: 'off',
     curly: 'error',
     eqeqeq: 'error',
+    indent: ['error', 2, {
+      ArrayExpression: 'first',
+      CallExpression: {arguments: 'first'},
+      MemberExpression: 'off',
+      ObjectExpression: 'first'
+    }],
     'max-len': ['error', {code: 120, tabWidth: 2}],
     'no-constant-condition': 'off',
     'no-fallthrough': ['error', {commentPattern: 'FALLTHRU'}],
@@ -40,6 +46,7 @@ module.exports = {
     yoda: ['error', 'always', {exceptRange: true}]
   },
   parserOptions: {
+    ecmaVersion: 6,
     sourceType: 'module'
   }
 }

@@ -19,8 +19,8 @@
   "main": "./lib/Layout.js",
   "devDependencies": {
     "coveralls": "^3.0.0",
-    "eslint": "~4.18.2",
-    "eslint-config-google": "~0.9.1",
+    "eslint": "^7.30.0",
+    "eslint-config-google": "~0.14.0",
     "eslint-plugin-pabigot": "~1.1.0",
     "jsdoc": "~3.6.7",
     "lodash": "~4.17.5",
