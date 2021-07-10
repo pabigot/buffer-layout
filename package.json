@@ -22,17 +22,17 @@
     "eslint": "~4.18.2",
     "eslint-config-google": "~0.9.1",
     "eslint-plugin-pabigot": "~1.1.0",
-    "istanbul": "~0.4.5",
     "jsdoc": "~3.6.7",
     "lodash": "~4.17.5",
-    "mocha": "~9.0.2"
+    "mocha": "~9.0.2",
+    "nyc": "~15.1.0"
   },
   "engines": {
     "node": ">=6.0"
   },
   "scripts": {
-    "coverage": "istanbul cover _mocha -- -u tdd",
-    "coveralls": "istanbul cover _mocha --report lcovonly -- -u tdd && cat ./coverage/lcov.info | coveralls",
+    "coverage": "nyc --reporter=lcov npm run test",
+    "coveralls": "nyc --reporter=lcovonly npm run test && cat ./coverage/lcov.info | coveralls",
     "eslint": "eslint lib/ test/",
     "jsdoc": "jsdoc -c jsdoc/conf.json",
     "test": "mocha -u tdd"

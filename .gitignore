@@ -1,3 +1,4 @@
 /CHANGELOG.html
 /coverage/
 /node_modules/
+/.nyc_output/
