@@ -23,9 +23,9 @@
     "eslint-config-google": "~0.9.1",
     "eslint-plugin-pabigot": "~1.1.0",
     "istanbul": "~0.4.5",
-    "jsdoc": "~3.5.5",
+    "jsdoc": "~3.6.7",
     "lodash": "~4.17.5",
-    "mocha": "~5.0.4"
+    "mocha": "~9.0.2"
   },
   "engines": {
     "node": ">=6.0"
