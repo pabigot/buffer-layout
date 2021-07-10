@@ -210,7 +210,7 @@
 [issue#21]: https://github.com/pabigot/buffer-layout/issues/21
 [pr#24]: https://github.com/pabigot/buffer-layout/pull/24
 [pr#26]: https://github.com/pabigot/buffer-layout/pull/26
-[ci:travis]: https://travis-ci.org/pabigot/buffer-layout
+[ci:travis]: https://travis-ci.com/pabigot/buffer-layout
 [ci:coveralls]: https://coveralls.io/github/pabigot/buffer-layout
 [node:issue#3992]: https://github.com/nodejs/node/issues/3992
 [node:issue#3994]: https://github.com/nodejs/node/issues/3994
