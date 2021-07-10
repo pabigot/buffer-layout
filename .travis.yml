@@ -4,8 +4,7 @@ node_js:
   - "16"
   - "14"
   - "12"
-  - "8"
-  - "6"
+  - "10"
 branches:
   only:
     - master
