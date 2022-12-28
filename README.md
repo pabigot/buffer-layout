@@ -395,3 +395,7 @@ decoding each of the alternatives:
 **NOTE** This code tickles a long-standing [bug in
 Buffer.writeInt{L,B}E](https://github.com/nodejs/node/pull/3994); if you
 are using Node prior to 4.2.4 or 5.2.0 you should update.
+
+### Big-endian integers and floats
+
+Append `be` to the integer or float type name, e.g. `u32be` for unsigned 32-bit integer.
